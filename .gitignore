@@ -1,4 +1,5 @@
 .gemini/
-.spec-workflow/
+.spec-workflow/templates/
+.spec-workflow/approvals/
 .DS_Store
 audit.log
