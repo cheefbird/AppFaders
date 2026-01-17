@@ -1,0 +1,4 @@
+.gemini/
+.spec-workflow/
+.DS_Store
+audit.log
