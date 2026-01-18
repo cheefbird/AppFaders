@@ -23,7 +23,7 @@ Apple's AudioDriverKit framework does **not** support virtual audio devices. Per
 This means:
 - We must use the traditional `/Library/Audio/Plug-Ins/HAL/` installation path
 - Driver installation requires `coreaudiod` restart (no hot-reload)
-- We'll use the Pancake framework to wrap the C-based HAL API in Swift
+- We'll use a custom minimal Swift/C wrapper for the HAL API (Pancake is not SPM-compatible)
 
 ### macOS 26+ and Apple Silicon Only
 
@@ -53,9 +53,9 @@ Targeting only macOS 26 and arm64 enables:
 
 #### Acceptance Criteria
 
-1. WHEN `Package.swift` is resolved THEN the HAL framework dependency SHALL be fetched
-2. IF Pancake is used AND it doesn't build with Swift 6 THEN we SHALL either fork/patch it or implement a minimal Swift wrapper directly
-3. WHEN the driver target imports the HAL framework THEN the AudioServerPlugIn APIs SHALL be accessible from Swift code
+1. WHEN `swift build` is run THEN the custom HAL wrapper SHALL compile without errors
+2. The HAL wrapper SHALL provide a C interface layer (`PlugInInterface.c`) that implements the `AudioServerPlugInDriverInterface` vtable
+3. WHEN the driver target is compiled THEN the AudioServerPlugIn APIs SHALL be accessible from Swift code via @_cdecl exports
 
 ### Requirement 3: Virtual Audio Device Registration
 

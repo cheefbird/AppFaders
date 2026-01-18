@@ -13,7 +13,7 @@ let package = Package(
     .plugin(name: "BundleAssembler", targets: ["BundleAssembler"])
   ],
   dependencies: [
-    // Pancake is an Xcode project, not SPM - will be addressed in Tasks 4-5
+    // Pancake is an Xcode project, not SPM - see docs/pancake-compatibility.md
     // .package(url: "https://github.com/0bmxa/Pancake.git", branch: "master")
   ],
   targets: [

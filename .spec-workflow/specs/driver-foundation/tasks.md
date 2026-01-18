@@ -30,9 +30,9 @@
   - _Requirements: 5.1, 5.2_
   - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: macOS developer with HAL plug-in experience | Task: Create Info.plist for AppFadersDriver.driver bundle. Include CFBundleIdentifier=com.appfaders.driver, CFBundleExecutable=AppFadersDriver, and AudioServerPlugIn dict with DeviceUID=com.appfaders.virtualdevice. | Restrictions: Use exact keys required by coreaudiod. No extra keys. | _Leverage: design.md Bundle Structure section | Success: Info.plist contains all required AudioServerPlugIn keys | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-## Phase 2: Pancake Integration
+## Phase 2: HAL Wrapper Setup
 
-- [ ] 4. Verify Pancake Swift 6 compatibility
+- [x] 4. Verify Pancake Swift 6 compatibility
   - File: Sources/AppFadersDriver/PancakeCheck.swift
   - Create test file that imports Pancake and uses basic APIs
   - Document any compiler errors or warnings
@@ -41,26 +41,27 @@
   - _Requirements: 2.1, 2.2_
   - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift developer debugging dependency issues | Task: Create PancakeCheck.swift that imports Pancake and attempts to use CreatePancakeDeviceConfig(), PancakeDeviceConfigAddFormat(), and CreatePancakeConfig(). Run swift build and document results. If build fails, document specific errors. | Restrictions: Do not modify Pancake source. Just test and document. | _Leverage: Context7 for Pancake docs if available, github.com/0bmxa/Pancake | Success: Document whether Pancake builds with Swift 6 - either "works" or "fails with [specific errors]" | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts documenting compatibility status, mark complete when done._
 
-- [ ] 5. Fork/patch Pancake if needed (conditional)
-  - File: Package.swift (modify dependency URL if needed)
-  - Fork Pancake to appfaders org if Swift 6 issues found
-  - Apply minimal patches for compatibility
-  - Purpose: Ensure HAL wrapper is usable
-  - _Leverage: Task 4 findings_
-  - _Requirements: 2.2_
-  - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift developer with legacy code migration experience | Task: Based on Task 4 findings, if Pancake doesn't build with Swift 6, fork to github and apply minimal fixes. Update Package.swift dependency URL. If Pancake works, mark this task N/A and skip. | Restrictions: Minimal changes only - fix compiler errors, don't refactor. | _Leverage: Task 4 documentation | Success: `swift build` succeeds with Pancake imported, or task marked N/A if no issues | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
+- [ ] 5. Create C interface layer for HAL plug-in
+  - File: Sources/AppFadersDriver/Bridge/PlugInInterface.c, PlugInInterface.h
+  - Implement COM-style factory function `AppFadersDriver_Create()`
+  - Create AudioServerPlugInDriverInterface vtable with function pointers
+  - Bridge to Swift implementation via @_cdecl exports
+  - Purpose: Entry point that coreaudiod loads and calls
+  - _Leverage: BackgroundMusic BGM_PlugInInterface.cpp, Apple AudioServerPlugIn.h_
+  - _Requirements: 2.2, 3.1_
+  - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: C/Swift interop developer with CoreAudio experience | Task: Create minimal C interface layer for HAL plug-in. Implement factory function matching CFPlugInFactories UUID. Create vtable implementing AudioServerPlugInDriverInterface. Use @_cdecl to expose Swift functions. Reference BackgroundMusic's BGM_PlugInInterface.cpp for patterns. | Restrictions: Keep C layer minimal - just bridge to Swift. Use Apple's AudioServerPlugIn.h types exactly. | _Leverage: docs/pancake-compatibility.md, BackgroundMusic source | Success: C interface compiles and exports correct symbols for coreaudiod loading | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
 ## Phase 3: HAL Driver Implementation
 
 - [ ] 6. Implement DriverEntry (HAL plug-in entry point)
   - File: Sources/AppFadersDriver/DriverEntry.swift
-  - Create AudioServerPlugInDriverInterface implementation
-  - Implement Initialize(), CreateDevice(), Teardown() callbacks
-  - Register with Pancake framework
+  - Create Swift singleton that manages plug-in lifecycle
+  - Implement Initialize(), CreateDevice(), Teardown() callbacks via @_cdecl
+  - Coordinate with C interface layer from Task 5
   - Purpose: Entry point that coreaudiod calls
-  - _Leverage: Pancake API, design.md Component 1_
+  - _Leverage: BackgroundMusic BGM_PlugIn, design.md Component 1_
   - _Requirements: 3.1, 3.2, 3.3_
-  - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: macOS audio driver developer | Task: Create DriverEntry.swift implementing the HAL plug-in entry point using Pancake. Set up AudioServerPlugInDriverInterface vtable. Implement Initialize() to create VirtualDevice, CreateDevice() to return device ID, Teardown() for cleanup. Use os_log for diagnostics. | Restrictions: Keep real-time safe - no allocations in audio callbacks. Follow Pancake patterns. | _Leverage: design.md, Pancake examples, Context7 | Success: Driver compiles and exports correct symbols for coreaudiod | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
+  - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: macOS audio driver developer | Task: Create DriverEntry.swift implementing the HAL plug-in entry point. Create singleton managing plugin state. Expose Initialize(), CreateDevice(), Teardown() via @_cdecl for C interface to call. Use os_log for diagnostics. | Restrictions: Keep real-time safe - no allocations in audio callbacks. | _Leverage: design.md, BackgroundMusic BGM_PlugIn.cpp | Success: Driver compiles and exports correct symbols for coreaudiod | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
 - [ ] 7. Implement VirtualDevice
   - File: Sources/AppFadersDriver/VirtualDevice.swift
@@ -68,9 +69,9 @@
   - Implement property getters/setters (name, UID, manufacturer, etc.)
   - Configure device as output type
   - Purpose: The virtual audio device users see in System Settings
-  - _Leverage: Pancake API, design.md Component 2_
+  - _Leverage: BackgroundMusic BGM_Device, design.md Component 2_
   - _Requirements: 3.1, 3.2_
-  - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: CoreAudio developer | Task: Create VirtualDevice.swift implementing the AudioObject for "AppFaders Virtual Device". Use Pancake's device configuration APIs. Set name="AppFaders Virtual Device", uid="com.appfaders.virtualdevice", manufacturer="AppFaders". Implement HasProperty, IsPropertySettable, GetPropertyDataSize, GetPropertyData, SetPropertyData for required properties. | Restrictions: Follow AudioObject property patterns exactly. | _Leverage: design.md, Pancake, CoreAudio headers | Success: Device properties are correctly reported when queried | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
+  - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: CoreAudio developer | Task: Create VirtualDevice.swift implementing the AudioObject for "AppFaders Virtual Device". Set name="AppFaders Virtual Device", uid="com.fbreidenbach.appfaders.virtualdevice", manufacturer="AppFaders". Implement HasProperty, IsPropertySettable, GetPropertyDataSize, GetPropertyData, SetPropertyData for required properties. | Restrictions: Follow AudioObject property patterns exactly. | _Leverage: design.md, BackgroundMusic BGM_Device.cpp, CoreAudio headers | Success: Device properties are correctly reported when queried | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
 - [ ] 8. Implement VirtualStream
   - File: Sources/AppFadersDriver/VirtualStream.swift
@@ -78,9 +79,9 @@
   - Support common formats: 44.1kHz, 48kHz, 96kHz stereo
   - Implement startIO/stopIO callbacks
   - Purpose: Handle audio stream configuration
-  - _Leverage: Pancake API, design.md Component 3_
+  - _Leverage: BackgroundMusic BGM_Stream, design.md Component 3_
   - _Requirements: 4.1_
-  - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Audio systems developer | Task: Create VirtualStream.swift implementing audio stream for VirtualDevice. Support 44100, 48000, 96000 Hz sample rates, stereo (2 channel), 32-bit float PCM. Implement stream property handlers and startIO/stopIO that coordinate with PassthroughEngine. | Restrictions: Support standard formats only for Phase 1. | _Leverage: design.md, CoreAudio AudioStreamBasicDescription | Success: Stream reports correct formats and handles IO lifecycle | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
+  - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Audio systems developer | Task: Create VirtualStream.swift implementing audio stream for VirtualDevice. Support 44100, 48000, 96000 Hz sample rates, stereo (2 channel), 32-bit float PCM. Implement stream property handlers and startIO/stopIO that coordinate with PassthroughEngine. | Restrictions: Support standard formats only for Phase 1. | _Leverage: design.md, BackgroundMusic BGM_Stream.cpp, CoreAudio AudioStreamBasicDescription | Success: Stream reports correct formats and handles IO lifecycle | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
 - [ ] 9. Implement PassthroughEngine
   - File: Sources/AppFadersDriver/PassthroughEngine.swift
