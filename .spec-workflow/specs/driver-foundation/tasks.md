@@ -83,7 +83,7 @@
   - _Requirements: 4.1_
   - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Audio systems developer | Task: Create VirtualStream.swift implementing audio stream for VirtualDevice. Support 44100, 48000, 96000 Hz sample rates, stereo (2 channel), 32-bit float PCM. Implement stream property handlers and startIO/stopIO that coordinate with PassthroughEngine. | Restrictions: Support standard formats only for Phase 1. | _Leverage: design.md, BackgroundMusic BGM_Stream.cpp, CoreAudio AudioStreamBasicDescription | Success: Stream reports correct formats and handles IO lifecycle | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 9. Implement PassthroughEngine
+- [x] 9. Implement PassthroughEngine
   - File: Sources/AppFadersDriver/PassthroughEngine.swift
   - Route captured audio to default physical output
   - Use CoreAudio APIs for output device discovery
@@ -93,7 +93,7 @@
   - _Requirements: 4.1, 4.2, 4.3, 4.4_
   - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Real-time audio systems developer | Task: Create PassthroughEngine.swift that routes audio from VirtualDevice to the default output device. Use AudioObjectGetPropertyData to find default output. Set up IOProc for real-time audio routing. Handle device changes gracefully. | Restrictions: MUST be real-time safe - no locks, no allocations in audio callback. Use lock-free patterns. | _Leverage: design.md, BackgroundMusic BGMPlayThrough patterns, CoreAudio | Success: Audio played to virtual device is heard through physical output | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 10. Create shared audio types
+- [x] 10. Create shared audio types
   - File: Sources/AppFadersDriver/AudioTypes.swift
   - Define AudioDeviceConfiguration struct
   - Define StreamFormat struct
