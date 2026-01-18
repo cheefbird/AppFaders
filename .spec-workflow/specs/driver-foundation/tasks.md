@@ -128,14 +128,14 @@
 ## Phase 5: Testing & Verification
 
 - [ ] 13. Create driver unit tests
-  - File: Tests/AppFadersDriverTests/VirtualDeviceTests.swift
-  - Test AudioDeviceConfiguration validation
-  - Test StreamFormat creation and validation
-  - Test property getter/setter logic (mocked)
+  - File: Tests/AppFadersDriverTests/AudioTypesTests.swift
+  - Test AudioDeviceConfiguration: creation, defaults, supportedFormats
+  - Test StreamFormat: creation, defaults, bytesPerFrame, toASBD(), init(from:), Equatable
+  - Test AudioRingBuffer: write/read operations, wrap-around, underflow/overflow behavior
   - Purpose: Verify driver logic without coreaudiod
   - _Leverage: Swift Testing framework_
   - _Requirements: All_
-  - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift test engineer | Task: Create VirtualDeviceTests.swift using Swift Testing framework (@Test, #expect). Test AudioDeviceConfiguration init and validation. Test StreamFormat for supported sample rates. Mock AudioObject interactions where possible. | Restrictions: Use Swift Testing, not XCTest. Keep tests fast and isolated. | _Leverage: Swift Testing docs via Context7 | Success: `swift test` passes all tests | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
+  - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift test engineer | Task: Create AudioTypesTests.swift using Swift Testing framework (@Test, #expect). Test AudioDeviceConfiguration defaults and supportedFormats. Test StreamFormat bytesPerFrame, toASBD round-trip, Equatable. Test AudioRingBuffer write/read, wrap-around at capacity, and edge cases. | Restrictions: Use Swift Testing, not XCTest. Keep tests fast and isolated. Focus on testable logic, not CoreAudio mocking. | _Leverage: Swift Testing docs via Context7 | Success: `swift test` passes all tests | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
 - [ ] 14. Manual integration test
   - File: Documentation only (no code file)
