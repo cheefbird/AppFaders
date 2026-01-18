@@ -67,17 +67,16 @@ The driver operates as a HAL AudioServerPlugIn loaded by `coreaudiod`. It create
 ### Component 1: DriverEntry (PlugIn Interface)
 - **Purpose**: Entry point that `coreaudiod` calls to initialize the plug-in
 - **Interfaces**:
-  - `AudioServerPlugInDriverInterface` vtable (C function pointers)
-  - `Initialize()`, `CreateDevice()`, `Teardown()`
+  - `AudioServerPlugInDriverInterface` vtable (C function pointers in PlugInInterface.c)
+  - Swift exports via @_cdecl: `AppFadersDriver_Initialize()`, `AppFadersDriver_CreateDevice()`, `AppFadersDriver_DestroyDevice()`
 - **Dependencies**: AppFadersDriverBridge target, CoreAudio types
 - **Files**: `Sources/AppFadersDriver/DriverEntry.swift`, `Sources/AppFadersDriverBridge/PlugInInterface.c`
 
 ### Component 2: VirtualDevice
-- **Purpose**: Represents the "AppFaders Virtual Device" AudioObject
+- **Purpose**: Represents the "AppFaders Virtual Device" AudioObject with property handlers
 - **Interfaces**:
-  - `configureDevice(name:uid:manufacturer:)`
-  - `addStream(_ stream: VirtualStream)`
-  - `getProperty(_:)` / `setProperty(_:value:)`
+  - Property handlers via @_cdecl: `HasProperty()`, `IsPropertySettable()`, `GetPropertyDataSize()`, `GetPropertyData()`
+  - `ObjectID` enum for stable audio object identifiers (plugIn=1, device=2, outputStream=3)
 - **Dependencies**: DriverEntry, CoreAudio types
 - **File**: `Sources/AppFadersDriver/VirtualDevice.swift`
 
@@ -170,9 +169,19 @@ let package = Package(
     ],
     targets: [
         .executableTarget(name: "AppFaders", dependencies: []),
+        // C interface layer - SPM requires separate target for C code
+        .target(
+            name: "AppFadersDriverBridge",
+            publicHeadersPath: "include",
+            linkerSettings: [
+                .linkedFramework("CoreAudio"),
+                .linkedFramework("CoreFoundation")
+            ]
+        ),
+        // Swift driver implementation
         .target(
             name: "AppFadersDriver",
-            dependencies: [],
+            dependencies: ["AppFadersDriverBridge"],
             linkerSettings: [
                 .linkedFramework("CoreAudio"),
                 .linkedFramework("AudioToolbox")

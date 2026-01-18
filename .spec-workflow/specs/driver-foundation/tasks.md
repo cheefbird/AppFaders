@@ -33,9 +33,9 @@
 ## Phase 2: HAL Wrapper Setup
 
 - [x] 4. Verify Pancake Swift 6 compatibility
-  - File: Sources/AppFadersDriver/PancakeCheck.swift
-  - Create test file that imports Pancake and uses basic APIs
-  - Document any compiler errors or warnings
+  - File: docs/pancake-compatibility.md
+  - Tested Pancake import and documented incompatibility
+  - Decision: Use custom minimal HAL wrapper instead
   - Purpose: Validate dependency before building on it
   - _Leverage: Pancake repository, Context7_
   - _Requirements: 2.1, 2.2_
@@ -56,7 +56,7 @@
 - [x] 6. Implement DriverEntry (HAL plug-in entry point)
   - File: Sources/AppFadersDriver/DriverEntry.swift
   - Create Swift singleton that manages plug-in lifecycle
-  - Implement Initialize(), CreateDevice(), Teardown() callbacks via @_cdecl
+  - Implement Initialize(), CreateDevice(), DestroyDevice() callbacks via @_cdecl
   - Coordinate with C interface layer from Task 5
   - Purpose: Entry point that coreaudiod calls
   - _Leverage: BackgroundMusic BGM_PlugIn, design.md Component 1_

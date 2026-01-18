@@ -54,8 +54,9 @@ Targeting only macOS 26 and arm64 enables:
 #### Acceptance Criteria
 
 1. WHEN `swift build` is run THEN the custom HAL wrapper SHALL compile without errors
-2. The HAL wrapper SHALL provide a C interface layer (`PlugInInterface.c`) that implements the `AudioServerPlugInDriverInterface` vtable
+2. The HAL wrapper SHALL provide a C interface layer (`AppFadersDriverBridge` target with `PlugInInterface.c`) that implements the `AudioServerPlugInDriverInterface` vtable
 3. WHEN the driver target is compiled THEN the AudioServerPlugIn APIs SHALL be accessible from Swift code via @_cdecl exports
+4. The C and Swift code SHALL be in separate SPM targets (SPM requires this for mixed-language support)
 
 ### Requirement 3: Virtual Audio Device Registration
 
