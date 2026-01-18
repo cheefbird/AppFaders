@@ -21,7 +21,7 @@
   - _Requirements: 1.1_
   - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift developer | Task: Create minimal main.swift for AppFaders executable target that prints "AppFaders v0.1.0 - Driver Foundation" and exits. | Restrictions: Keep it minimal - no UI, no functionality beyond print statement. | _Leverage: None | Success: `swift run AppFaders` prints version and exits cleanly | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 3. Create driver Info.plist template
+- [x] 3. Create driver Info.plist template
   - File: Resources/Info.plist
   - Define CFBundleIdentifier, CFBundleName, CFBundleExecutable
   - Add AudioServerPlugIn dictionary with DeviceUID
