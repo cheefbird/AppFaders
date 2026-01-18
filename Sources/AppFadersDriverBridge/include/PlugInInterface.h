@@ -10,16 +10,17 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-/// Factory function called by coreaudiod to create the driver instance.
-/// Must match the name in Info.plist CFPlugInFactories.
-///
-/// @param allocator The allocator to use (typically kCFAllocatorDefault)
-/// @param requestedTypeUUID Must be kAudioServerPlugInTypeUUID
-/// @return Pointer to our AudioServerPlugInDriverInterface, or NULL on failure
-void* AppFadersDriver_Create(CFAllocatorRef allocator, CFUUIDRef requestedTypeUUID);
+  /// Factory function called by coreaudiod to create the driver instance.
+  /// Must match the name in Info.plist CFPlugInFactories.
+  ///
+  /// @param allocator The allocator to use (typically kCFAllocatorDefault)
+  /// @param requestedTypeUUID Must be kAudioServerPlugInTypeUUID
+  /// @return Pointer to our AudioServerPlugInDriverInterface, or NULL on failure
+  void *AppFadersDriver_Create(CFAllocatorRef allocator, CFUUIDRef requestedTypeUUID);
 
 #ifdef __cplusplus
 }
