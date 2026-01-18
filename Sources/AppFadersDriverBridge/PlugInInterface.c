@@ -23,6 +23,16 @@ static os_log_t GetPlugInLog(void)
 #define LogInfo(format, ...) os_log_info(GetPlugInLog(), format, ##__VA_ARGS__)
 #define LogError(format, ...) os_log_error(GetPlugInLog(), format, ##__VA_ARGS__)
 
+// MARK: - Swift Function Imports
+
+// These are exported from DriverEntry.swift via @_cdecl
+extern OSStatus AppFadersDriver_Initialize(AudioServerPlugInHostRef inHost);
+extern OSStatus AppFadersDriver_CreateDevice(
+    CFDictionaryRef inDescription,
+    const AudioServerPlugInClientInfo *inClientInfo,
+    AudioObjectID *outDeviceObjectID);
+extern OSStatus AppFadersDriver_DestroyDevice(AudioObjectID inDeviceObjectID);
+
 // MARK: - Reference Counting
 
 static _Atomic UInt32 sDriverRefCount = 0;
@@ -111,8 +121,8 @@ static OSStatus PlugIn_Initialize(
 
   sHost = inHost;
 
-  // TODO(task6): swift DriverEntry will handle actual init
-  return kAudioHardwareNoError;
+  // delegate to Swift singleton
+  return AppFadersDriver_Initialize(inHost);
 }
 
 static OSStatus PlugIn_CreateDevice(
@@ -123,8 +133,8 @@ static OSStatus PlugIn_CreateDevice(
 {
   LogInfo("CreateDevice called");
 
-  // we create device at init time - error on dynamic device creation
-  return kAudioHardwareUnsupportedOperationError;
+  // delegate to Swift - returns unsupported (we create device at init time)
+  return AppFadersDriver_CreateDevice(inDescription, inClientInfo, outDeviceObjectID);
 }
 
 static OSStatus PlugIn_DestroyDevice(
@@ -133,8 +143,8 @@ static OSStatus PlugIn_DestroyDevice(
 {
   LogInfo("DestroyDevice called for device %u", inDeviceObjectID);
 
-  // not currently supporting destroying our built-in device
-  return kAudioHardwareUnsupportedOperationError;
+  // delegate to Swift - returns unsupported (we don't support dynamic destruction)
+  return AppFadersDriver_DestroyDevice(inDeviceObjectID);
 }
 
 static OSStatus PlugIn_AddDeviceClient(
