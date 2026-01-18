@@ -105,7 +105,7 @@
 
 ## Phase 4: Build System
 
-- [ ] 11. Create BundleAssembler build plugin
+- [x] 11. Create BundleAssembler build plugin
   - File: Plugins/BundleAssembler/BundleAssembler.swift
   - Implement SPM BuildToolPlugin
   - Assemble .driver bundle structure (Contents/MacOS, Contents/Info.plist)
@@ -115,7 +115,7 @@
   - _Requirements: 5.1, 5.2, 5.3_
   - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Build systems engineer with SPM expertise | Task: Create BundleAssembler.swift implementing SPM BuildToolPlugin. Use prebuildCommand to create AppFadersDriver.driver/ bundle structure in plugin work directory. Copy Info.plist to Contents/, create Contents/MacOS/ directory. The actual binary linking happens separately. | Restrictions: Follow SPM plugin patterns exactly. Use FileManager for file operations. | _Leverage: Context7 SPM plugin docs, design.md | Success: Running swift build produces correct bundle structure in build output | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 12. Create install script
+- [x] 12. Create install script
   - File: Scripts/install-driver.sh
   - Copy .driver bundle to /Library/Audio/Plug-Ins/HAL/
   - Restart coreaudiod
