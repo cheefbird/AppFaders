@@ -40,6 +40,9 @@ let package = Package(
       linkerSettings: [
         .linkedFramework("CoreAudio"),
         .linkedFramework("AudioToolbox")
+      ],
+      plugins: [
+        .plugin(name: "BundleAssembler")
       ]
     ),
     .plugin(
