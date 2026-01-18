@@ -2,7 +2,7 @@
 
 ## Phase 1: Project Setup
 
-- [ ] 1. Initialize SPM monorepo with Package.swift
+- [x] 1. Initialize SPM monorepo with Package.swift
   - File: Package.swift
   - Create Swift 6 package manifest with macOS 26+ platform target
   - Define products: AppFaders executable, AppFadersDriver dynamic library, BundleAssembler plugin
@@ -13,7 +13,7 @@
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
   - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift developer specializing in SPM and macOS development | Task: Create Package.swift for monorepo with app target, driver library target, and build plugin target. Use Swift 6, macOS 26+ only, arm64. Add Pancake dependency from github.com/0bmxa/Pancake. Link CoreAudio and AudioToolbox frameworks. Reference design.md for exact structure. | Restrictions: Do not create Xcode project files. Do not add unnecessary dependencies. Keep package manifest clean and minimal. | _Leverage: .spec-workflow/specs/driver-foundation/design.md, Context7 for SPM docs | Success: `swift build` compiles without errors, package structure matches design.md | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 2. Create placeholder app entry point
+- [x] 2. Create placeholder app entry point
   - File: Sources/AppFaders/main.swift
   - Create minimal main.swift that prints version info
   - Purpose: Satisfy SPM executable target requirement
