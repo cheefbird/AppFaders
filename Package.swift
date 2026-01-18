@@ -21,9 +21,22 @@ let package = Package(
       name: "AppFaders",
       dependencies: []
     ),
+    // C interface layer for HAL AudioServerPlugIn
+    .target(
+      name: "AppFadersDriverBridge",
+      dependencies: [],
+      publicHeadersPath: "include",
+      cSettings: [
+        .headerSearchPath("include")
+      ],
+      linkerSettings: [
+        .linkedFramework("CoreAudio"),
+        .linkedFramework("CoreFoundation")
+      ]
+    ),
     .target(
       name: "AppFadersDriver",
-      dependencies: [], // Pancake dependency deferred to Tasks 4-5
+      dependencies: ["AppFadersDriverBridge"],
       linkerSettings: [
         .linkedFramework("CoreAudio"),
         .linkedFramework("AudioToolbox")
