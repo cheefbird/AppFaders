@@ -6,9 +6,9 @@ set -e
 
 DRIVER_PATH="/Library/Audio/Plug-Ins/HAL/AppFadersDriver.driver"
 
-if [[ ! -d "$DRIVER_PATH" ]]; then
-    echo "Driver not installed at $DRIVER_PATH"
-    exit 0
+if [[ ! -d $DRIVER_PATH ]]; then
+	echo "Driver not installed at $DRIVER_PATH"
+	exit 0
 fi
 
 echo "Removing $DRIVER_PATH..."

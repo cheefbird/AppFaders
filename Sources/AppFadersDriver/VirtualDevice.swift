@@ -27,6 +27,12 @@ private let kAudioPlugInPropertyResourceBundle = AudioObjectPropertySelector(
   fourCharCode("rsrc"))
 private let kAudioDevicePropertyZeroTimeStampPeriod = AudioObjectPropertySelector(
   fourCharCode("ring"))
+private let kAudioObjectPropertyCustomPropertyInfoList = AudioObjectPropertySelector(
+  fourCharCode("cust"))
+private let kAudioDevicePropertyControlList = AudioObjectPropertySelector(
+  fourCharCode("ctrl"))
+private let kAudioClockDevicePropertyClockDomain = AudioObjectPropertySelector(
+  fourCharCode("clk#"))
 
 private func fourCharCode(_ string: String) -> UInt32 {
   var result: UInt32 = 0
@@ -34,6 +40,16 @@ private func fourCharCode(_ string: String) -> UInt32 {
     result = (result << 8) | UInt32(char)
   }
   return result
+}
+
+private func fourCharCodeToString(_ code: UInt32) -> String {
+  let chars: [Character] = [
+    Character(UnicodeScalar((code >> 24) & 0xFF)!),
+    Character(UnicodeScalar((code >> 16) & 0xFF)!),
+    Character(UnicodeScalar((code >> 8) & 0xFF)!),
+    Character(UnicodeScalar(code & 0xFF)!)
+  ]
+  return String(chars)
 }
 
 // MARK: - Logging
@@ -123,19 +139,30 @@ final class VirtualDevice: @unchecked Sendable {
     objectID: AudioObjectID,
     address: AudioObjectPropertyAddress
   ) -> UInt32? {
-    if objectID == ObjectID.plugIn {
-      return getPlugInPropertyDataSize(address: address)
+    let result: UInt32? = if objectID == ObjectID.plugIn {
+      getPlugInPropertyDataSize(address: address)
+    } else if objectID == ObjectID.device {
+      getDevicePropertyDataSize(address: address)
+    } else if objectID == ObjectID.outputStream {
+      VirtualStream.shared.getPropertyDataSize(address: address)
+    } else {
+      nil
     }
 
-    if objectID == ObjectID.device {
-      return getDevicePropertyDataSize(address: address)
+    if result == nil {
+      os_log(
+        .error,
+        log: log,
+        "getPropertyDataSize: unknown - objectID=%u selector=%{public}@ (0x%x) scope=0x%x element=%u",
+        objectID,
+        fourCharCodeToString(address.mSelector),
+        address.mSelector,
+        address.mScope,
+        address.mElement
+      )
     }
 
-    if objectID == ObjectID.outputStream {
-      return VirtualStream.shared.getPropertyDataSize(address: address)
-    }
-
-    return nil
+    return result
   }
 
   /// get property value - returns (data, actualSize) or nil if unknown
@@ -162,23 +189,34 @@ final class VirtualDevice: @unchecked Sendable {
   // MARK: - Plug-In Properties
 
   private func hasPlugInProperty(address: AudioObjectPropertyAddress) -> Bool {
-    switch address.mSelector {
+    let has = switch address.mSelector {
     case kAudioObjectPropertyClass,
+         kAudioObjectPropertyBaseClass,
          kAudioObjectPropertyOwner,
          kAudioObjectPropertyManufacturer,
          kAudioObjectPropertyOwnedObjects,
+         kAudioObjectPropertyCustomPropertyInfoList,
+         kAudioPlugInPropertyBoxList,
+         kAudioPlugInPropertyTranslateUIDToBox,
          kAudioPlugInPropertyDeviceList,
          kAudioPlugInPropertyTranslateUIDToDevice,
-         kAudioPlugInPropertyResourceBundle:
+         kAudioPlugInPropertyResourceBundle,
+         kAudioClockDevicePropertyClockDomain:
       true
     default:
       false
     }
+    if !has {
+      os_log(.error, log: log, "hasPlugInProperty: unknown selector %{public}@ (0x%x)",
+             fourCharCodeToString(address.mSelector), address.mSelector)
+    }
+    return has
   }
 
   private func getPlugInPropertyDataSize(address: AudioObjectPropertyAddress) -> UInt32? {
     switch address.mSelector {
-    case kAudioObjectPropertyClass:
+    case kAudioObjectPropertyClass,
+         kAudioObjectPropertyBaseClass:
       UInt32(MemoryLayout<AudioClassID>.size)
     case kAudioObjectPropertyOwner:
       UInt32(MemoryLayout<AudioObjectID>.size)
@@ -187,10 +225,17 @@ final class VirtualDevice: @unchecked Sendable {
     case kAudioObjectPropertyOwnedObjects,
          kAudioPlugInPropertyDeviceList:
       UInt32(MemoryLayout<AudioObjectID>.size) // one device
+    case kAudioObjectPropertyCustomPropertyInfoList,
+         kAudioPlugInPropertyBoxList:
+      0 // empty lists
+    case kAudioPlugInPropertyTranslateUIDToBox:
+      UInt32(MemoryLayout<AudioObjectID>.size)
     case kAudioPlugInPropertyTranslateUIDToDevice:
       UInt32(MemoryLayout<AudioObjectID>.size)
     case kAudioPlugInPropertyResourceBundle:
       UInt32(MemoryLayout<CFString>.size)
+    case kAudioClockDevicePropertyClockDomain:
+      UInt32(MemoryLayout<UInt32>.size)
     default:
       nil
     }
@@ -203,6 +248,11 @@ final class VirtualDevice: @unchecked Sendable {
     switch address.mSelector {
     case kAudioObjectPropertyClass:
       var classID = kAudioPlugInClassID
+      return (Data(bytes: &classID, count: MemoryLayout<AudioClassID>.size),
+              UInt32(MemoryLayout<AudioClassID>.size))
+
+    case kAudioObjectPropertyBaseClass:
+      var classID = kAudioObjectClassID
       return (Data(bytes: &classID, count: MemoryLayout<AudioClassID>.size),
               UInt32(MemoryLayout<AudioClassID>.size))
 
@@ -220,6 +270,17 @@ final class VirtualDevice: @unchecked Sendable {
       return (Data(bytes: &deviceID, count: MemoryLayout<AudioObjectID>.size),
               UInt32(MemoryLayout<AudioObjectID>.size))
 
+    case kAudioObjectPropertyCustomPropertyInfoList,
+         kAudioPlugInPropertyBoxList:
+      // empty lists
+      return (Data(), 0)
+
+    case kAudioPlugInPropertyTranslateUIDToBox:
+      // no boxes - return unknown object
+      var boxID = kAudioObjectUnknown
+      return (Data(bytes: &boxID, count: MemoryLayout<AudioObjectID>.size),
+              UInt32(MemoryLayout<AudioObjectID>.size))
+
     case kAudioPlugInPropertyTranslateUIDToDevice:
       // qualifier contains UID to translate - for now just return our device
       var deviceID = ObjectID.device
@@ -229,6 +290,11 @@ final class VirtualDevice: @unchecked Sendable {
     case kAudioPlugInPropertyResourceBundle:
       return cfStringPropertyData(resourceBundle)
 
+    case kAudioClockDevicePropertyClockDomain:
+      var domain: UInt32 = 0
+      return (Data(bytes: &domain, count: MemoryLayout<UInt32>.size),
+              UInt32(MemoryLayout<UInt32>.size))
+
     default:
       return nil
     }
@@ -237,12 +303,14 @@ final class VirtualDevice: @unchecked Sendable {
   // MARK: - Device Properties
 
   private func hasDeviceProperty(address: AudioObjectPropertyAddress) -> Bool {
-    switch address.mSelector {
+    let has = switch address.mSelector {
     case kAudioObjectPropertyClass,
+         kAudioObjectPropertyBaseClass,
          kAudioObjectPropertyOwner,
          kAudioObjectPropertyName,
          kAudioObjectPropertyManufacturer,
          kAudioObjectPropertyOwnedObjects,
+         kAudioObjectPropertyCustomPropertyInfoList,
          kAudioDevicePropertyDeviceUID,
          kAudioDevicePropertyModelUID,
          kAudioDevicePropertyTransportType,
@@ -250,21 +318,30 @@ final class VirtualDevice: @unchecked Sendable {
          kAudioDevicePropertyDeviceCanBeDefaultDevice,
          kAudioDevicePropertyDeviceCanBeDefaultSystemDevice,
          kAudioDevicePropertyStreams,
+         kAudioDevicePropertyControlList,
          kAudioDevicePropertyNominalSampleRate,
          kAudioDevicePropertyAvailableNominalSampleRates,
          kAudioDevicePropertyLatency,
          kAudioDevicePropertySafetyOffset,
          kAudioDevicePropertyZeroTimeStampPeriod,
-         kAudioDevicePropertyClockDomain:
+         kAudioDevicePropertyClockDomain,
+         kAudioDevicePropertyIsHidden,
+         kAudioDevicePropertyPreferredChannelsForStereo:
       true
     default:
       false
     }
+    if !has {
+      os_log(.debug, log: log, "hasDeviceProperty: unknown selector %{public}@ (0x%x)",
+             fourCharCodeToString(address.mSelector), address.mSelector)
+    }
+    return has
   }
 
   private func getDevicePropertyDataSize(address: AudioObjectPropertyAddress) -> UInt32? {
     switch address.mSelector {
     case kAudioObjectPropertyClass,
+         kAudioObjectPropertyBaseClass,
          kAudioDevicePropertyTransportType,
          kAudioDevicePropertyClockDomain:
       UInt32(MemoryLayout<AudioClassID>.size)
@@ -275,8 +352,12 @@ final class VirtualDevice: @unchecked Sendable {
          kAudioDevicePropertyDeviceCanBeDefaultSystemDevice,
          kAudioDevicePropertyLatency,
          kAudioDevicePropertySafetyOffset,
-         kAudioDevicePropertyZeroTimeStampPeriod:
+         kAudioDevicePropertyZeroTimeStampPeriod,
+         kAudioDevicePropertyIsHidden:
       UInt32(MemoryLayout<UInt32>.size)
+
+    case kAudioDevicePropertyPreferredChannelsForStereo:
+      UInt32(MemoryLayout<UInt32>.size * 2) // left and right channel
 
     case kAudioObjectPropertyName,
          kAudioObjectPropertyManufacturer,
@@ -284,10 +365,19 @@ final class VirtualDevice: @unchecked Sendable {
          kAudioDevicePropertyModelUID:
       UInt32(MemoryLayout<CFString>.size)
 
-    case kAudioObjectPropertyOwnedObjects,
-         kAudioDevicePropertyStreams:
-      // one output stream for now
+    case kAudioObjectPropertyOwnedObjects:
+      // one output stream
       UInt32(MemoryLayout<AudioObjectID>.size)
+
+    case kAudioDevicePropertyStreams:
+      // only return stream for output scope (we have no input streams)
+      (address.mScope == kAudioObjectPropertyScopeOutput ||
+        address.mScope == kAudioObjectPropertyScopeGlobal)
+        ? UInt32(MemoryLayout<AudioObjectID>.size) : 0
+
+    case kAudioObjectPropertyCustomPropertyInfoList,
+         kAudioDevicePropertyControlList:
+      0 // empty lists - no custom properties or controls
 
     case kAudioDevicePropertyNominalSampleRate:
       UInt32(MemoryLayout<Float64>.size)
@@ -308,6 +398,11 @@ final class VirtualDevice: @unchecked Sendable {
     switch address.mSelector {
     case kAudioObjectPropertyClass:
       var classID = kAudioDeviceClassID
+      return (Data(bytes: &classID, count: MemoryLayout<AudioClassID>.size),
+              UInt32(MemoryLayout<AudioClassID>.size))
+
+    case kAudioObjectPropertyBaseClass:
+      var classID = kAudioObjectClassID
       return (Data(bytes: &classID, count: MemoryLayout<AudioClassID>.size),
               UInt32(MemoryLayout<AudioClassID>.size))
 
@@ -346,11 +441,26 @@ final class VirtualDevice: @unchecked Sendable {
       return (Data(bytes: &canBe, count: MemoryLayout<UInt32>.size),
               UInt32(MemoryLayout<UInt32>.size))
 
-    case kAudioObjectPropertyOwnedObjects,
-         kAudioDevicePropertyStreams:
+    case kAudioObjectPropertyOwnedObjects:
       var streamID = ObjectID.outputStream
       return (Data(bytes: &streamID, count: MemoryLayout<AudioObjectID>.size),
               UInt32(MemoryLayout<AudioObjectID>.size))
+
+    case kAudioDevicePropertyStreams:
+      // only return stream for output scope (we have no input streams)
+      if address.mScope == kAudioObjectPropertyScopeOutput ||
+        address.mScope == kAudioObjectPropertyScopeGlobal
+      {
+        var streamID = ObjectID.outputStream
+        return (Data(bytes: &streamID, count: MemoryLayout<AudioObjectID>.size),
+                UInt32(MemoryLayout<AudioObjectID>.size))
+      }
+      return (Data(), 0) // no input streams
+
+    case kAudioObjectPropertyCustomPropertyInfoList,
+         kAudioDevicePropertyControlList:
+      // empty lists
+      return (Data(), 0)
 
     case kAudioDevicePropertyNominalSampleRate:
       lock.lock()
@@ -386,6 +496,16 @@ final class VirtualDevice: @unchecked Sendable {
       var domain: UInt32 = 0
       return (Data(bytes: &domain, count: MemoryLayout<UInt32>.size),
               UInt32(MemoryLayout<UInt32>.size))
+
+    case kAudioDevicePropertyIsHidden:
+      var hidden: UInt32 = 0 // not hidden
+      return (Data(bytes: &hidden, count: MemoryLayout<UInt32>.size),
+              UInt32(MemoryLayout<UInt32>.size))
+
+    case kAudioDevicePropertyPreferredChannelsForStereo:
+      var channels: [UInt32] = [1, 2] // left=1, right=2
+      return (Data(bytes: &channels, count: MemoryLayout<UInt32>.size * 2),
+              UInt32(MemoryLayout<UInt32>.size * 2))
 
     default:
       return nil

@@ -39,7 +39,9 @@ let package = Package(
       dependencies: ["AppFadersDriverBridge"],
       linkerSettings: [
         .linkedFramework("CoreAudio"),
-        .linkedFramework("AudioToolbox")
+        .linkedFramework("AudioToolbox"),
+        // Build as MH_BUNDLE instead of MH_DYLIB for CFPlugIn compatibility
+        .unsafeFlags(["-Xlinker", "-bundle"])
       ],
       plugins: [
         .plugin(name: "BundleAssembler")

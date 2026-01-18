@@ -127,7 +127,7 @@
 
 ## Phase 5: Testing & Verification
 
-- [ ] 13. Create driver unit tests
+- [x] 13. Create driver unit tests
   - File: Tests/AppFadersDriverTests/AudioTypesTests.swift
   - Test AudioDeviceConfiguration: creation, defaults, supportedFormats
   - Test StreamFormat: creation, defaults, bytesPerFrame, toASBD(), init(from:), Equatable
@@ -137,7 +137,7 @@
   - _Requirements: All_
   - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift test engineer | Task: Create AudioTypesTests.swift using Swift Testing framework (@Test, #expect). Test AudioDeviceConfiguration defaults and supportedFormats. Test StreamFormat bytesPerFrame, toASBD round-trip, Equatable. Test AudioRingBuffer write/read, wrap-around at capacity, and edge cases. | Restrictions: Use Swift Testing, not XCTest. Keep tests fast and isolated. Focus on testable logic, not CoreAudio mocking. | _Leverage: Swift Testing docs via Context7 | Success: `swift test` passes all tests | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 14. Manual integration test
+- [x] 14. Manual integration test
   - File: Documentation only (no code file)
   - Install driver using install script
   - Verify device appears in System Settings → Sound → Output
