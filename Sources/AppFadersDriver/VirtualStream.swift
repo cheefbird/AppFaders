@@ -383,7 +383,12 @@ public func driverStartIO(deviceID: AudioObjectID, clientID: UInt32) -> OSStatus
   os_log(.info, log: log, "StartIO: device=%u client=%u", deviceID, clientID)
   VirtualStream.shared.setActive(true)
   VirtualDevice.shared.setRunning(true)
-  // TODO(task9): PassthroughEngine.shared.start()
+
+  let status = PassthroughEngine.shared.start()
+  if status != noErr {
+    os_log(.error, log: log, "StartIO: PassthroughEngine.start() failed: %d", status)
+  }
+
   return noErr
 }
 
@@ -393,6 +398,11 @@ public func driverStopIO(deviceID: AudioObjectID, clientID: UInt32) -> OSStatus 
   os_log(.info, log: log, "StopIO: device=%u client=%u", deviceID, clientID)
   VirtualStream.shared.setActive(false)
   VirtualDevice.shared.setRunning(false)
-  // TODO(task9): PassthroughEngine.shared.stop()
+
+  let status = PassthroughEngine.shared.stop()
+  if status != noErr {
+    os_log(.error, log: log, "StopIO: PassthroughEngine.stop() failed: %d", status)
+  }
+
   return noErr
 }
