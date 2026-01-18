@@ -28,10 +28,8 @@ final class DriverEntry: @unchecked Sendable {
   /// for property change notifications
   private var host: AudioServerPlugInHostRef?
 
-  private(set) var plugInObjectID: AudioObjectID = kAudioObjectUnknown
-
-  /// set up in task 7
-  private(set) var deviceObjectID: AudioObjectID = kAudioObjectUnknown
+  private(set) var plugInObjectID: AudioObjectID = ObjectID.plugIn
+  private(set) var deviceObjectID: AudioObjectID = ObjectID.device
 
   private let lock = NSLock()
 
@@ -56,9 +54,8 @@ final class DriverEntry: @unchecked Sendable {
 
     self.host = host
 
-    // TODO(task7): create VirtualDevice here and register with host
-
-    os_log(.debug, log: log, "initialize complete")
+    // VirtualDevice is a singleton, accessed via VirtualDevice.shared
+    os_log(.debug, log: log, "initialize complete - device ID: %u", deviceObjectID)
     return noErr
   }
 
