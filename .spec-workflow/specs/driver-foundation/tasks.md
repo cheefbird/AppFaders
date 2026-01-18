@@ -63,7 +63,7 @@
   - _Requirements: 3.1, 3.2, 3.3_
   - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: macOS audio driver developer | Task: Create DriverEntry.swift implementing the HAL plug-in entry point. Create singleton managing plugin state. Expose Initialize(), CreateDevice(), Teardown() via @_cdecl for C interface to call. Use os_log for diagnostics. | Restrictions: Keep real-time safe - no allocations in audio callbacks. | _Leverage: design.md, BackgroundMusic BGM_PlugIn.cpp | Success: Driver compiles and exports correct symbols for coreaudiod | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 7. Implement VirtualDevice
+- [x] 7. Implement VirtualDevice
   - File: Sources/AppFadersDriver/VirtualDevice.swift
   - Create AudioObject representing "AppFaders Virtual Device"
   - Implement property getters/setters (name, UID, manufacturer, etc.)

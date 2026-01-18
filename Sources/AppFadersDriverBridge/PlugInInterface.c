@@ -33,6 +33,36 @@ extern OSStatus AppFadersDriver_CreateDevice(
     AudioObjectID *outDeviceObjectID);
 extern OSStatus AppFadersDriver_DestroyDevice(AudioObjectID inDeviceObjectID);
 
+// properties - from VirtualDevice.swift
+extern Boolean AppFadersDriver_HasProperty(
+    AudioObjectID inObjectID,
+    pid_t inClientProcessID,
+    AudioObjectPropertySelector inSelector,
+    AudioObjectPropertyScope inScope,
+    AudioObjectPropertyElement inElement);
+extern Boolean AppFadersDriver_IsPropertySettable(
+    AudioObjectID inObjectID,
+    pid_t inClientProcessID,
+    AudioObjectPropertySelector inSelector,
+    AudioObjectPropertyScope inScope,
+    AudioObjectPropertyElement inElement);
+extern OSStatus AppFadersDriver_GetPropertyDataSize(
+    AudioObjectID inObjectID,
+    pid_t inClientProcessID,
+    AudioObjectPropertySelector inSelector,
+    AudioObjectPropertyScope inScope,
+    AudioObjectPropertyElement inElement,
+    UInt32 *outDataSize);
+extern OSStatus AppFadersDriver_GetPropertyData(
+    AudioObjectID inObjectID,
+    pid_t inClientProcessID,
+    AudioObjectPropertySelector inSelector,
+    AudioObjectPropertyScope inScope,
+    AudioObjectPropertyElement inElement,
+    UInt32 inDataSize,
+    UInt32 *outDataSize,
+    void *outData);
+
 // MARK: - Reference Counting
 
 static _Atomic UInt32 sDriverRefCount = 0;
@@ -202,8 +232,12 @@ static Boolean PlugIn_HasProperty(
     pid_t inClientProcessID,
     const AudioObjectPropertyAddress *inAddress)
 {
-  // TODO(task7): swift VirtualDevice handles this
-  return false;
+  return AppFadersDriver_HasProperty(
+      inObjectID,
+      inClientProcessID,
+      inAddress->mSelector,
+      inAddress->mScope,
+      inAddress->mElement);
 }
 
 static OSStatus PlugIn_IsPropertySettable(
@@ -218,9 +252,13 @@ static OSStatus PlugIn_IsPropertySettable(
     return kAudioHardwareIllegalOperationError;
   }
 
-  // TODO(task7): swift VirtualDevice handles this
-  *outIsSettable = false;
-  return kAudioHardwareUnknownPropertyError;
+  *outIsSettable = AppFadersDriver_IsPropertySettable(
+      inObjectID,
+      inClientProcessID,
+      inAddress->mSelector,
+      inAddress->mScope,
+      inAddress->mElement);
+  return kAudioHardwareNoError;
 }
 
 static OSStatus PlugIn_GetPropertyDataSize(
@@ -237,9 +275,13 @@ static OSStatus PlugIn_GetPropertyDataSize(
     return kAudioHardwareIllegalOperationError;
   }
 
-  // TODO(task7): swift VirtualDevice handles this
-  *outDataSize = 0;
-  return kAudioHardwareUnknownPropertyError;
+  return AppFadersDriver_GetPropertyDataSize(
+      inObjectID,
+      inClientProcessID,
+      inAddress->mSelector,
+      inAddress->mScope,
+      inAddress->mElement,
+      outDataSize);
 }
 
 static OSStatus PlugIn_GetPropertyData(
@@ -258,9 +300,15 @@ static OSStatus PlugIn_GetPropertyData(
     return kAudioHardwareIllegalOperationError;
   }
 
-  // TODO(task7): swift VirtualDevice handles this
-  *outDataSize = 0;
-  return kAudioHardwareUnknownPropertyError;
+  return AppFadersDriver_GetPropertyData(
+      inObjectID,
+      inClientProcessID,
+      inAddress->mSelector,
+      inAddress->mScope,
+      inAddress->mElement,
+      inDataSize,
+      outDataSize,
+      outData);
 }
 
 static OSStatus PlugIn_SetPropertyData(
@@ -273,7 +321,7 @@ static OSStatus PlugIn_SetPropertyData(
     UInt32 inDataSize,
     const void *inData)
 {
-  // TODO(task7): swift VirtualDevice handles this
+  // TODO(task8): implement SetPropertyData in Swift for sample rate changes
   return kAudioHardwareUnknownPropertyError;
 }
 
