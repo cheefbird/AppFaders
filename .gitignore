@@ -1,7 +1,25 @@
+### Mine ###
 .gemini/
 .spec-workflow/templates/
 .spec-workflow/approvals/
-.DS_Store
 audit.log
-.build/
 **/Implementation Logs/
+
+### Macos ###
+.DS_Store
+.AppleDouble
+.LSOverride
+
+## Icon must end with two \r
+Icon
+
+
+## Thumbnails
+._*
+
+### SwiftPM ###
+Packages
+.build/
+xcuserdata
+DerivedData/
+*.xcodeproj
