@@ -69,8 +69,8 @@ The driver operates as a HAL AudioServerPlugIn loaded by `coreaudiod`. It create
 - **Interfaces**:
   - `AudioServerPlugInDriverInterface` vtable (C function pointers)
   - `Initialize()`, `CreateDevice()`, `Teardown()`
-- **Dependencies**: C interface layer (Bridge/PlugInInterface.c), CoreAudio types
-- **Files**: `Sources/AppFadersDriver/DriverEntry.swift`, `Sources/AppFadersDriver/Bridge/PlugInInterface.c`
+- **Dependencies**: AppFadersDriverBridge target, CoreAudio types
+- **Files**: `Sources/AppFadersDriver/DriverEntry.swift`, `Sources/AppFadersDriverBridge/PlugInInterface.c`
 
 ### Component 2: VirtualDevice
 - **Purpose**: Represents the "AppFaders Virtual Device" AudioObject
@@ -238,10 +238,11 @@ AppFaders/
 ├── Sources/
 │   ├── AppFaders/
 │   │   └── main.swift              # Placeholder app entry
+│   ├── AppFadersDriverBridge/      # Separate C target (SPM requires this)
+│   │   ├── include/
+│   │   │   └── PlugInInterface.h   # C header for coreaudiod
+│   │   └── PlugInInterface.c       # C entry point, COM vtable
 │   └── AppFadersDriver/
-│       ├── Bridge/
-│       │   ├── PlugInInterface.c   # C entry point, COM vtable
-│       │   └── PlugInInterface.h   # C header for coreaudiod
 │       ├── DriverEntry.swift       # HAL plug-in Swift implementation
 │       ├── VirtualDevice.swift     # AudioObject device implementation
 │       ├── VirtualStream.swift     # Stream configuration

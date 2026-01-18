@@ -42,7 +42,7 @@
   - _Prompt: Implement the task for spec driver-foundation, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift developer debugging dependency issues | Task: Create PancakeCheck.swift that imports Pancake and attempts to use CreatePancakeDeviceConfig(), PancakeDeviceConfigAddFormat(), and CreatePancakeConfig(). Run swift build and document results. If build fails, document specific errors. | Restrictions: Do not modify Pancake source. Just test and document. | _Leverage: Context7 for Pancake docs if available, github.com/0bmxa/Pancake | Success: Document whether Pancake builds with Swift 6 - either "works" or "fails with [specific errors]" | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts documenting compatibility status, mark complete when done._
 
 - [ ] 5. Create C interface layer for HAL plug-in
-  - File: Sources/AppFadersDriver/Bridge/PlugInInterface.c, PlugInInterface.h
+  - Files: Sources/AppFadersDriverBridge/PlugInInterface.c, include/PlugInInterface.h
   - Implement COM-style factory function `AppFadersDriver_Create()`
   - Create AudioServerPlugInDriverInterface vtable with function pointers
   - Bridge to Swift implementation via @_cdecl exports
