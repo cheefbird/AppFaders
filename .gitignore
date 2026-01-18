@@ -3,3 +3,5 @@
 .spec-workflow/approvals/
 .DS_Store
 audit.log
+.build/
+**/Implementation Logs/
