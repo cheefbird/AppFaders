@@ -62,6 +62,18 @@ extern OSStatus AppFadersDriver_GetPropertyData(
     UInt32 inDataSize,
     UInt32 *outDataSize,
     void *outData);
+extern OSStatus AppFadersDriver_SetPropertyData(
+    AudioObjectID inObjectID,
+    pid_t inClientProcessID,
+    AudioObjectPropertySelector inSelector,
+    AudioObjectPropertyScope inScope,
+    AudioObjectPropertyElement inElement,
+    UInt32 inDataSize,
+    const void *inData);
+
+// IO operations - from VirtualStream.swift
+extern OSStatus AppFadersDriver_StartIO(AudioObjectID inDeviceObjectID, UInt32 inClientID);
+extern OSStatus AppFadersDriver_StopIO(AudioObjectID inDeviceObjectID, UInt32 inClientID);
 
 // MARK: - Reference Counting
 
@@ -321,8 +333,19 @@ static OSStatus PlugIn_SetPropertyData(
     UInt32 inDataSize,
     const void *inData)
 {
-  // TODO(task8): implement SetPropertyData in Swift for sample rate changes
-  return kAudioHardwareUnknownPropertyError;
+  if (inData == NULL)
+  {
+    return kAudioHardwareIllegalOperationError;
+  }
+
+  return AppFadersDriver_SetPropertyData(
+      inObjectID,
+      inClientProcessID,
+      inAddress->mSelector,
+      inAddress->mScope,
+      inAddress->mElement,
+      inDataSize,
+      inData);
 }
 
 // MARK: - IO Operations
@@ -333,9 +356,7 @@ static OSStatus PlugIn_StartIO(
     UInt32 inClientID)
 {
   LogInfo("StartIO: device=%u client=%u", inDeviceObjectID, inClientID);
-
-  // TODO(task8): swift PassthroughEngine starts here
-  return kAudioHardwareNoError;
+  return AppFadersDriver_StartIO(inDeviceObjectID, inClientID);
 }
 
 static OSStatus PlugIn_StopIO(
@@ -344,9 +365,7 @@ static OSStatus PlugIn_StopIO(
     UInt32 inClientID)
 {
   LogInfo("StopIO: device=%u client=%u", inDeviceObjectID, inClientID);
-
-  // TODO(task8): swift PassthroughEngine stops here
-  return kAudioHardwareNoError;
+  return AppFadersDriver_StopIO(inDeviceObjectID, inClientID);
 }
 
 static OSStatus PlugIn_GetZeroTimeStamp(
@@ -357,7 +376,7 @@ static OSStatus PlugIn_GetZeroTimeStamp(
     UInt64 *outHostTime,
     UInt64 *outSeed)
 {
-  // TODO(task8): real timing impl
+  // TODO(task9): real timing impl for audio sync
   if (outSampleTime)
     *outSampleTime = 0;
   if (outHostTime)
@@ -375,9 +394,15 @@ static OSStatus PlugIn_WillDoIOOperation(
     Boolean *outWillDo,
     Boolean *outWillDoInPlace)
 {
-  // TODO(task8): tell host which IO ops we support
+  // we support write operations (output device) and mixing
+  Boolean willDo = false;
+  if (inOperationID == kAudioServerPlugInIOOperationWriteMix)
+  {
+    willDo = true;
+  }
+
   if (outWillDo)
-    *outWillDo = false;
+    *outWillDo = willDo;
   if (outWillDoInPlace)
     *outWillDoInPlace = true;
   return kAudioHardwareNoError;
@@ -391,7 +416,7 @@ static OSStatus PlugIn_BeginIOOperation(
     UInt32 inIOBufferFrameSize,
     const AudioServerPlugInIOCycleInfo *inIOCycleInfo)
 {
-  // TODO(task8): IO cycle start
+  // TODO(task9): IO cycle start for passthrough
   return kAudioHardwareNoError;
 }
 
@@ -418,7 +443,7 @@ static OSStatus PlugIn_EndIOOperation(
     UInt32 inIOBufferFrameSize,
     const AudioServerPlugInIOCycleInfo *inIOCycleInfo)
 {
-  // TODO(task8): IO cycle end
+  // TODO(task9): IO cycle end for passthrough
   return kAudioHardwareNoError;
 }
 

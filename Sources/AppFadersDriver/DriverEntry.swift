@@ -92,7 +92,7 @@ final class DriverEntry: @unchecked Sendable {
       return
     }
 
-    // TODO(task7): implement once VirtualDevice exists - will call host PropertiesChanged
+    // TODO(task9): implement host.PropertiesChanged call
     os_log(
       .debug,
       log: log,
