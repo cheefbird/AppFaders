@@ -21,8 +21,8 @@ final class VirtualStream: @unchecked Sendable {
   let objectID = ObjectID.outputStream
   let ownerID = ObjectID.device
 
-  // stream is output direction (1 = output, 0 = input)
-  let direction: UInt32 = 1
+  // stream is output direction (0 = output, 1 = input)
+  let direction: UInt32 = 0
   let startingChannel: UInt32 = 1
   let latencyFrames: UInt32 = 0
 
