@@ -3,10 +3,26 @@ name: CodeQL Advanced
 on:
   push:
     branches: [ main ]
+    paths:
+    - '**/*.swift'
+    - '**/*.c'
+    - '**/*.h'
+    - '.github/workflows/**'
+    - 'Package.swift'
   pull_request:
     branches: [ main ]
+    paths:
+    - '**/*.swift'
+    - '**/*.c'
+    - '**/*.h'
+    - '.github/workflows/**'
+    - 'Package.swift'
   schedule:
   - cron: '0 6 * * 3' # Weekly Wednesday 6am UTC
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
