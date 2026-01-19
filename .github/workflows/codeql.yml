@@ -30,17 +30,20 @@ permissions:
 
 jobs:
   analyze:
-    runs-on: macos-26
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
         include:
         - language: swift
           build-mode: manual
+          runner: macos-26
         - language: c-cpp
           build-mode: manual
+          runner: macos-26
         - language: actions
           build-mode: none
+          runner: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
