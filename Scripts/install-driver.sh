@@ -21,8 +21,8 @@ NC='\033[0m' # no color
 info() { echo -e "${GREEN}[INFO]${NC} $1"; }
 warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 error() {
-	echo -e "${RED}[ERROR]${NC} $1"
-	exit 1
+  echo -e "${RED}[ERROR]${NC} $1"
+  exit 1
 }
 
 cd "$PROJECT_DIR"
@@ -34,14 +34,14 @@ swift build || error "Build failed"
 # step 2: locate built dylib
 DYLIB_PATH=".build/debug/libAppFadersDriver.dylib"
 if [[ ! -f $DYLIB_PATH ]]; then
-	error "Built dylib not found at $DYLIB_PATH"
+  error "Built dylib not found at $DYLIB_PATH"
 fi
 info "Found dylib: $DYLIB_PATH"
 
 # step 3: locate bundle structure created by plugin
 BUNDLE_PATH=$(find .build -path "*BundleAssembler/$DRIVER_NAME" -type d 2>/dev/null | head -1)
 if [[ -z $BUNDLE_PATH || ! -d $BUNDLE_PATH ]]; then
-	error "Bundle structure not found. Make sure BundleAssembler plugin ran."
+  error "Bundle structure not found. Make sure BundleAssembler plugin ran."
 fi
 info "Found bundle: $BUNDLE_PATH"
 
@@ -64,7 +64,7 @@ rm -f "$BUNDLE_PATH/.bundle-ready"
 # use SHA-1 hash to avoid ambiguity when multiple certs have same name
 SIGNING_HASH=$(security find-identity -v -p codesigning | grep "Developer ID Application" | head -1 | awk '{print $2}')
 if [[ -z $SIGNING_HASH ]]; then
-	error "No 'Developer ID Application' certificate found in keychain"
+  error "No 'Developer ID Application' certificate found in keychain"
 fi
 info "Using identity hash: $SIGNING_HASH"
 codesign --force --options runtime --timestamp --sign "$SIGNING_HASH" "$BINARY_DEST" || error "Code signing failed"
@@ -72,10 +72,10 @@ info "Binary signed"
 
 # step 7: verify bundle structure
 if [[ ! -f "$BUNDLE_PATH/Contents/Info.plist" ]]; then
-	error "Info.plist missing from bundle"
+  error "Info.plist missing from bundle"
 fi
 if [[ ! -f $BINARY_DEST ]]; then
-	error "Binary missing from bundle"
+  error "Binary missing from bundle"
 fi
 info "Bundle structure verified"
 
@@ -84,8 +84,8 @@ INSTALL_PATH="$HAL_PLUGINS_DIR/$DRIVER_NAME"
 info "Installing to $INSTALL_PATH (requires sudo)..."
 
 if [[ -d $INSTALL_PATH ]]; then
-	warn "Removing existing installation..."
-	sudo rm -rf "$INSTALL_PATH"
+  warn "Removing existing installation..."
+  sudo rm -rf "$INSTALL_PATH"
 fi
 
 sudo cp -R "$BUNDLE_PATH" "$HAL_PLUGINS_DIR/"
@@ -103,11 +103,12 @@ info "Verifying device registration..."
 sleep 1
 
 if system_profiler SPAudioDataType 2>/dev/null | grep -q "AppFaders"; then
-	info "SUCCESS: AppFaders Virtual Device is registered!"
+  info "SUCCESS: AppFaders Virtual Device is registered!"
 else
-	warn "Device not found in system_profiler output"
-	warn "Check Console.app for coreaudiod logs (filter: com.fbreidenbach.appfaders)"
-	exit 1
+  warn "Device not found in system_profiler output"
+  warn "Check Console.app for coreaudiod logs (filter: com.fbreidenbach.appfaders)"
+  info "Some additional troubleshooting info in docs/hal-driver-lessons-learned.md"
+  exit 1
 fi
 
 echo ""
