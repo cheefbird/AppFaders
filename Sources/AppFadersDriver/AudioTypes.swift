@@ -114,3 +114,13 @@ extension AudioDeviceConfiguration {
     }
   }
 }
+
+// MARK: - Custom Properties
+
+/// custom property selectors for AppFaders IPC
+public enum AppFadersProperty {
+  /// set volume for an application: 'afvc'
+  public static let setVolume = AudioObjectPropertySelector(0x6166_7663)
+  /// get volume for an application: 'afvq'
+  public static let getVolume = AudioObjectPropertySelector(0x6166_7671)
+}
