@@ -5,35 +5,50 @@
 The project is structured as a modern, monorepo-style Swift Package Manager (SPM) project. This ensures all components, including the low-level audio driver, are managed using native Swift tools.
 
 ```
-AppFaders/                  # Project root
-├── Package.swift           # SPM manifest defining all targets and dependencies
+AppFaders/                              # Project root
+├── Package.swift                       # SPM manifest (targets, dependencies, -bundle flag)
+├── CLAUDE.md                           # Project conventions for AI assistance
 ├── Sources/
-│   ├── AppFaders/          # Main SwiftUI Application
-│   │   ├── App.swift       # Application entry point & lifecycle
-│   │   ├── UI/             # SwiftUI Views & ViewModels
-│   │   │   ├── Components/ # Reusable UI elements (Sliders, Buttons)
-│   │   │   └── Windows/    # Main settings and menu bar windows
-│   │   └── Logic/          # Business logic & Device management
-│   │       ├── AudioEngine.swift # High-level audio state management
-│   │       └── AppMonitor.swift  # Running application detection logic
-│   └── AppFadersDriver/    # Swift-based Audio Server Plug-in (HAL)
-│       ├── DriverEntry.swift   # Plug-in entry point using Swift interfaces
-│       ├── VirtualDevice.swift # Virtual audio device implementation
-│       └── Support/            # Minimal C/C++ shims required by CoreAudio
+│   ├── AppFaders/                      # Main SwiftUI Application (Phase 2+)
+│   │   └── main.swift                  # Placeholder entry point
+│   ├── AppFadersDriver/                # Swift HAL implementation (Phase 1 ✓)
+│   │   ├── AppFadersDriver.swift       # Module entry, version constant
+│   │   ├── AudioTypes.swift            # Configuration structs (Sendable)
+│   │   ├── DriverEntry.swift           # Plugin lifecycle, @_cdecl exports
+│   │   ├── PassthroughEngine.swift     # Audio routing + AudioRingBuffer
+│   │   ├── VirtualDevice.swift         # Device property handlers
+│   │   └── VirtualStream.swift         # Stream config + IO state
+│   └── AppFadersDriverBridge/          # C interface layer for HAL
+│       ├── PlugInInterface.c           # COM-style vtable, factory function
+│       └── include/
+│           └── PlugInInterface.h       # C function prototypes
 ├── Tests/
-│   ├── AppFadersTests/     # Swift Testing suite for the application
-│   └── AppFadersDriverTests/ # Unit tests for driver logic
-└── Resources/              # Shared assets (Icons, Localizations)
+│   └── AppFadersDriverTests/           # Swift Testing suite
+│       ├── AppFadersDriverTests.swift  # Placeholder
+│       └── AudioTypesTests.swift       # Config, format, ring buffer tests
+├── Plugins/
+│   └── BundleAssembler/                # SPM BuildToolPlugin
+│       └── BundleAssembler.swift       # Assembles .driver bundle structure
+├── Resources/
+│   └── Info.plist                      # CFPlugIn configuration for driver
+├── Scripts/
+│   ├── install-driver.sh               # Build, sign, install, restart coreaudiod
+│   └── uninstall-driver.sh             # Remove driver from system
+└── docs/
+    ├── hal-driver-lessons-learned.md   # HAL driver gotchas and patterns
+    └── pancake-compatibility.md        # Why we use custom C wrapper
 ```
 
 ## Naming Conventions
 
 ### Files
+
 - **Swift Files**: `PascalCase.swift` (e.g., `VolumeController.swift`).
 - **Target Folders**: `PascalCase` (e.g., `AppFadersDriver`).
 - **Tests**: `PascalCaseTests.swift`.
 
 ### Code
+
 - **Types (Structs, Classes, Enums)**: `PascalCase`.
 - **Properties & Functions**: `camelCase`.
 - **Macros/Property Wrappers**: `@CamelCase` or `@camelCase` depending on framework usage.
@@ -41,13 +56,15 @@ AppFaders/                  # Project root
 ## Import Patterns
 
 ### Import Order
-1. **System Frameworks**: `Foundation`, `SwiftUI`, `CoreAudio`.
-2. **First-party Swift Packages**: `SimplyCoreAudio`, `Pancake`.
-3. **Internal Modules**: `AppFadersDriver`.
+
+1. **System Frameworks**: `Foundation`, `SwiftUI`, `CoreAudio`, `AudioToolbox`, `os.log`.
+2. **First-party Swift Packages**: `SimplyCoreAudio`.
+3. **Internal Modules**: `AppFadersDriver`, `AppFadersDriverBridge`.
 
 ## Code Structure Patterns
 
 ### SwiftUI Component Pattern
+
 ```swift
 @Observable
 class ComponentViewModel { ... }
@@ -59,6 +76,7 @@ struct ComponentView: View {
 ```
 
 ### Module Organization
+
 - **Public API**: Clearly marked with `public` or `package` access modifiers.
 - **Implementation**: `internal` or `private` by default to enforce strict module boundaries.
 
@@ -71,9 +89,11 @@ struct ComponentView: View {
 
 ## Module Boundaries
 
-- **AppFaders (Main Target)**: Depends on `SimplyCoreAudio` for device orchestration. It observes the system state and commands the driver.
-- **AppFadersDriver (Library Target)**: A specialized target that compiles into a `.driver` bundle. It utilizes Swift-based HAL frameworks (like `Pancake`) to minimize C++ boilerplate.
-- **SimplyCoreAudio (External)**: Used as the primary bridge for high-level CoreAudio interactions.
+- **AppFaders (Executable Target)**: Main application. Will depend on `SimplyCoreAudio` for device orchestration.
+- **AppFadersDriver (Dynamic Library Target)**: Swift implementation of HAL driver logic. Depends on `AppFadersDriverBridge`. Exports functions via `@_cdecl` for C interop. Built with `-Xlinker -bundle` to produce `MH_BUNDLE` binary.
+- **AppFadersDriverBridge (Library Target)**: C interface layer implementing `AudioServerPlugInDriverInterface` vtable. Factory function `AppFadersDriver_Create` serves as CFPlugIn entry point.
+- **BundleAssembler (Plugin Target)**: SPM `BuildToolPlugin` that assembles the `.driver` bundle structure from build artifacts.
+- **SimplyCoreAudio (External)**: Will be used as primary bridge for high-level CoreAudio interactions in Phase 2.
 
 ## Code Size Guidelines
 

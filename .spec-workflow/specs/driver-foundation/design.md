@@ -14,7 +14,7 @@ This phase delivers:
 ### Technical Standards (tech.md)
 - **Swift 6** with strict concurrency for all new code
 - **SPM-first** build system (with build plugin for bundle assembly)
-- **Pancake framework** for HAL API wrapper (or fork/minimal wrapper if needed)
+- **Custom HAL wrapper** - minimal Swift/C implementation (Pancake not SPM-compatible)
 - **macOS 26+ / arm64 only** per updated requirements
 
 ### Project Structure (structure.md)
@@ -26,7 +26,8 @@ This phase delivers:
 ## Code Reuse Analysis
 
 ### Existing Components to Leverage
-- **Pancake** (external): Swift wrapper for AudioServerPlugIn C API - provides device configuration, stream management, and HAL registration
+- **Custom HAL wrapper** (internal): Minimal Swift/C implementation wrapping AudioServerPlugIn C API - see `docs/pancake-compatibility.md` for decision rationale
+- **BackgroundMusic** (reference): Open-source HAL driver for patterns and implementation guidance
 - **CoreAudio/AudioToolbox** (system): Native frameworks for audio device interaction and format handling
 
 ### Integration Points
@@ -66,17 +67,16 @@ The driver operates as a HAL AudioServerPlugIn loaded by `coreaudiod`. It create
 ### Component 1: DriverEntry (PlugIn Interface)
 - **Purpose**: Entry point that `coreaudiod` calls to initialize the plug-in
 - **Interfaces**:
-  - `AudioServerPlugInDriverInterface` vtable (C function pointers)
-  - `Initialize()`, `CreateDevice()`, `Teardown()`
-- **Dependencies**: Pancake framework (wraps the C API)
-- **File**: `Sources/AppFadersDriver/DriverEntry.swift`
+  - `AudioServerPlugInDriverInterface` vtable (C function pointers in PlugInInterface.c)
+  - Swift exports via @_cdecl: `AppFadersDriver_Initialize()`, `AppFadersDriver_CreateDevice()`, `AppFadersDriver_DestroyDevice()`
+- **Dependencies**: AppFadersDriverBridge target, CoreAudio types
+- **Files**: `Sources/AppFadersDriver/DriverEntry.swift`, `Sources/AppFadersDriverBridge/PlugInInterface.c`
 
 ### Component 2: VirtualDevice
-- **Purpose**: Represents the "AppFaders Virtual Device" AudioObject
+- **Purpose**: Represents the "AppFaders Virtual Device" AudioObject with property handlers
 - **Interfaces**:
-  - `configureDevice(name:uid:manufacturer:)`
-  - `addStream(_ stream: VirtualStream)`
-  - `getProperty(_:)` / `setProperty(_:value:)`
+  - Property handlers via @_cdecl: `HasProperty()`, `IsPropertySettable()`, `GetPropertyDataSize()`, `GetPropertyData()`
+  - `ObjectID` enum for stable audio object identifiers (plugIn=1, device=2, outputStream=3)
 - **Dependencies**: DriverEntry, CoreAudio types
 - **File**: `Sources/AppFadersDriver/VirtualDevice.swift`
 
@@ -109,7 +109,7 @@ The driver operates as a HAL AudioServerPlugIn loaded by `coreaudiod`. It create
 ```swift
 struct AudioDeviceConfiguration: Sendable {
     let name: String           // "AppFaders Virtual Device"
-    let uid: String            // "com.appfaders.virtualdevice"
+    let uid: String            // "com.fbreidenbach.appfaders.virtualdevice"
     let manufacturer: String   // "AppFaders"
     let sampleRates: [Double]  // [44100, 48000, 96000]
     let channelCount: UInt32   // 2 (stereo)
@@ -165,14 +165,23 @@ let package = Package(
         .plugin(name: "BundleAssembler", targets: ["BundleAssembler"])
     ],
     dependencies: [
-        .package(url: "https://github.com/0bmxa/Pancake.git", branch: "master")
-        // Or fork if Swift 6 compat needed
+        // No external dependencies - using custom HAL wrapper
     ],
     targets: [
         .executableTarget(name: "AppFaders", dependencies: []),
+        // C interface layer - SPM requires separate target for C code
+        .target(
+            name: "AppFadersDriverBridge",
+            publicHeadersPath: "include",
+            linkerSettings: [
+                .linkedFramework("CoreAudio"),
+                .linkedFramework("CoreFoundation")
+            ]
+        ),
+        // Swift driver implementation
         .target(
             name: "AppFadersDriver",
-            dependencies: ["Pancake"],
+            dependencies: ["AppFadersDriverBridge"],
             linkerSettings: [
                 .linkedFramework("CoreAudio"),
                 .linkedFramework("AudioToolbox")
@@ -197,8 +206,8 @@ let package = Package(
 
 ### Error Scenarios
 
-1. **Pancake doesn't build with Swift 6**
-   - **Handling**: Fork and patch, or implement minimal HAL wrapper directly
+1. **C/Swift interop issues in HAL wrapper**
+   - **Handling**: Ensure @_cdecl exports match C header declarations exactly
    - **User Impact**: None (build-time issue)
 
 2. **Driver fails to load in coreaudiod**
@@ -238,8 +247,12 @@ AppFaders/
 ├── Sources/
 │   ├── AppFaders/
 │   │   └── main.swift              # Placeholder app entry
+│   ├── AppFadersDriverBridge/      # Separate C target (SPM requires this)
+│   │   ├── include/
+│   │   │   └── PlugInInterface.h   # C header for coreaudiod
+│   │   └── PlugInInterface.c       # C entry point, COM vtable
 │   └── AppFadersDriver/
-│       ├── DriverEntry.swift       # HAL plug-in entry point
+│       ├── DriverEntry.swift       # HAL plug-in Swift implementation
 │       ├── VirtualDevice.swift     # AudioObject device implementation
 │       ├── VirtualStream.swift     # Stream configuration
 │       ├── PassthroughEngine.swift # Audio routing to physical output
