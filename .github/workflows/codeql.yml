@@ -23,6 +23,8 @@ jobs:
           build-mode: manual
         - language: c-cpp
           build-mode: manual
+        - language: actions
+          build-mode: none
 
     steps:
     - uses: actions/checkout@v4
@@ -32,9 +34,9 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
-        threat-models: remote,local
 
     - name: Build
+      if: matrix.build-mode == 'manual'
       run: swift build
 
     - name: Perform CodeQL Analysis
