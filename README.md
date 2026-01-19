@@ -33,6 +33,7 @@ swift test
 
 ```bash
 # Build, sign, and install to /Library/Audio/Plug-Ins/HAL
+# Script will also detect and remove existing install
 Scripts/install-driver.sh
 
 # Remove the driver
