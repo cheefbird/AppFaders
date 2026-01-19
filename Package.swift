@@ -15,11 +15,14 @@ let package = Package(
   dependencies: [
     // Pancake is an Xcode project, not SPM - see docs/pancake-compatibility.md
     // .package(url: "https://github.com/0bmxa/Pancake.git", branch: "master")
+    .package(url: "https://github.com/rnine/SimplyCoreAudio.git", from: "4.1.0")
   ],
   targets: [
     .executableTarget(
       name: "AppFaders",
-      dependencies: []
+      dependencies: [
+        .product(name: "SimplyCoreAudio", package: "SimplyCoreAudio")
+      ]
     ),
     // C interface layer for HAL AudioServerPlugIn
     .target(
@@ -54,6 +57,10 @@ let package = Package(
     .testTarget(
       name: "AppFadersDriverTests",
       dependencies: ["AppFadersDriver"]
+    ),
+    .testTarget(
+      name: "AppFadersTests",
+      dependencies: ["AppFaders"]
     )
   ]
 )
