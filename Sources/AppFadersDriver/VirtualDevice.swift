@@ -137,7 +137,9 @@ final class VirtualDevice: @unchecked Sendable {
   /// get size in bytes needed for property data
   func getPropertyDataSize(
     objectID: AudioObjectID,
-    address: AudioObjectPropertyAddress
+    address: AudioObjectPropertyAddress,
+    qualifierSize: UInt32,
+    qualifierData: UnsafeRawPointer?
   ) -> UInt32? {
     let result: UInt32? = if objectID == ObjectID.plugIn {
       getPlugInPropertyDataSize(address: address)
@@ -169,14 +171,16 @@ final class VirtualDevice: @unchecked Sendable {
   func getPropertyData(
     objectID: AudioObjectID,
     address: AudioObjectPropertyAddress,
-    maxSize: UInt32
+    maxSize: UInt32,
+    qualifierSize: UInt32,
+    qualifierData: UnsafeRawPointer?
   ) -> (Data, UInt32)? {
     if objectID == ObjectID.plugIn {
       return getPlugInPropertyData(address: address, maxSize: maxSize)
     }
 
     if objectID == ObjectID.device {
-      return getDevicePropertyData(address: address, maxSize: maxSize)
+      return getDevicePropertyData(address: address, maxSize: maxSize, qualifierSize: qualifierSize, qualifierData: qualifierData)
     }
 
     if objectID == ObjectID.outputStream {
@@ -213,33 +217,61 @@ final class VirtualDevice: @unchecked Sendable {
     return has
   }
 
-  private func getPlugInPropertyDataSize(address: AudioObjectPropertyAddress) -> UInt32? {
-    switch address.mSelector {
-    case kAudioObjectPropertyClass,
-         kAudioObjectPropertyBaseClass:
-      UInt32(MemoryLayout<AudioClassID>.size)
-    case kAudioObjectPropertyOwner:
-      UInt32(MemoryLayout<AudioObjectID>.size)
-    case kAudioObjectPropertyManufacturer:
-      UInt32(MemoryLayout<CFString>.size)
-    case kAudioObjectPropertyOwnedObjects,
-         kAudioPlugInPropertyDeviceList:
-      UInt32(MemoryLayout<AudioObjectID>.size) // one device
-    case kAudioObjectPropertyCustomPropertyInfoList,
-         kAudioPlugInPropertyBoxList:
-      0 // empty lists
-    case kAudioPlugInPropertyTranslateUIDToBox:
-      UInt32(MemoryLayout<AudioObjectID>.size)
-    case kAudioPlugInPropertyTranslateUIDToDevice:
-      UInt32(MemoryLayout<AudioObjectID>.size)
-    case kAudioPlugInPropertyResourceBundle:
-      UInt32(MemoryLayout<CFString>.size)
-    case kAudioClockDevicePropertyClockDomain:
-      UInt32(MemoryLayout<UInt32>.size)
-    default:
-      nil
+    private func getPlugInPropertyDataSize(address: AudioObjectPropertyAddress) -> UInt32? {
+
+      switch address.mSelector {
+
+      case kAudioObjectPropertyClass,
+
+           kAudioObjectPropertyBaseClass:
+
+        return UInt32(MemoryLayout<AudioClassID>.size)
+
+      case kAudioObjectPropertyOwner:
+
+        return UInt32(MemoryLayout<AudioObjectID>.size)
+
+      case kAudioObjectPropertyManufacturer:
+
+        return UInt32(MemoryLayout<CFString>.size)
+
+      case kAudioObjectPropertyOwnedObjects,
+
+           kAudioPlugInPropertyDeviceList:
+
+        return UInt32(MemoryLayout<AudioObjectID>.size) // one device
+
+      case kAudioObjectPropertyCustomPropertyInfoList,
+
+           kAudioPlugInPropertyBoxList:
+
+        return 0 // empty lists
+
+      case kAudioPlugInPropertyTranslateUIDToBox:
+
+        return UInt32(MemoryLayout<AudioObjectID>.size)
+
+      case kAudioPlugInPropertyTranslateUIDToDevice:
+
+        return UInt32(MemoryLayout<AudioObjectID>.size)
+
+      case kAudioPlugInPropertyResourceBundle:
+
+        return UInt32(MemoryLayout<CFString>.size)
+
+      case kAudioClockDevicePropertyClockDomain:
+
+        return UInt32(MemoryLayout<UInt32>.size)
+
+      default:
+
+        return nil
+
+      }
+
     }
-  }
+
+  
 
   private func getPlugInPropertyData(
     address: AudioObjectPropertyAddress,
@@ -326,7 +358,9 @@ final class VirtualDevice: @unchecked Sendable {
          kAudioDevicePropertyZeroTimeStampPeriod,
          kAudioDevicePropertyClockDomain,
          kAudioDevicePropertyIsHidden,
-         kAudioDevicePropertyPreferredChannelsForStereo:
+         kAudioDevicePropertyPreferredChannelsForStereo,
+         AppFadersProperty.setVolume,
+         AppFadersProperty.getVolume:
       true
     default:
       false
@@ -344,7 +378,7 @@ final class VirtualDevice: @unchecked Sendable {
          kAudioObjectPropertyBaseClass,
          kAudioDevicePropertyTransportType,
          kAudioDevicePropertyClockDomain:
-      UInt32(MemoryLayout<AudioClassID>.size)
+      return UInt32(MemoryLayout<AudioClassID>.size)
 
     case kAudioObjectPropertyOwner,
          kAudioDevicePropertyDeviceIsRunning,
@@ -354,46 +388,56 @@ final class VirtualDevice: @unchecked Sendable {
          kAudioDevicePropertySafetyOffset,
          kAudioDevicePropertyZeroTimeStampPeriod,
          kAudioDevicePropertyIsHidden:
-      UInt32(MemoryLayout<UInt32>.size)
+      return UInt32(MemoryLayout<UInt32>.size)
 
     case kAudioDevicePropertyPreferredChannelsForStereo:
-      UInt32(MemoryLayout<UInt32>.size * 2) // left and right channel
+      return UInt32(MemoryLayout<UInt32>.size * 2) // left and right channel
 
     case kAudioObjectPropertyName,
          kAudioObjectPropertyManufacturer,
          kAudioDevicePropertyDeviceUID,
          kAudioDevicePropertyModelUID:
-      UInt32(MemoryLayout<CFString>.size)
+      return UInt32(MemoryLayout<CFString>.size)
 
     case kAudioObjectPropertyOwnedObjects:
       // one output stream
-      UInt32(MemoryLayout<AudioObjectID>.size)
+      return UInt32(MemoryLayout<AudioObjectID>.size)
 
     case kAudioDevicePropertyStreams:
       // only return stream for output scope (we have no input streams)
-      (address.mScope == kAudioObjectPropertyScopeOutput ||
+      return (address.mScope == kAudioObjectPropertyScopeOutput ||
         address.mScope == kAudioObjectPropertyScopeGlobal)
         ? UInt32(MemoryLayout<AudioObjectID>.size) : 0
 
-    case kAudioObjectPropertyCustomPropertyInfoList,
-         kAudioDevicePropertyControlList:
-      0 // empty lists - no custom properties or controls
+    case kAudioObjectPropertyCustomPropertyInfoList:
+      return UInt32(MemoryLayout<AudioServerPlugInCustomPropertyInfo>.size * 2)
+
+    case kAudioDevicePropertyControlList:
+      return 0 // empty list
 
     case kAudioDevicePropertyNominalSampleRate:
-      UInt32(MemoryLayout<Float64>.size)
+      return UInt32(MemoryLayout<Float64>.size)
+
+    case AppFadersProperty.setVolume:
+      return UInt32(VolumeCommand.totalSize)
+
+    case AppFadersProperty.getVolume:
+      return UInt32(MemoryLayout<Float32>.size)
 
     case kAudioDevicePropertyAvailableNominalSampleRates:
       // 3 sample rates: 44100, 48000, 96000
-      UInt32(MemoryLayout<AudioValueRange>.size * 3)
+      return UInt32(MemoryLayout<AudioValueRange>.size * 3)
 
     default:
-      nil
+      return nil
     }
   }
 
   private func getDevicePropertyData(
     address: AudioObjectPropertyAddress,
-    maxSize: UInt32
+    maxSize: UInt32,
+    qualifierSize: UInt32 = 0,
+    qualifierData: UnsafeRawPointer? = nil
   ) -> (Data, UInt32)? {
     switch address.mSelector {
     case kAudioObjectPropertyClass:
@@ -457,9 +501,33 @@ final class VirtualDevice: @unchecked Sendable {
       }
       return (Data(), 0) // no input streams
 
-    case kAudioObjectPropertyCustomPropertyInfoList,
-         kAudioDevicePropertyControlList:
-      // empty lists
+    case kAudioObjectPropertyCustomPropertyInfoList:
+      var info = [
+        AudioServerPlugInCustomPropertyInfo(
+          mSelector: AppFadersProperty.setVolume,
+          mPropertyDataType: 0,
+          mQualifierDataType: 0
+        ),
+        AudioServerPlugInCustomPropertyInfo(
+          mSelector: AppFadersProperty.getVolume,
+          mPropertyDataType: 0,
+          mQualifierDataType: 0
+        )
+      ]
+      let size = MemoryLayout<AudioServerPlugInCustomPropertyInfo>.size * info.count
+      return (Data(bytes: &info, count: size), UInt32(size))
+
+    case AppFadersProperty.getVolume:
+      guard qualifierSize > 0, let qualifierData else {
+        return nil
+      }
+      let bundleID = String(cString: qualifierData.assumingMemoryBound(to: UInt8.self))
+      var volume = Float32(VolumeStore.shared.getVolume(for: bundleID))
+      return (Data(bytes: &volume, count: MemoryLayout<Float32>.size),
+              UInt32(MemoryLayout<Float32>.size))
+
+    case kAudioDevicePropertyControlList:
+      // empty list
       return (Data(), 0)
 
     case kAudioDevicePropertyNominalSampleRate:
@@ -535,7 +603,9 @@ final class VirtualDevice: @unchecked Sendable {
     objectID: AudioObjectID,
     address: AudioObjectPropertyAddress,
     data: UnsafeRawPointer,
-    size: UInt32
+    size: UInt32,
+    qualifierSize: UInt32 = 0,
+    qualifierData: UnsafeRawPointer? = nil
   ) -> OSStatus {
     // device sample rate change
     if objectID == ObjectID.device,
@@ -564,6 +634,34 @@ final class VirtualDevice: @unchecked Sendable {
         data: data,
         size: size
       )
+      return noErr
+    }
+
+    // set application volume
+    if objectID == ObjectID.device,
+       address.mSelector == AppFadersProperty.setVolume
+    {
+      guard size >= UInt32(VolumeCommand.totalSize) else {
+        return kAudioHardwareBadPropertySizeError
+      }
+
+      // parse VolumeCommand from data
+      // wire format: [bundleIDLength: UInt8] [bundleIDBytes: 255 bytes] [volume: Float32]
+      let bundleIDLength = data.load(as: UInt8.self)
+      guard bundleIDLength <= UInt8(VolumeCommand.maxBundleIDLength) else {
+        return kAudioHardwareIllegalOperationError
+      }
+
+      let bundleIDStart = data.advanced(by: 1)
+      let bundleIDData = Data(bytes: bundleIDStart, count: Int(bundleIDLength))
+      guard let bundleID = String(data: bundleIDData, encoding: .utf8) else {
+        return kAudioHardwareIllegalOperationError
+      }
+
+      let volumeStart = data.advanced(by: 1 + VolumeCommand.maxBundleIDLength)
+      let volume = volumeStart.load(as: Float32.self)
+
+      VolumeStore.shared.setVolume(for: bundleID, volume: volume)
       return noErr
     }
 
@@ -620,6 +718,8 @@ public func driverGetPropertyDataSize(
   selector: AudioObjectPropertySelector,
   scope: AudioObjectPropertyScope,
   element: AudioObjectPropertyElement,
+  qualifierSize: UInt32,
+  qualifierData: UnsafeRawPointer?,
   outSize: UnsafeMutablePointer<UInt32>?
 ) -> OSStatus {
   let address = AudioObjectPropertyAddress(
@@ -628,7 +728,12 @@ public func driverGetPropertyDataSize(
     mElement: element
   )
 
-  guard let size = VirtualDevice.shared.getPropertyDataSize(objectID: objectID, address: address)
+  guard let size = VirtualDevice.shared.getPropertyDataSize(
+    objectID: objectID,
+    address: address,
+    qualifierSize: qualifierSize,
+    qualifierData: qualifierData
+  )
   else {
     return kAudioHardwareUnknownPropertyError
   }
@@ -645,6 +750,8 @@ public func driverGetPropertyData(
   selector: AudioObjectPropertySelector,
   scope: AudioObjectPropertyScope,
   element: AudioObjectPropertyElement,
+  qualifierSize: UInt32,
+  qualifierData: UnsafeRawPointer?,
   inDataSize: UInt32,
   outDataSize: UnsafeMutablePointer<UInt32>?,
   outData: UnsafeMutableRawPointer?
@@ -659,7 +766,9 @@ public func driverGetPropertyData(
     let (data, actualSize) = VirtualDevice.shared.getPropertyData(
       objectID: objectID,
       address: address,
-      maxSize: inDataSize
+      maxSize: inDataSize,
+      qualifierSize: qualifierSize,
+      qualifierData: qualifierData
     )
   else {
     return kAudioHardwareUnknownPropertyError
@@ -685,6 +794,8 @@ public func driverSetPropertyData(
   selector: AudioObjectPropertySelector,
   scope: AudioObjectPropertyScope,
   element: AudioObjectPropertyElement,
+  qualifierSize: UInt32,
+  qualifierData: UnsafeRawPointer?,
   dataSize: UInt32,
   data: UnsafeRawPointer?
 ) -> OSStatus {
@@ -702,6 +813,8 @@ public func driverSetPropertyData(
     objectID: objectID,
     address: address,
     data: data,
-    size: dataSize
+    size: dataSize,
+    qualifierSize: qualifierSize,
+    qualifierData: qualifierData
   )
 }
