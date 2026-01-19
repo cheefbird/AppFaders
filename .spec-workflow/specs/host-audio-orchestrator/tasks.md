@@ -33,7 +33,7 @@
   - _Requirements: 5.1, 5.2, 5.3, 6.3_
   - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift concurrency developer | Task: Create VolumeStore.swift with thread-safe singleton. Use private NSLock and Dictionary<String, Float> for storage. setVolume validates 0.0-1.0 range. getVolume returns 1.0 for unknown bundleIDs. Follow lock pattern from VirtualDevice.shared. Add os_log for volume changes. | Restrictions: Must be thread-safe. No async/await - use locks for real-time safety. | _Leverage: Sources/AppFadersDriver/VirtualDevice.swift lock pattern, design.md | Success: VolumeStore compiles, is Sendable, and handles concurrent access safely | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 4. Add custom property handlers to VirtualDevice.swift
+- [x] 4. Add custom property handlers to VirtualDevice.swift
   - File: Sources/AppFadersDriver/VirtualDevice.swift
   - Update hasDeviceProperty to include AppFadersProperty.setVolume and getVolume
   - Update getDevicePropertyDataSize for custom properties
