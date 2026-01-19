@@ -1,13 +1,29 @@
 name: Build and Test
 
-permissions:
-  contents: read
-
 on:
   push:
     branches: [ main ]
+    paths:
+    - '**/*.swift'
+    - '**/*.c'
+    - '**/*.h'
+    - '.github/workflows/**'
+    - 'Package.swift'
   pull_request:
     branches: [ main ]
+    paths:
+    - '**/*.swift'
+    - '**/*.c'
+    - '**/*.h'
+    - '.github/workflows/**'
+    - 'Package.swift'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   build-and-test:
