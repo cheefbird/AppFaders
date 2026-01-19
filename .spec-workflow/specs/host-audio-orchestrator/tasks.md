@@ -47,7 +47,7 @@
 
 ## Phase 3: Host Models and Utilities
 
-- [ ] 5. Create TrackedApp model
+- [x] 5. Create TrackedApp model
   - File: Sources/AppFaders/TrackedApp.swift
   - Define struct with bundleID, localizedName, icon (NSImage?), launchDate
   - Conform to Identifiable (id = bundleID), Sendable, Hashable
