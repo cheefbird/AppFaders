@@ -3,20 +3,8 @@ name: CodeQL Advanced
 on:
   push:
     branches: [ main ]
-    paths:
-    - '**/*.swift'
-    - '**/*.c'
-    - '**/*.h'
-    - '.github/workflows/**'
-    - 'Package.swift'
   pull_request:
     branches: [ main ]
-    paths:
-    - '**/*.swift'
-    - '**/*.c'
-    - '**/*.h'
-    - '.github/workflows/**'
-    - 'Package.swift'
   schedule:
   - cron: '0 6 * * 3' # Weekly Wednesday 6am UTC
 
@@ -29,8 +17,40 @@ permissions:
   security-events: write
 
 jobs:
+  detect-changes:
+    name: Detect Changed Files
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read       # Required for actions/checkout
+      pull-requests: read  # Required for paths-filter on PRs
+    outputs:
+      swift: ${{ steps.filter.outputs.swift }}
+      c-cpp: ${{ steps.filter.outputs.c-cpp }}
+      actions: ${{ steps.filter.outputs.actions }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            swift:
+              - '**/*.swift'
+              - 'Package.swift'
+            c-cpp:
+              - '**/*.c'
+              - '**/*.h'
+            actions:
+              - '.github/workflows/**'
+
   analyze:
     name: Analyze (${{ matrix.language }})
+    needs: detect-changes
+    if: |
+      github.event_name == 'schedule' ||
+      (matrix.language == 'swift' && needs.detect-changes.outputs.swift == 'true') ||
+      (matrix.language == 'c-cpp' && needs.detect-changes.outputs.c-cpp == 'true') ||
+      (matrix.language == 'actions' && needs.detect-changes.outputs.actions == 'true')
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
     strategy:
