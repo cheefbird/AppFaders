@@ -30,6 +30,7 @@ permissions:
 
 jobs:
   analyze:
+    name: Analyze (${{ matrix.language }})
     runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
