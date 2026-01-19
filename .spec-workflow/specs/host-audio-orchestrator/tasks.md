@@ -14,7 +14,7 @@
 
 ## Phase 2: Shared Types (Driver-side)
 
-- [ ] 2. Add AppFadersProperty enum to AudioTypes.swift
+- [x] 2. Add AppFadersProperty enum to AudioTypes.swift
   - File: Sources/AppFadersDriver/AudioTypes.swift
   - Define custom property selectors: setVolume (0x61667663 = 'afvc'), getVolume (0x61667671 = 'afvq')
   - Use AudioObjectPropertySelector type
@@ -23,7 +23,7 @@
   - _Requirements: 5.1, 5.2, 6.1_
   - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift/CoreAudio developer | Task: Add AppFadersProperty enum to AudioTypes.swift with static let setVolume and getVolume as AudioObjectPropertySelector values. Use hex values 0x61667663 and 0x61667671. These are four-char codes 'afvc' and 'afvq'. | Restrictions: Do not modify existing types. Add to existing file only. | _Leverage: Sources/AppFadersDriver/AudioTypes.swift, design.md | Success: AppFadersProperty compiles and is accessible from driver code | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 3. Create VolumeStore for per-app volume storage
+- [x] 3. Create VolumeStore for per-app volume storage
   - File: Sources/AppFadersDriver/VolumeStore.swift
   - Create thread-safe singleton with NSLock
   - Implement setVolume(bundleID:volume:), getVolume(bundleID:) with default 1.0, removeVolume(bundleID:)
