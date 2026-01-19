@@ -21,6 +21,7 @@ Per `product.md`, AppFaders requires a virtual audio device to intercept and mod
 Apple's AudioDriverKit framework does **not** support virtual audio devices. Per Apple's guidance, AudioDriverKit is only for hardware-backed drivers. For virtual audio devices (like ours), the HAL AudioServerPlugIn model remains the required approach.
 
 This means:
+
 - We must use the traditional `/Library/Audio/Plug-Ins/HAL/` installation path
 - Driver installation requires `coreaudiod` restart (no hot-reload)
 - We'll use a custom minimal Swift/C wrapper for the HAL API (Pancake is not SPM-compatible)
@@ -28,6 +29,7 @@ This means:
 ### macOS 26+ and Apple Silicon Only
 
 Targeting only macOS 26 and arm64 enables:
+
 - **Single architecture build** — no Universal Binary complexity
 - **Latest Swift 6 concurrency** — no runtime availability checks needed
 - **Latest SwiftUI** — no `@available` guards throughout the codebase

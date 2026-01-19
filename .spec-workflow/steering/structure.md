@@ -4,7 +4,7 @@
 
 The project is structured as a modern, monorepo-style Swift Package Manager (SPM) project. This ensures all components, including the low-level audio driver, are managed using native Swift tools.
 
-```
+```sh
 AppFaders/                              # Project root
 ├── Package.swift                       # SPM manifest (targets, dependencies, -bundle flag)
 ├── CLAUDE.md                           # Project conventions for AI assistance

@@ -25,7 +25,7 @@ A practical guide to implementing a HAL (Hardware Abstraction Layer) AudioServer
 
 HAL drivers run in a separate helper process (`com.apple.audio.Core-Audio-Driver-Service.helper`), not in coreaudiod directly. This is the "remote plugin" architecture Apple uses for isolation.
 
-```
+```sh
 coreaudiod
     │
     ▼ communicates via XPC
@@ -198,7 +198,7 @@ targets: [
 
 HAL drivers must be `.driver` bundles with this structure:
 
-```
+```sh
 AppFadersDriver.driver/
   Contents/
     Info.plist
@@ -239,7 +239,7 @@ The minimal CFPlugIn keys required:
 
 ### Object Hierarchy
 
-```
+```sh
 Plugin (ObjectID 1)
   └── Device (ObjectID 2)
         └── Stream (ObjectID 3)

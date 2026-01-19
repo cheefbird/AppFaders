@@ -10,18 +10,19 @@ Pancake cannot be used as an SPM dependency because it is an **Xcode-only projec
 
 ## Error When Adding as SPM Dependency
 
-```
+```sh
 error: the package manifest at '/Package.swift' cannot be accessed
 (/Package.swift doesn't exist in file system) in https://github.com/0bmxa/Pancake.git
 ```
 
 ## Repository Analysis
 
-**Repository:** https://github.com/0bmxa/Pancake
+**Repository:** <https://github.com/0bmxa/Pancake>
 
 **Build System:** Xcode (`.xcodeproj`, `.xcworkspace`)
 
 **Root Contents:**
+
 - `Pancake.xcodeproj` - Main Xcode project
 - `Pancake.xcworkspace` - Xcode workspace
 - `Pancake/` - Framework source code
@@ -44,18 +45,21 @@ The framework provides these key functions for HAL driver development:
 ## Options Going Forward (Task 5)
 
 ### Option A: Fork and Add Package.swift
+
 - Fork `0bmxa/Pancake` to our own repo
 - Add `Package.swift` manifest
 - May require code changes for Swift 6 compatibility
 - **Effort:** Medium-High (depends on Swift 6 issues)
 
 ### Option B: Write Minimal HAL Wrapper
+
 - Implement our own Swift wrapper around CoreAudio's `AudioServerPlugIn.h`
 - Use Apple's SimpleAudio sample as reference
 - Full control over code, no external dependency
 - **Effort:** Medium (but cleaner long-term)
 
 ### Option C: Use as Local Package
+
 - Clone Pancake repo locally
 - Add Package.swift manually
 - Reference as local package in our Package.swift
