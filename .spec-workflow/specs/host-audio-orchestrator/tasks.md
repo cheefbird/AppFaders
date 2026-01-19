@@ -2,7 +2,7 @@
 
 ## Phase 1: Package Setup
 
-- [ ] 1. Add SimplyCoreAudio dependency and test target to Package.swift
+- [x] 1. Add SimplyCoreAudio dependency and test target to Package.swift
   - File: Package.swift
   - Add SimplyCoreAudio 4.1.0+ dependency from github.com/rnine/SimplyCoreAudio
   - Add dependency to AppFaders executable target
