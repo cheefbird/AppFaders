@@ -167,13 +167,14 @@ graph TD
   final class VolumeStore: @unchecked Sendable {
       static let shared = VolumeStore()
 
-      func setVolume(for bundleID: String, volume: Float)
+      func setVolume(for bundleID: String, volume: Float)  // clamps to 0.0-1.0
       func getVolume(for bundleID: String) -> Float  // default 1.0
       func removeVolume(for bundleID: String)
   }
   ```
 - **Dependencies**: Foundation (NSLock for thread safety)
 - **Reuses**: Lock pattern from VirtualDevice.shared
+- **Note**: VolumeStore clamps out-of-range values as a defensive measure; primary validation occurs in DriverBridge on the host side
 
 ## Data Models
 
