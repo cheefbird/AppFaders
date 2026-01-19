@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   analyze:
-    runs-on: macos-latest
+    runs-on: macos-26
     strategy:
       fail-fast: false
       matrix:
