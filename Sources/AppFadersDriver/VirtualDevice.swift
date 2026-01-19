@@ -126,6 +126,13 @@ final class VirtualDevice: @unchecked Sendable {
       return true
     }
 
+    // custom IPC property for setting app volumes
+    if objectID == ObjectID.device,
+       address.mSelector == AppFadersProperty.setVolume
+    {
+      return true
+    }
+
     // delegate stream properties to VirtualStream
     if objectID == ObjectID.outputStream {
       return VirtualStream.shared.isPropertySettable(address: address)
@@ -217,61 +224,44 @@ final class VirtualDevice: @unchecked Sendable {
     return has
   }
 
-    private func getPlugInPropertyDataSize(address: AudioObjectPropertyAddress) -> UInt32? {
+  private func getPlugInPropertyDataSize(address: AudioObjectPropertyAddress) -> UInt32? {
+    switch address.mSelector {
+    case kAudioObjectPropertyClass,
+         kAudioObjectPropertyBaseClass:
+      return UInt32(MemoryLayout<AudioClassID>.size)
 
-      switch address.mSelector {
+    case kAudioObjectPropertyOwner:
+      return UInt32(MemoryLayout<AudioObjectID>.size)
 
-      case kAudioObjectPropertyClass,
+    case kAudioObjectPropertyManufacturer:
+      return UInt32(MemoryLayout<CFString>.size)
 
-           kAudioObjectPropertyBaseClass:
+    case kAudioObjectPropertyOwnedObjects,
+         kAudioPlugInPropertyDeviceList:
+      return UInt32(MemoryLayout<AudioObjectID>.size) // one device
 
-        return UInt32(MemoryLayout<AudioClassID>.size)
+    case kAudioObjectPropertyCustomPropertyInfoList,
+         kAudioPlugInPropertyBoxList:
+      return 0 // empty lists
 
-      case kAudioObjectPropertyOwner:
+    case kAudioPlugInPropertyTranslateUIDToBox:
+      return UInt32(MemoryLayout<AudioObjectID>.size)
 
-        return UInt32(MemoryLayout<AudioObjectID>.size)
+    case kAudioPlugInPropertyTranslateUIDToDevice:
+      return UInt32(MemoryLayout<AudioObjectID>.size)
 
-      case kAudioObjectPropertyManufacturer:
+    case kAudioPlugInPropertyResourceBundle:
+      return UInt32(MemoryLayout<CFString>.size)
 
-        return UInt32(MemoryLayout<CFString>.size)
+    case kAudioClockDevicePropertyClockDomain:
+      return UInt32(MemoryLayout<UInt32>.size)
 
-      case kAudioObjectPropertyOwnedObjects,
-
-           kAudioPlugInPropertyDeviceList:
-
-        return UInt32(MemoryLayout<AudioObjectID>.size) // one device
-
-      case kAudioObjectPropertyCustomPropertyInfoList,
-
-           kAudioPlugInPropertyBoxList:
-
-        return 0 // empty lists
-
-      case kAudioPlugInPropertyTranslateUIDToBox:
-
-        return UInt32(MemoryLayout<AudioObjectID>.size)
-
-      case kAudioPlugInPropertyTranslateUIDToDevice:
-
-        return UInt32(MemoryLayout<AudioObjectID>.size)
-
-      case kAudioPlugInPropertyResourceBundle:
-
-        return UInt32(MemoryLayout<CFString>.size)
-
-      case kAudioClockDevicePropertyClockDomain:
-
-        return UInt32(MemoryLayout<UInt32>.size)
-
-      default:
-
-        return nil
-
-      }
-
+    default:
+      return nil
     }
+  }
 
-  
+
 
   private func getPlugInPropertyData(
     address: AudioObjectPropertyAddress,
