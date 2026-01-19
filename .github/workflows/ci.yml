@@ -5,18 +5,18 @@ permissions:
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   build-and-test:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Build
-        run: swift build
+    - name: Build
+      run: swift build
 
-      - name: Test
-        run: swift test
+    - name: Test
+      run: swift test
