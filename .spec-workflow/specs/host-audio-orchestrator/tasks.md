@@ -108,7 +108,7 @@
   - _Requirements: 1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 2.4_
   - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: macOS audio developer | Task: Rewrite DeviceManager.swift to use CAAudioHardware. Replace SimplyCoreAudio logic. Implement `appFadersDevice` using `AudioSystem.instance.deviceID(forUID:)`. Implement `deviceListUpdates` using `AudioSystem.instance.whenSelectorChanges(.devices)` inside an AsyncStream. Ensure resource cleanup in `onTermination`. | Restrictions: Use CAAudioHardware APIs only. Maintain AsyncStream interface. | _Leverage: design.md | Success: DeviceManager compiles with CAAudioHardware | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 11. Create DriverBridge for IPC communication
+- [x] 11. Create DriverBridge for IPC communication
   - File: Sources/AppFaders/DriverBridge.swift
   - Import CoreAudio for AudioObject functions
   - Implement connect(deviceID:) storing AudioDeviceID
