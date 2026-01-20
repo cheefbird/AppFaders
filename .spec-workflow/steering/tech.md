@@ -8,7 +8,7 @@ Native macOS Desktop Application (Menu Bar Extra) utilizing a User-Space Audio D
 
 ### Primary Language(s)
 
-- **Swift 6.0**: The primary language for the application UI, business logic, and host-side audio management.
+- **Swift 6.2**: The primary language for the application UI, business logic, and host-side audio management.
 - **C/C++**: Minimal usage reserved for the low-level Audio Server Plug-in (HAL driver) boilerplate, integrated via Swift Package Manager.
 - **Runtime/Compiler**: Xcode 16+ / LLVM.
 - **Language-specific tools**: Swift Package Manager (SPM) for all dependency management and build orchestration.
