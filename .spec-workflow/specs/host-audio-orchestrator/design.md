@@ -16,6 +16,7 @@ This phase delivers:
 ### Technical Standards (tech.md)
 
 - **Swift 6** with strict concurrency and `@Observable` for state management
+- **Structured Concurrency**: Use `AsyncStream` and `TaskGroup` instead of delegates or NotificationCenter observers
 - **SimplyCoreAudio** (v4.1.1) as specified dependency for device management
 - **AudioObject properties** for IPC — standard HAL pattern, low-latency
 - **macOS 26+ / arm64 only** per platform requirements
@@ -41,8 +42,8 @@ This phase delivers:
 
 ### Integration Points
 
-- **SimplyCoreAudio**: New dependency — provides `allOutputDevices`, device UID lookup, NotificationCenter-based change notifications
-- **NSWorkspace**: System API for `runningApplications` and launch/terminate notifications
+- **SimplyCoreAudio**: New dependency — provides `allOutputDevices`, device UID lookup. NotificationCenter events will be adapted to `AsyncStream`.
+- **NSWorkspace**: System API for `runningApplications` and launch/terminate notifications (adapted to `AsyncStream`).
 - **coreaudiod**: Property get/set calls flow through system daemon to driver
 
 ## Architecture
@@ -64,8 +65,8 @@ graph TD
         PE[PassthroughEngine]
     end
 
-    AAM --> AO
-    DM --> AO
+    AAM -->|AsyncStream| AO
+    DM -->|AsyncStream| AO
     DB --> AO
     AO --> UI[Phase 3 UI]
     DB -->|AudioObjectSetPropertyData| coreaudiod
@@ -77,7 +78,7 @@ graph TD
 ### Modular Design Principles
 
 - **Single File Responsibility**: Each Swift file handles one concern (monitoring, device mgmt, IPC)
-- **Component Isolation**: Components communicate via protocols for testability
+- **Component Isolation**: Components expose `AsyncStream` sequences instead of callbacks/delegates
 - **Service Layer Separation**: DeviceManager handles CoreAudio, AppAudioMonitor handles NSWorkspace
 - **Utility Modularity**: Shared types in AudioTypes.swift, errors in dedicated file
 
@@ -95,7 +96,7 @@ graph TD
       private(set) var appVolumes: [String: Float]  // bundleID -> volume
 
       func setVolume(for bundleID: String, volume: Float) throws
-      func start() async
+      func start() async // consumes streams via TaskGroup
       func stop()
   }
   ```
@@ -107,17 +108,17 @@ graph TD
 - **Purpose**: Track running applications that may produce audio via NSWorkspace
 - **Interfaces**:
   ```swift
-  protocol AppAudioMonitorDelegate: AnyObject {
-      func monitor(_ monitor: AppAudioMonitor, didLaunch app: TrackedApp)
-      func monitor(_ monitor: AppAudioMonitor, didTerminate bundleID: String)
+  enum AppLifecycleEvent: Sendable {
+      case didLaunch(TrackedApp)
+      case didTerminate(String) // bundleID
   }
 
   final class AppAudioMonitor {
-      weak var delegate: AppAudioMonitorDelegate?
       var runningApps: [TrackedApp] { get }
+      var events: AsyncStream<AppLifecycleEvent> { get }
 
-      func start()
-      func stop()
+      func start() // initializes initial state
+      // stop() is implicit via stream cancellation
   }
   ```
 - **Dependencies**: NSWorkspace, AppKit (for NSRunningApplication, NSImage)
@@ -132,10 +133,7 @@ graph TD
       var allOutputDevices: [AudioDevice] { get }
       var appFadersDevice: AudioDevice? { get }
 
-      func startObserving()
-      func stopObserving()
-
-      var onDeviceListChanged: (() -> Void)?
+      var deviceListUpdates: AsyncStream<Void> { get }
   }
   ```
 - **Dependencies**: SimplyCoreAudio (v4.1.1)
@@ -187,6 +185,15 @@ struct TrackedApp: Identifiable, Sendable, Hashable {
     let localizedName: String
     let icon: NSImage?       // app icon for future UI
     let launchDate: Date
+}
+```
+
+### AppLifecycleEvent
+
+```swift
+enum AppLifecycleEvent: Sendable {
+    case didLaunch(TrackedApp)
+    case didTerminate(String) // bundleID
 }
 ```
 

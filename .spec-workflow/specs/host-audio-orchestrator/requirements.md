@@ -23,7 +23,7 @@ SimplyCoreAudio wraps CoreAudio's verbose C APIs with Swift-native patterns:
 
 - Device enumeration with type filtering (input/output/aggregate)
 - Default device get/set operations
-- Property change notifications via Combine/NotificationCenter
+- **Async-compatible notifications**: We will adapt its NotificationCenter events into `AsyncStream` for modern concurrency
 - Eliminates hundreds of lines of AudioObject boilerplate
 
 The framework is mature (5+ years) and actively maintained. It targets macOS 10.12+ and Swift 4.0+, well within our macOS 26+ / Swift 6 requirements.
@@ -59,7 +59,7 @@ Audio session detection (knowing which apps *can* produce audio vs which *are* p
 
 1. WHEN `swift build` is run THEN SimplyCoreAudio SHALL compile without errors alongside existing targets
 2. WHEN the host app initializes THEN it SHALL enumerate available audio devices using SimplyCoreAudio
-3. WHEN the default output device changes THEN the host SHALL receive a notification via SimplyCoreAudio's observer mechanism
+3. WHEN the default output device changes THEN the host SHALL receive a notification via an `AsyncStream` adapter
 4. IF SimplyCoreAudio fails to initialize THEN the host SHALL log an error and continue with degraded functionality
 
 ### Requirement 2: AppFaders Virtual Device Discovery
@@ -80,8 +80,8 @@ Audio session detection (knowing which apps *can* produce audio vs which *are* p
 #### Acceptance Criteria
 
 1. WHEN the host starts THEN it SHALL enumerate currently running applications
-2. WHEN a new application launches THEN AppAudioMonitor SHALL add it to the tracked list within 1 second
-3. WHEN an application terminates THEN AppAudioMonitor SHALL remove it from the tracked list within 1 second
+2. WHEN a new application launches THEN AppAudioMonitor SHALL emit an event via `AsyncStream` within 1 second
+3. WHEN an application terminates THEN AppAudioMonitor SHALL emit an event via `AsyncStream` within 1 second
 4. WHEN an application is tracked THEN its bundle ID, localized name, and icon SHALL be available
 5. IF an application has no bundle ID (command-line tool) THEN it SHALL be excluded from tracking
 
