@@ -17,16 +17,16 @@ Per `product.md`, AppFaders provides per-application volume control. This spec d
 
 ## Technical Approach
 
-### Why SimplyCoreAudio
+### Why CAAudioHardware
 
-SimplyCoreAudio wraps CoreAudio's verbose C APIs with Swift-native patterns:
+CAAudioHardware (sbooth/CAAudioHardware) wraps CoreAudio's verbose C APIs with Swift-native patterns:
 
 - Device enumeration with type filtering (input/output/aggregate)
 - Default device get/set operations
 - **Async-compatible notifications**: We will adapt its NotificationCenter events into `AsyncStream` for modern concurrency
 - Eliminates hundreds of lines of AudioObject boilerplate
 
-The framework is mature (5+ years) and actively maintained. It targets macOS 10.12+ and Swift 4.0+, well within our macOS 26+ / Swift 6 requirements.
+The framework is mature and actively maintained. It targets macOS 10.15+ and Swift 6.0+, well within our macOS 26+ requirements.
 
 ### Why AudioObject Properties for IPC
 
@@ -51,16 +51,16 @@ Audio session detection (knowing which apps *can* produce audio vs which *are* p
 
 ## Requirements
 
-### Requirement 1: SimplyCoreAudio Integration
+### Requirement 1: CAAudioHardware Integration
 
-**User Story:** As a developer, I want SimplyCoreAudio integrated as an SPM dependency, so that I can manage audio devices with idiomatic Swift code.
+**User Story:** As a developer, I want CAAudioHardware integrated as an SPM dependency, so that I can manage audio devices with idiomatic Swift code.
 
 #### Acceptance Criteria
 
-1. WHEN `swift build` is run THEN SimplyCoreAudio SHALL compile without errors alongside existing targets
-2. WHEN the host app initializes THEN it SHALL enumerate available audio devices using SimplyCoreAudio
+1. WHEN `swift build` is run THEN CAAudioHardware SHALL compile without errors alongside existing targets
+2. WHEN the host app initializes THEN it SHALL enumerate available audio devices using CAAudioHardware
 3. WHEN the default output device changes THEN the host SHALL receive a notification via an `AsyncStream` adapter
-4. IF SimplyCoreAudio fails to initialize THEN the host SHALL log an error and continue with degraded functionality
+4. IF CAAudioHardware fails to initialize THEN the host SHALL log an error and continue with degraded functionality
 
 ### Requirement 2: AppFaders Virtual Device Discovery
 
@@ -125,7 +125,7 @@ Audio session detection (knowing which apps *can* produce audio vs which *are* p
 
 #### Acceptance Criteria
 
-1. WHEN the AppFaders app launches THEN it SHALL initialize SimplyCoreAudio, AppAudioMonitor, and IPC bridge
+1. WHEN the AppFaders app launches THEN it SHALL initialize CAAudioHardware, AppAudioMonitor, and IPC bridge
 2. WHEN initialization completes THEN the app SHALL expose an observable state object for future UI binding
 3. WHEN any component fails to initialize THEN the app SHALL continue with available functionality and surface errors
 4. WHEN running without UI THEN the orchestrator SHALL function as a background service (no window, just initialization)
