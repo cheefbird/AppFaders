@@ -57,7 +57,7 @@
   - _Requirements: 3.1, 3.2, 3.4_
   - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift/AppKit developer | Task: Create TrackedApp.swift with struct matching design.md. Use AppKit NSRunningApplication and NSImage. Add init?(from: NSRunningApplication) that extracts bundleIdentifier, localizedName, icon, launchDate. Return nil if bundleIdentifier is nil. Mark NSImage as @unchecked Sendable via extension. | Restrictions: Exclude apps without bundleID per Requirement 3.5. | _Leverage: design.md Data Models, AppKit docs | Success: TrackedApp compiles, can be created from NSRunningApplication | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 6. Create DriverError enum
+- [x] 6. Create DriverError enum
   - File: Sources/AppFaders/DriverError.swift
   - Define error cases: deviceNotFound, propertyReadFailed(OSStatus), propertyWriteFailed(OSStatus), invalidVolumeRange(Float), bundleIDTooLong(Int)
   - Conform to Error, LocalizedError with errorDescription
