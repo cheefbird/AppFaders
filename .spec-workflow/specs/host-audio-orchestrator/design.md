@@ -17,7 +17,7 @@ This phase delivers:
 
 - **Swift 6** with strict concurrency and `@Observable` for state management
 - **Structured Concurrency**: Use `AsyncStream` and `TaskGroup` instead of delegates or NotificationCenter observers
-- **SimplyCoreAudio** (v4.1.1) as specified dependency for device management
+- **CAAudioHardware** (sbooth/CAAudioHardware) as specified dependency for device management
 - **AudioObject properties** for IPC — standard HAL pattern, low-latency
 - **macOS 26+ / arm64 only** per platform requirements
 - **os_log** for diagnostics with subsystem `com.fbreidenbach.appfaders`
@@ -28,7 +28,7 @@ This phase delivers:
 - Driver modifications minimal — add to existing `VirtualDevice.swift` and `AudioTypes.swift`
 - New files follow `PascalCase.swift` naming
 - Max 400 lines per file, 40 lines per method
-- Import order: System frameworks → SimplyCoreAudio → Internal modules
+- Import order: System frameworks → CAAudioHardware → Internal modules
 
 ## Code Reuse Analysis
 
@@ -42,7 +42,7 @@ This phase delivers:
 
 ### Integration Points
 
-- **SimplyCoreAudio**: New dependency — provides `allOutputDevices`, device UID lookup. NotificationCenter events will be adapted to `AsyncStream`.
+- **CAAudioHardware**: New dependency — provides `AudioSystem`, `AudioDevice`, device UID lookup. NotificationCenter events will be adapted to `AsyncStream` via `whenSelectorChanges`.
 - **NSWorkspace**: System API for `runningApplications` and launch/terminate notifications (adapted to `AsyncStream`).
 - **coreaudiod**: Property get/set calls flow through system daemon to driver
 
@@ -55,7 +55,7 @@ graph TD
     subgraph Host["AppFaders Host (Swift)"]
         AO[AudioOrchestrator<br/>@Observable]
         AAM[AppAudioMonitor<br/>NSWorkspace]
-        DM[DeviceManager<br/>SimplyCoreAudio]
+        DM[DeviceManager<br/>CAAudioHardware]
         DB[DriverBridge<br/>AudioObject props]
     end
 
@@ -126,7 +126,7 @@ graph TD
 
 ### Component 3: DeviceManager
 
-- **Purpose**: Wrapper around SimplyCoreAudio for device discovery and notifications
+- **Purpose**: Wrapper around CAAudioHardware for device discovery and notifications
 - **Interfaces**:
   ```swift
   final class DeviceManager {
@@ -136,7 +136,7 @@ graph TD
       var deviceListUpdates: AsyncStream<Void> { get }
   }
   ```
-- **Dependencies**: SimplyCoreAudio (v4.1.1)
+- **Dependencies**: CAAudioHardware
 - **Reuses**: None (new component)
 
 ### Component 4: DriverBridge
@@ -279,19 +279,19 @@ enum DriverError: Error, LocalizedError {
 - Launch various apps (Safari, Music), verify AppAudioMonitor detects them
 - Set volume for an app, verify driver logs receipt (via Console.app)
 
-## SimplyCoreAudio Integration Details
+## CAAudioHardware Integration Details
 
 ### Package.swift Changes
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/rnine/SimplyCoreAudio.git", from: "4.1.0")
+    .package(url: "https://github.com/sbooth/CAAudioHardware", from: "0.7.1")
 ],
 targets: [
     .executableTarget(
         name: "AppFaders",
         dependencies: [
-            .product(name: "SimplyCoreAudio", package: "SimplyCoreAudio")
+            .product(name: "CAAudioHardware", package: "CAAudioHardware")
         ]
     ),
     // ... existing targets unchanged
@@ -301,27 +301,28 @@ targets: [
 ### Device Discovery Pattern
 
 ```swift
-import SimplyCoreAudio
+import CAAudioHardware
 
 final class DeviceManager {
-    private let simplyCA = SimplyCoreAudio()
-    private var notificationObservers: [NSObjectProtocol] = []
-
     var appFadersDevice: AudioDevice? {
-        simplyCA.allOutputDevices.first { device in
-            device.uid == "com.fbreidenbach.appfaders.virtualdevice"
+        guard let id = try? AudioSystem.instance.deviceID(forUID: "com.fbreidenbach.appfaders.virtualdevice") else {
+            return nil
         }
+        return AudioDevice(id)
     }
 
-    func startObserving() {
-        let observer = NotificationCenter.default.addObserver(
-            forName: .deviceListChanged,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.onDeviceListChanged?()
+    var deviceListUpdates: AsyncStream<Void> {
+        AsyncStream { continuation in
+            // Subscribe to kAudioHardwarePropertyDevices
+            let observer = try? AudioSystem.instance.whenSelectorChanges(.devices, on: .main) { _ in
+                continuation.yield()
+            }
+            
+            continuation.onTermination = { _ in
+                // Remove observer (implementation detail: pass nil block)
+                try? AudioSystem.instance.whenSelectorChanges(.devices, perform: nil)
+            }
         }
-        notificationObservers.append(observer)
     }
 }
 ```

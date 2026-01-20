@@ -76,20 +76,39 @@
   - Purpose: Encapsulate device discovery and notifications via AsyncStream
   - _Leverage: design.md Component 3: DeviceManager, SimplyCoreAudio Integration Details_
   - _Requirements: 1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 2.4_
-  - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: macOS audio developer | Task: Re-implement DeviceManager.swift per updated design.md. Remove ThreadSafeArray usage. Use SimplyCoreAudio() instance. Find appFadersDevice by filtering allOutputDevices where uid == "com.fbreidenbach.appfaders.virtualdevice". Expose `deviceListUpdates` as an `AsyncStream<Void>` that adds a NotificationCenter observer for .deviceListChanged and yields on each firing. Use `continuation.onTermination` to remove the observer. | Restrictions: Use SimplyCoreAudio and AsyncStream only. No manual start/stop or delegates. | _Leverage: design.md, SimplyCoreAudio README | Success: DeviceManager finds virtual device and provides an async stream of updates | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
+  - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: macOS audio developer | Task: Create/Update DeviceManager.swift per design.md. Use SimplyCoreAudio() instance. Find appFadersDevice by filtering allOutputDevices where uid == "com.fbreidenbach.appfaders.virtualdevice". Expose `deviceListUpdates` as an `AsyncStream<Void>` that adds a NotificationCenter observer for .deviceListChanged and yields on each firing. Use `continuation.onTermination` to remove the observer. | Restrictions: Use SimplyCoreAudio and AsyncStream only. No manual start/stop or delegates. | _Leverage: design.md, SimplyCoreAudio README | Success: DeviceManager finds virtual device and provides an async stream of updates | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
 - [x] 8. Create AppAudioMonitor for process tracking
   - File: Sources/AppFaders/AppAudioMonitor.swift
   - Use NSWorkspace.shared.runningApplications for initial list
   - Expose `events` as an `AsyncStream<AppLifecycleEvent>` adapting launch/terminate notifications
   - Filter to apps with bundleIdentifier (exclude command-line tools)
-  - Remove `Sources/AppFaders/Utilities.swift` (cleanup)
   - Purpose: Track running applications via AsyncStream
   - _Leverage: design.md Component 2: AppAudioMonitor_
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
-  - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: macOS/AppKit developer | Task: Re-implement AppAudioMonitor.swift per updated design.md. Expose `events` as an `AsyncStream<AppLifecycleEvent>` that adapts NSWorkspace notifications for launch/terminate. Yield .didLaunch(TrackedApp) and .didTerminate(bundleID) respectively. Use `continuation.onTermination` to remove observers. Ensure initial `runningApps` state is populated. Also delete Sources/AppFaders/Utilities.swift as it is no longer needed. | Restrictions: Filter out apps without bundleIdentifier. Use AsyncStream only. | _Leverage: design.md, AppKit NSWorkspace docs | Success: AppAudioMonitor tracks app launches/terminates via an async stream, and Utilities.swift is removed | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
+  - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: macOS/AppKit developer | Task: Create/Update AppAudioMonitor.swift per design.md. Expose `events` as an `AsyncStream<AppLifecycleEvent>` that adapts NSWorkspace notifications for launch/terminate. Yield .didLaunch(TrackedApp) and .didTerminate(bundleID) respectively. Use `continuation.onTermination` to remove observers. Ensure initial `runningApps` state is populated. Also delete Sources/AppFaders/Utilities.swift as it is no longer needed. | Restrictions: Filter out apps without bundleIdentifier. Use AsyncStream only. | _Leverage: design.md, AppKit NSWorkspace docs | Success: AppAudioMonitor tracks app launches/terminates via an async stream | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 9. Create DriverBridge for IPC communication
+- [ ] 9. Migration: Replace SimplyCoreAudio with CAAudioHardware
+  - File: Package.swift
+  - Remove SimplyCoreAudio dependency
+  - Add CAAudioHardware dependency (from: "0.7.1")
+  - Update target dependencies
+  - Purpose: Replace unmaintained library with active one
+  - _Leverage: design.md Package.swift Changes_
+  - _Requirements: 1.1, 1.2, 1.3_
+  - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift developer | Task: Update Package.swift to remove SimplyCoreAudio and add CAAudioHardware (url: "https://github.com/sbooth/CAAudioHardware", from: "0.7.1"). Update AppFaders target to depend on CAAudioHardware product. | Restrictions: Do not modify driver targets. | _Leverage: design.md | Success: `swift build` resolves new dependency | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
+
+- [ ] 10. Migration: Refactor DeviceManager to use CAAudioHardware
+  - File: Sources/AppFaders/DeviceManager.swift
+  - Replace SimplyCoreAudio imports and usage with CAAudioHardware
+  - Use `AudioSystem.instance.deviceID(forUID:)` for discovery
+  - Adapt `AudioSystem` notifications to `AsyncStream` using `whenSelectorChanges`
+  - Purpose: Migrate device management logic to new library
+  - _Leverage: design.md CAAudioHardware Integration Details_
+  - _Requirements: 1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 2.4_
+  - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: macOS audio developer | Task: Rewrite DeviceManager.swift to use CAAudioHardware. Replace SimplyCoreAudio logic. Implement `appFadersDevice` using `AudioSystem.instance.deviceID(forUID:)`. Implement `deviceListUpdates` using `AudioSystem.instance.whenSelectorChanges(.devices)` inside an AsyncStream. Ensure resource cleanup in `onTermination`. | Restrictions: Use CAAudioHardware APIs only. Maintain AsyncStream interface. | _Leverage: design.md | Success: DeviceManager compiles with CAAudioHardware | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
+
+- [ ] 11. Create DriverBridge for IPC communication
   - File: Sources/AppFaders/DriverBridge.swift
   - Import CoreAudio for AudioObject functions
   - Implement connect(deviceID:) storing AudioDeviceID
@@ -101,7 +120,7 @@
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 6.1, 6.2_
   - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: CoreAudio/IPC developer | Task: Create DriverBridge.swift per design.md. Store connected AudioDeviceID. For setAppVolume: validate 0.0-1.0 range, serialize VolumeCommand (UInt8 length + bundleID bytes padded to 255 + Float32 volume), call AudioObjectSetPropertyData with AppFadersProperty.setVolume selector. For getAppVolume: encode bundleID as qualifier, call AudioObjectGetPropertyData with getVolume selector, return Float32. Check OSStatus, throw DriverError on failure. | Restrictions: Bundle ID max 255 chars. Validate all inputs. Use os_log for errors. | _Leverage: design.md, CoreAudio AudioObject.h | Success: DriverBridge can send volume commands to installed driver | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 10. Create AudioOrchestrator as central coordinator
+- [ ] 12. Create AudioOrchestrator as central coordinator
   - File: Sources/AppFaders/AudioOrchestrator.swift
   - Mark as @Observable for SwiftUI binding
   - Compose DeviceManager, AppAudioMonitor, DriverBridge
@@ -113,7 +132,7 @@
   - _Requirements: 7.1, 7.2, 7.3_
   - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift developer with Observation framework expertise | Task: Create AudioOrchestrator.swift per design.md. Use @Observable macro. Create DeviceManager, AppAudioMonitor, DriverBridge as private properties. In start(): use `withTaskGroup` or multiple `Task`s to iterate over `deviceManager.deviceListUpdates` and `appAudioMonitor.events` concurrently. Update `trackedApps` and `isDriverConnected` state based on events. Implement setVolume to update appVolumes and call DriverBridge. | Restrictions: Use structured concurrency (TaskGroup) for stream consumption. Handle errors gracefully. | _Leverage: design.md, Swift Observation framework | Success: AudioOrchestrator compiles, manages state, coordinates components via streams | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 11. Update main.swift to initialize orchestrator
+- [ ] 13. Update main.swift to initialize orchestrator
   - File: Sources/AppFaders/main.swift
   - Create AudioOrchestrator instance
   - Call start() to initialize components
@@ -126,7 +145,7 @@
 
 ## Phase 5: Testing
 
-- [ ] 12. Create VolumeStore unit tests
+- [ ] 14. Create VolumeStore unit tests
   - File: Tests/AppFadersDriverTests/VolumeStoreTests.swift
   - Test setVolume/getVolume round-trip
   - Test default value (1.0) for unknown bundleID
@@ -137,7 +156,7 @@
   - _Requirements: 5.1, 5.2_
   - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift test engineer | Task: Create VolumeStoreTests.swift using Swift Testing (@Test, #expect). Test: setVolume then getVolume returns same value, getVolume for unknown returns 1.0, removeVolume then getVolume returns 1.0, concurrent access from multiple DispatchQueue.global().async blocks doesn't crash. | Restrictions: Use Swift Testing not XCTest. Keep tests fast. | _Leverage: Swift Testing docs | Success: `swift test --filter VolumeStore` passes | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 13. Create AppAudioMonitor unit tests
+- [ ] 15. Create AppAudioMonitor unit tests
   - File: Tests/AppFadersTests/AppAudioMonitorTests.swift
   - Test initial app enumeration
   - Test stream events (launch/terminate)
@@ -146,7 +165,7 @@
   - _Requirements: 3.1, 3.2, 3.5_
   - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift test engineer | Task: Create AppAudioMonitorTests.swift using Swift Testing. Test that initial `runningApps` is populated. Verify that events are yielded to the `events` stream by creating a `Task` that consumes the stream and checking for expected values (using mocks or manual triggering if possible, otherwise rely on system behavior for integration tests). Note: Can't easily mock NSWorkspace in unit tests, so mainly verify the stream mechanics if possible or skip deep integration testing in unit test layer. | Restrictions: Keep tests isolated and fast. | _Leverage: Swift Testing docs, design.md | Success: `swift test --filter AppAudioMonitor` passes | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 14. Create DriverBridge unit tests
+- [ ] 16. Create DriverBridge unit tests
   - File: Tests/AppFadersTests/DriverBridgeTests.swift
   - Test volume validation (reject out of range)
   - Test bundleID length validation
@@ -156,7 +175,7 @@
   - _Requirements: 5.4, 6.1, 6.2_
   - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift test engineer | Task: Create DriverBridgeTests.swift using Swift Testing. Test: setAppVolume throws invalidVolumeRange for volume < 0 or > 1, setAppVolume throws bundleIDTooLong for bundleID > 255 chars. Can't test actual CoreAudio calls in unit test, but can test validation logic. Consider extracting validation to testable methods. | Restrictions: Don't require installed driver for unit tests. Test validation only. | _Leverage: Swift Testing docs, design.md | Success: `swift test --filter DriverBridge` passes | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 15. Integration test: volume command round-trip
+- [ ] 17. Integration test: volume command round-trip
   - File: Documentation only (manual test procedure)
   - Install driver using Scripts/install-driver.sh
   - Run host app

@@ -16,7 +16,7 @@ Native macOS Desktop Application (Menu Bar Extra) utilizing a User-Space Audio D
 ### Key Dependencies/Libraries
 
 - **SwiftUI**: Modern UI framework using the `Observation` framework for reactive state management.
-- **SimplyCoreAudio**: A Swift package for high-level management of CoreAudio devices, simplifying device discovery and volume control.
+- **CAAudioHardware**: A Swift package (`sbooth/CAAudioHardware`) for high-level management of CoreAudio devices, providing a robust object-oriented wrapper for the HAL.
 - **Custom C/Swift HAL Wrapper**: Minimal C interface (`AppFadersDriverBridge`) with Swift implementation (`AppFadersDriver`). Pancake was evaluated but found incompatible with Swift 6 strict concurrency — see `docs/pancake-compatibility.md`.
 - **CoreAudio / AudioToolbox**: Native system frameworks for low-level audio device interaction.
 - **ServiceManagement**: For implementing "Launch at Login" using the modern `SMAppService` Swift API. *(Phase 3+)*
