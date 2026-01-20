@@ -1,9 +1,12 @@
 ### Mine ###
-.gemini/
 .spec-workflow/templates/
 .spec-workflow/approvals/
 audit.log
 **/Implementation Logs/
+
+### Gemini ###
+gha-creds-*.json
+.gemini/
 
 ### Macos ###
 .DS_Store
@@ -12,7 +15,6 @@ audit.log
 
 ## Icon must end with two \r
 Icon
-
 
 ## Thumbnails
 ._*
