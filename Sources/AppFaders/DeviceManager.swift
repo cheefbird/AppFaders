@@ -11,7 +11,7 @@ import os.log
 private let log = OSLog(subsystem: "com.fbreidenbach.appfaders", category: "DeviceManager")
 
 /// manages audio device discovery and status monitoring
-final class DeviceManager {
+final class DeviceManager: Sendable {
   /// returns all available output devices
   var allOutputDevices: [AudioDevice] {
     do {
