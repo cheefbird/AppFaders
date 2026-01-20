@@ -78,7 +78,7 @@
   - _Requirements: 1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 2.4_
   - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: macOS audio developer | Task: Re-implement DeviceManager.swift per updated design.md. Remove ThreadSafeArray usage. Use SimplyCoreAudio() instance. Find appFadersDevice by filtering allOutputDevices where uid == "com.fbreidenbach.appfaders.virtualdevice". Expose `deviceListUpdates` as an `AsyncStream<Void>` that adds a NotificationCenter observer for .deviceListChanged and yields on each firing. Use `continuation.onTermination` to remove the observer. | Restrictions: Use SimplyCoreAudio and AsyncStream only. No manual start/stop or delegates. | _Leverage: design.md, SimplyCoreAudio README | Success: DeviceManager finds virtual device and provides an async stream of updates | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 8. Create AppAudioMonitor for process tracking
+- [x] 8. Create AppAudioMonitor for process tracking
   - File: Sources/AppFaders/AppAudioMonitor.swift
   - Use NSWorkspace.shared.runningApplications for initial list
   - Expose `events` as an `AsyncStream<AppLifecycleEvent>` adapting launch/terminate notifications
