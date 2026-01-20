@@ -98,7 +98,7 @@
   - _Requirements: 1.1, 1.2, 1.3_
   - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Swift developer | Task: Update Package.swift to remove SimplyCoreAudio and add CAAudioHardware (url: "https://github.com/sbooth/CAAudioHardware", from: "0.7.1"). Update AppFaders target to depend on CAAudioHardware product. | Restrictions: Do not modify driver targets. | _Leverage: design.md | Success: `swift build` resolves new dependency | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 10. Migration: Refactor DeviceManager to use CAAudioHardware
+- [x] 10. Migration: Refactor DeviceManager to use CAAudioHardware
   - File: Sources/AppFaders/DeviceManager.swift
   - Replace SimplyCoreAudio imports and usage with CAAudioHardware
   - Use `AudioSystem.instance.deviceID(forUID:)` for discovery
