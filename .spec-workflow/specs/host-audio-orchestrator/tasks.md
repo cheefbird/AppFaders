@@ -68,7 +68,7 @@
 
 ## Phase 4: Host Components
 
-- [ ] 7. Create DeviceManager wrapper for SimplyCoreAudio
+- [x] 7. Create DeviceManager wrapper for SimplyCoreAudio
   - File: Sources/AppFaders/DeviceManager.swift
   - Import SimplyCoreAudio, create instance
   - Implement allOutputDevices, appFadersDevice (find by UID)
