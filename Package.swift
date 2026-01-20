@@ -13,13 +13,13 @@ let package = Package(
     .plugin(name: "BundleAssembler", targets: ["BundleAssembler"])
   ],
   dependencies: [
-    .package(url: "https://github.com/rnine/SimplyCoreAudio.git", from: "4.1.0")
+    .package(url: "https://github.com/sbooth/CAAudioHardware", from: "0.7.1")
   ],
   targets: [
     .executableTarget(
       name: "AppFaders",
       dependencies: [
-        .product(name: "SimplyCoreAudio", package: "SimplyCoreAudio")
+        .product(name: "CAAudioHardware", package: "CAAudioHardware")
       ]
     ),
     .target(

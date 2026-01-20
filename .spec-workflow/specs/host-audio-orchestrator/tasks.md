@@ -88,7 +88,7 @@
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
   - _Prompt: Implement the task for spec host-audio-orchestrator, first run spec-workflow-guide to get the workflow guide then implement the task: Role: macOS/AppKit developer | Task: Create/Update AppAudioMonitor.swift per design.md. Expose `events` as an `AsyncStream<AppLifecycleEvent>` that adapts NSWorkspace notifications for launch/terminate. Yield .didLaunch(TrackedApp) and .didTerminate(bundleID) respectively. Use `continuation.onTermination` to remove observers. Ensure initial `runningApps` state is populated. Also delete Sources/AppFaders/Utilities.swift as it is no longer needed. | Restrictions: Filter out apps without bundleIdentifier. Use AsyncStream only. | _Leverage: design.md, AppKit NSWorkspace docs | Success: AppAudioMonitor tracks app launches/terminates via an async stream | Instructions: Mark task in-progress in tasks.md before starting, use log-implementation tool after completion with artifacts, mark complete when done._
 
-- [ ] 9. Migration: Replace SimplyCoreAudio with CAAudioHardware
+- [x] 9. Migration: Replace SimplyCoreAudio with CAAudioHardware
   - File: Package.swift
   - Remove SimplyCoreAudio dependency
   - Add CAAudioHardware dependency (from: "0.7.1")
