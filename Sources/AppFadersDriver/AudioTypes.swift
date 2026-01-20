@@ -92,18 +92,18 @@ public struct StreamFormat: Sendable, Equatable {
 
   /// create from CoreAudio AudioStreamBasicDescription
   public init(from asbd: AudioStreamBasicDescription) {
-    self.sampleRate = asbd.mSampleRate
-    self.channelCount = asbd.mChannelsPerFrame
-    self.bitsPerChannel = asbd.mBitsPerChannel
-    self.formatID = asbd.mFormatID
+    sampleRate = asbd.mSampleRate
+    channelCount = asbd.mChannelsPerFrame
+    bitsPerChannel = asbd.mBitsPerChannel
+    formatID = asbd.mFormatID
   }
 }
 
 // MARK: - Supported Formats
 
-extension AudioDeviceConfiguration {
+public extension AudioDeviceConfiguration {
   /// generate all supported StreamFormats for this device
-  public var supportedFormats: [StreamFormat] {
+  var supportedFormats: [StreamFormat] {
     sampleRates.map { rate in
       StreamFormat(
         sampleRate: rate,

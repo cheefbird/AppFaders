@@ -187,7 +187,12 @@ final class VirtualDevice: @unchecked Sendable {
     }
 
     if objectID == ObjectID.device {
-      return getDevicePropertyData(address: address, maxSize: maxSize, qualifierSize: qualifierSize, qualifierData: qualifierData)
+      return getDevicePropertyData(
+        address: address,
+        maxSize: maxSize,
+        qualifierSize: qualifierSize,
+        qualifierData: qualifierData
+      )
     }
 
     if objectID == ObjectID.outputStream {
@@ -228,40 +233,38 @@ final class VirtualDevice: @unchecked Sendable {
     switch address.mSelector {
     case kAudioObjectPropertyClass,
          kAudioObjectPropertyBaseClass:
-      return UInt32(MemoryLayout<AudioClassID>.size)
+      UInt32(MemoryLayout<AudioClassID>.size)
 
     case kAudioObjectPropertyOwner:
-      return UInt32(MemoryLayout<AudioObjectID>.size)
+      UInt32(MemoryLayout<AudioObjectID>.size)
 
     case kAudioObjectPropertyManufacturer:
-      return UInt32(MemoryLayout<CFString>.size)
+      UInt32(MemoryLayout<CFString>.size)
 
     case kAudioObjectPropertyOwnedObjects,
          kAudioPlugInPropertyDeviceList:
-      return UInt32(MemoryLayout<AudioObjectID>.size) // one device
+      UInt32(MemoryLayout<AudioObjectID>.size) // one device
 
     case kAudioObjectPropertyCustomPropertyInfoList,
          kAudioPlugInPropertyBoxList:
-      return 0 // empty lists
+      0 // empty lists
 
     case kAudioPlugInPropertyTranslateUIDToBox:
-      return UInt32(MemoryLayout<AudioObjectID>.size)
+      UInt32(MemoryLayout<AudioObjectID>.size)
 
     case kAudioPlugInPropertyTranslateUIDToDevice:
-      return UInt32(MemoryLayout<AudioObjectID>.size)
+      UInt32(MemoryLayout<AudioObjectID>.size)
 
     case kAudioPlugInPropertyResourceBundle:
-      return UInt32(MemoryLayout<CFString>.size)
+      UInt32(MemoryLayout<CFString>.size)
 
     case kAudioClockDevicePropertyClockDomain:
-      return UInt32(MemoryLayout<UInt32>.size)
+      UInt32(MemoryLayout<UInt32>.size)
 
     default:
-      return nil
+      nil
     }
   }
-
-
 
   private func getPlugInPropertyData(
     address: AudioObjectPropertyAddress,
@@ -368,7 +371,7 @@ final class VirtualDevice: @unchecked Sendable {
          kAudioObjectPropertyBaseClass,
          kAudioDevicePropertyTransportType,
          kAudioDevicePropertyClockDomain:
-      return UInt32(MemoryLayout<AudioClassID>.size)
+      UInt32(MemoryLayout<AudioClassID>.size)
 
     case kAudioObjectPropertyOwner,
          kAudioDevicePropertyDeviceIsRunning,
@@ -378,48 +381,48 @@ final class VirtualDevice: @unchecked Sendable {
          kAudioDevicePropertySafetyOffset,
          kAudioDevicePropertyZeroTimeStampPeriod,
          kAudioDevicePropertyIsHidden:
-      return UInt32(MemoryLayout<UInt32>.size)
+      UInt32(MemoryLayout<UInt32>.size)
 
     case kAudioDevicePropertyPreferredChannelsForStereo:
-      return UInt32(MemoryLayout<UInt32>.size * 2) // left and right channel
+      UInt32(MemoryLayout<UInt32>.size * 2) // left and right channel
 
     case kAudioObjectPropertyName,
          kAudioObjectPropertyManufacturer,
          kAudioDevicePropertyDeviceUID,
          kAudioDevicePropertyModelUID:
-      return UInt32(MemoryLayout<CFString>.size)
+      UInt32(MemoryLayout<CFString>.size)
 
     case kAudioObjectPropertyOwnedObjects:
       // one output stream
-      return UInt32(MemoryLayout<AudioObjectID>.size)
+      UInt32(MemoryLayout<AudioObjectID>.size)
 
     case kAudioDevicePropertyStreams:
       // only return stream for output scope (we have no input streams)
-      return (address.mScope == kAudioObjectPropertyScopeOutput ||
+      (address.mScope == kAudioObjectPropertyScopeOutput ||
         address.mScope == kAudioObjectPropertyScopeGlobal)
         ? UInt32(MemoryLayout<AudioObjectID>.size) : 0
 
     case kAudioObjectPropertyCustomPropertyInfoList:
-      return UInt32(MemoryLayout<AudioServerPlugInCustomPropertyInfo>.size * 2)
+      UInt32(MemoryLayout<AudioServerPlugInCustomPropertyInfo>.size * 2)
 
     case kAudioDevicePropertyControlList:
-      return 0 // empty list
+      0 // empty list
 
     case kAudioDevicePropertyNominalSampleRate:
-      return UInt32(MemoryLayout<Float64>.size)
+      UInt32(MemoryLayout<Float64>.size)
 
     case AppFadersProperty.setVolume:
-      return UInt32(VolumeCommand.totalSize)
+      UInt32(VolumeCommand.totalSize)
 
     case AppFadersProperty.getVolume:
-      return UInt32(MemoryLayout<Float32>.size)
+      UInt32(MemoryLayout<Float32>.size)
 
     case kAudioDevicePropertyAvailableNominalSampleRates:
       // 3 sample rates: 44100, 48000, 96000
-      return UInt32(MemoryLayout<AudioValueRange>.size * 3)
+      UInt32(MemoryLayout<AudioValueRange>.size * 3)
 
     default:
-      return nil
+      nil
     }
   }
 
