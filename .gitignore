@@ -1,8 +1,6 @@
 ### Mine ###
-.spec-workflow/templates/
-.spec-workflow/approvals/
+.spec-workflow/
 audit.log
-**/Implementation Logs/
 
 ### Gemini ###
 gha-creds-*.json
