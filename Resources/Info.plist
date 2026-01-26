@@ -48,6 +48,12 @@
 		<string>com.fbreidenbach.appfaders.virtualdevice</string>
 	</dict>
 
+	<!-- Mach Services the driver can access from coreaudiod sandbox (QA1811) -->
+	<key>AudioServerPlugIn_MachServices</key>
+	<array>
+		<string>com.fbreidenbach.appfaders.helper</string>
+	</array>
+
 	<!-- Copyright -->
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright 2026 AppFaders</string>
