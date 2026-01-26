@@ -2,7 +2,7 @@
 
 Per-application audio volume control for macOS via a custom HAL audio driver.
 
-> **Status**: Early development — Phase 1 (driver foundation) complete, Phase 2 (host audio orchestrator) in progress.
+> **Status**: Early development — Phase 1 (driver foundation) complete, Phase 2 proved IPC is a no-go. Looking in to XPC instead, which I shoulda done in the first place if we're being honest here.
 
 ## Overview
 
@@ -11,7 +11,7 @@ AppFaders is a menu bar app that lets you control volume individually for each a
 ```sh
 ┌─────────────────────┐                    ┌────────────────────┐
 │  Host App (SwiftUI) │◄──────────────────►│  HAL Driver        │
-│  - Menu Bar UI      │   AudioObject IPC  │  - Virtual device  │
+│  - Menu Bar UI      │        XPC         │  - Virtual device  │
 │  - App monitoring   │                    │  - Passthrough     │
 └─────────────────────┘                    └────────────────────┘
 ```

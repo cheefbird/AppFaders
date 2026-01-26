@@ -2,7 +2,7 @@
 
 This document outlines the sequential phases for building the AppFaders macOS application, as defined in the steering documents.
 
-## Phase 1: `driver-foundation` (Spec 1)
+## Phase 1: `driver-foundation` ✓
 
 **Goal**: Establish the monorepo and the virtual audio pipeline.
 
@@ -11,14 +11,22 @@ This document outlines the sequential phases for building the AppFaders macOS ap
 - **HAL Implementation**: Build the minimal Audio Server Plug-in that registers the "AppFaders Virtual Device."
 - **Verification**: Device appears in System Settings and passes audio successfully.
 
-## Phase 2: `host-audio-orchestrator` (Spec 2)
+## Phase 2: `host-audio-orchestrator` (in progress)
 
 **Goal**: Build the "Brain" of the application (Host Logic).
 
-- **Device Management**: Integrate **SimplyCoreAudio** for high-level orchestration using `AsyncStream` and structured concurrency.
-- **Process Monitoring**: Implement `AppAudioMonitor` to track running apps and their audio state via `NSWorkspace` notifications.
-- **IPC Bridge**: Create the communication layer using `AudioObject` properties to send commands from the Host to the Driver.
-- **Verification**: Unit tests proving volume commands reach the driver's logic layer.
+- **Device Management**: Integrate **CAAudioHardware** for device discovery using `AsyncStream` and structured concurrency.
+- **Process Monitoring**: Implement `AppAudioMonitor` to track running apps via `NSWorkspace` notifications.
+- **IPC Bridge**: ⚠️ Custom AudioObject properties (`'afvc'`/`'afvq'`) blocked by `coreaudiod` with `kAudioHardwareUnknownPropertyError`. **Pivot to XPC** required for host-driver communication.
+- **Verification**: Integration tests confirming successful XPC message delivery and volume state synchronization.
+
+### IPC Findings (Task 17)
+
+Attempted approach: Custom AudioObject properties registered via `kAudioObjectPropertyCustomPropertyInfoList`.
+
+**Result**: FAILED. `coreaudiod` filters custom property writes before they reach the driver. The request never arrives - confirmed by absence of driver logs.
+
+**Next step**: Implement XPC service embedded in driver bundle, or evaluate Mach ports as alternative.
 
 ## Phase 3: `swiftui-volume-mixer` (Spec 3)
 
