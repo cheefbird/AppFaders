@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 
 import PackageDescription
 
@@ -13,15 +13,15 @@ let package = Package(
     .plugin(name: "BundleAssembler", targets: ["BundleAssembler"])
   ],
   dependencies: [
-    // Pancake is an Xcode project, not SPM - see docs/pancake-compatibility.md
-    // .package(url: "https://github.com/0bmxa/Pancake.git", branch: "master")
+    .package(url: "https://github.com/sbooth/CAAudioHardware", from: "0.7.1")
   ],
   targets: [
     .executableTarget(
       name: "AppFaders",
-      dependencies: []
+      dependencies: [
+        .product(name: "CAAudioHardware", package: "CAAudioHardware")
+      ]
     ),
-    // C interface layer for HAL AudioServerPlugIn
     .target(
       name: "AppFadersDriverBridge",
       dependencies: [],
@@ -40,7 +40,6 @@ let package = Package(
       linkerSettings: [
         .linkedFramework("CoreAudio"),
         .linkedFramework("AudioToolbox"),
-        // Build as MH_BUNDLE instead of MH_DYLIB for CFPlugIn compatibility
         .unsafeFlags(["-Xlinker", "-bundle"])
       ],
       plugins: [
@@ -54,6 +53,10 @@ let package = Package(
     .testTarget(
       name: "AppFadersDriverTests",
       dependencies: ["AppFadersDriver"]
+    ),
+    .testTarget(
+      name: "AppFadersTests",
+      dependencies: ["AppFaders"]
     )
   ]
 )

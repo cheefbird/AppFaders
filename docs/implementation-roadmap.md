@@ -7,7 +7,7 @@ This document outlines the sequential phases for building the AppFaders macOS ap
 **Goal**: Establish the monorepo and the virtual audio pipeline.
 
 - **Project Setup**: Initialize the SPM Monorepo in the clean project directory.
-- **Driver Core**: Integrate the **Pancake** framework (Stable) as a dependency.
+- **Driver Core**: Implement custom C/Swift wrapper (`AppFadersDriverBridge`) to replace incompatible Pancake framework.
 - **HAL Implementation**: Build the minimal Audio Server Plug-in that registers the "AppFaders Virtual Device."
 - **Verification**: Device appears in System Settings and passes audio successfully.
 
@@ -15,8 +15,8 @@ This document outlines the sequential phases for building the AppFaders macOS ap
 
 **Goal**: Build the "Brain" of the application (Host Logic).
 
-- **Device Management**: Integrate **SimplyCoreAudio** for high-level orchestration.
-- **Process Monitoring**: Implement `AppAudioMonitor` to track running apps and their audio state via `NSWorkspace`.
+- **Device Management**: Integrate **SimplyCoreAudio** for high-level orchestration using `AsyncStream` and structured concurrency.
+- **Process Monitoring**: Implement `AppAudioMonitor` to track running apps and their audio state via `NSWorkspace` notifications.
 - **IPC Bridge**: Create the communication layer using `AudioObject` properties to send commands from the Host to the Driver.
 - **Verification**: Unit tests proving volume commands reach the driver's logic layer.
 

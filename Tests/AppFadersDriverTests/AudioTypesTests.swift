@@ -190,7 +190,7 @@ struct AudioRingBufferTests {
     #expect(read == 10)
 
     // verify data matches
-    for i in 0..<20 {
+    for i in 0 ..< 20 {
       #expect(output[i] == 0.5)
     }
   }
@@ -200,7 +200,7 @@ struct AudioRingBufferTests {
     let buffer = AudioRingBuffer()
 
     // write 5 frames
-    let input: [Float] = Array(1...10).map { Float($0) }
+    let input: [Float] = Array(1 ... 10).map { Float($0) }
     _ = input.withUnsafeBufferPointer { ptr in
       buffer.write(frames: ptr.baseAddress!, frameCount: 5)
     }
@@ -215,12 +215,12 @@ struct AudioRingBufferTests {
     #expect(read == 5)
 
     // first 10 samples should be the data
-    for i in 0..<10 {
+    for i in 0 ..< 10 {
       #expect(output[i] == Float(i + 1))
     }
 
     // remaining samples should be silence (0.0)
-    for i in 10..<20 {
+    for i in 10 ..< 20 {
       #expect(output[i] == 0.0)
     }
   }
@@ -251,7 +251,7 @@ struct AudioRingBufferTests {
     var readBuffer = [Float](repeating: 0.0, count: 2000 * 2)
 
     // do 10 iterations to wrap around the 8192 frame buffer
-    for iteration in 0..<10 {
+    for iteration in 0 ..< 10 {
       let written = chunk.withUnsafeBufferPointer { ptr in
         buffer.write(frames: ptr.baseAddress!, frameCount: 2000)
       }
@@ -263,7 +263,7 @@ struct AudioRingBufferTests {
       #expect(read == 2000, "iteration \(iteration) read failed")
 
       // verify data integrity after wrap
-      for i in 0..<(2000 * 2) {
+      for i in 0 ..< (2000 * 2) {
         #expect(readBuffer[i] == 0.25, "data corruption at iteration \(iteration), index \(i)")
       }
     }
@@ -290,7 +290,7 @@ struct AudioRingBufferTests {
 
     #expect(read == 0)
     // read fills remainder with silence (0.0) on underflow
-    for i in 0..<20 {
+    for i in 0 ..< 20 {
       #expect(output[i] == 0.0)
     }
   }

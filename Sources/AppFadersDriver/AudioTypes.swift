@@ -92,18 +92,18 @@ public struct StreamFormat: Sendable, Equatable {
 
   /// create from CoreAudio AudioStreamBasicDescription
   public init(from asbd: AudioStreamBasicDescription) {
-    self.sampleRate = asbd.mSampleRate
-    self.channelCount = asbd.mChannelsPerFrame
-    self.bitsPerChannel = asbd.mBitsPerChannel
-    self.formatID = asbd.mFormatID
+    sampleRate = asbd.mSampleRate
+    channelCount = asbd.mChannelsPerFrame
+    bitsPerChannel = asbd.mBitsPerChannel
+    formatID = asbd.mFormatID
   }
 }
 
 // MARK: - Supported Formats
 
-extension AudioDeviceConfiguration {
+public extension AudioDeviceConfiguration {
   /// generate all supported StreamFormats for this device
-  public var supportedFormats: [StreamFormat] {
+  var supportedFormats: [StreamFormat] {
     sampleRates.map { rate in
       StreamFormat(
         sampleRate: rate,
@@ -112,5 +112,52 @@ extension AudioDeviceConfiguration {
         formatID: kAudioFormatLinearPCM
       )
     }
+  }
+}
+
+// MARK: - Custom Properties
+
+/// custom property selectors for AppFaders IPC
+public enum AppFadersProperty {
+  /// set volume for an application: 'afvc'
+  public static let setVolume = AudioObjectPropertySelector(0x6166_7663)
+  /// get volume for an application: 'afvq'
+  public static let getVolume = AudioObjectPropertySelector(0x6166_7671)
+}
+
+// MARK: - CoreAudio HAL Missing Types
+
+/// information about a custom property
+/// matches AudioServerPlugInCustomPropertyInfo in AudioServerPlugIn.h
+public struct AudioServerPlugInCustomPropertyInfo: Sendable {
+  public var mSelector: AudioObjectPropertySelector
+  public var mPropertyDataType: UInt32
+  public var mQualifierDataType: UInt32
+
+  public init(
+    mSelector: AudioObjectPropertySelector,
+    mPropertyDataType: UInt32,
+    mQualifierDataType: UInt32
+  ) {
+    self.mSelector = mSelector
+    self.mPropertyDataType = mPropertyDataType
+    self.mQualifierDataType = mQualifierDataType
+  }
+}
+
+// MARK: - IPC Models
+
+/// IPC command to set volume for an application
+/// matches the wire format: [length: UInt8] [bundleID: 255 bytes] [volume: Float32]
+public struct VolumeCommand: Sendable {
+  public static let maxBundleIDLength = 255
+  public static let totalSize = 1 + maxBundleIDLength + 4 // 260 bytes
+
+  public let bundleID: String
+  public let volume: Float
+
+  public init(bundleID: String, volume: Float) {
+    self.bundleID = bundleID
+    self.volume = volume
   }
 }

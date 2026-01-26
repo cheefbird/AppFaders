@@ -7,12 +7,15 @@
 import AudioToolbox
 import CoreAudio
 import Foundation
-import Synchronization
 import os.log
+import Synchronization
 
 // MARK: - Logging
 
-private let log = OSLog(subsystem: "com.fbreidenbach.appfaders.driver", category: "PassthroughEngine")
+private let log = OSLog(
+  subsystem: "com.fbreidenbach.appfaders.driver",
+  category: "PassthroughEngine"
+)
 
 // MARK: - Missing CoreAudio Constants
 
@@ -66,7 +69,7 @@ final class AudioRingBuffer: @unchecked Sendable {
     let actualFrames = actualSamples / channelCount
 
     // copy samples to buffer
-    for i in 0..<actualSamples {
+    for i in 0 ..< actualSamples {
       let idx = (currentWrite + i) % bufferSampleCount
       buffer[idx] = frames[i]
     }
@@ -90,14 +93,14 @@ final class AudioRingBuffer: @unchecked Sendable {
     let actualFrames = actualSamples / channelCount
 
     // copy samples from buffer
-    for i in 0..<actualSamples {
+    for i in 0 ..< actualSamples {
       let idx = (currentRead + i) % bufferSampleCount
       frames[i] = buffer[idx]
     }
 
     // fill remainder with silence
     if actualSamples < samplesToRead {
-      for i in actualSamples..<samplesToRead {
+      for i in actualSamples ..< samplesToRead {
         frames[i] = 0.0
       }
     }
@@ -113,7 +116,7 @@ final class AudioRingBuffer: @unchecked Sendable {
     writeIndex.store(0, ordering: .relaxed)
     readIndex.store(0, ordering: .relaxed)
     // zero out buffer
-    for i in 0..<bufferSampleCount {
+    for i in 0 ..< bufferSampleCount {
       buffer[i] = 0.0
     }
   }

@@ -52,6 +52,8 @@ extern OSStatus AppFadersDriver_GetPropertyDataSize(
     AudioObjectPropertySelector inSelector,
     AudioObjectPropertyScope inScope,
     AudioObjectPropertyElement inElement,
+    UInt32 inQualifierDataSize,
+    const void *inQualifierData,
     UInt32 *outDataSize);
 extern OSStatus AppFadersDriver_GetPropertyData(
     AudioObjectID inObjectID,
@@ -59,6 +61,8 @@ extern OSStatus AppFadersDriver_GetPropertyData(
     AudioObjectPropertySelector inSelector,
     AudioObjectPropertyScope inScope,
     AudioObjectPropertyElement inElement,
+    UInt32 inQualifierDataSize,
+    const void *inQualifierData,
     UInt32 inDataSize,
     UInt32 *outDataSize,
     void *outData);
@@ -68,6 +72,8 @@ extern OSStatus AppFadersDriver_SetPropertyData(
     AudioObjectPropertySelector inSelector,
     AudioObjectPropertyScope inScope,
     AudioObjectPropertyElement inElement,
+    UInt32 inQualifierDataSize,
+    const void *inQualifierData,
     UInt32 inDataSize,
     const void *inData);
 
@@ -303,6 +309,8 @@ static OSStatus PlugIn_GetPropertyDataSize(
       inAddress->mSelector,
       inAddress->mScope,
       inAddress->mElement,
+      inQualifierDataSize,
+      inQualifierData,
       outDataSize);
 }
 
@@ -328,6 +336,8 @@ static OSStatus PlugIn_GetPropertyData(
       inAddress->mSelector,
       inAddress->mScope,
       inAddress->mElement,
+      inQualifierDataSize,
+      inQualifierData,
       inDataSize,
       outDataSize,
       outData);
@@ -354,6 +364,8 @@ static OSStatus PlugIn_SetPropertyData(
       inAddress->mSelector,
       inAddress->mScope,
       inAddress->mElement,
+      inQualifierDataSize,
+      inQualifierData,
       inDataSize,
       inData);
 }
