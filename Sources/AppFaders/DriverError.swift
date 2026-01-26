@@ -6,7 +6,7 @@
 import Foundation
 
 /// errors related to driver communication and management
-enum DriverError: Error, LocalizedError {
+enum DriverError: Error, LocalizedError, Equatable {
   /// the virtual audio device could not be found
   case deviceNotFound
   /// failed to read a property from the audio object
