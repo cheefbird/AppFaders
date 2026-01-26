@@ -42,11 +42,9 @@ struct VolumeStoreTests {
     let store = VolumeStore.shared
     let bundleID = makeBundleID()
 
-    // Test upper bound
     store.setVolume(for: bundleID, volume: 1.5)
     #expect(store.getVolume(for: bundleID) == 1.0)
 
-    // Test lower bound
     store.setVolume(for: bundleID, volume: -0.5)
     #expect(store.getVolume(for: bundleID) == 0.0)
   }
@@ -69,7 +67,7 @@ struct VolumeStoreTests {
     let bundleID = makeBundleID()
     let iterations = 1000
 
-    // Use dispatch queue concurrent perform to stress the lock
+    // use dispatch queue concurrent perform to stress the lock
     await withCheckedContinuation { continuation in
       DispatchQueue.global().async {
         DispatchQueue.concurrentPerform(iterations: iterations) { i in

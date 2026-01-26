@@ -32,6 +32,13 @@ struct TrackedApp: Identifiable, Sendable, Hashable {
     launchDate = runningApp.launchDate ?? .distantPast
   }
 
+  init(bundleID: String, localizedName: String, icon: NSImage?, launchDate: Date) {
+    self.bundleID = bundleID
+    self.localizedName = localizedName
+    self.icon = icon
+    self.launchDate = launchDate
+  }
+
   // MARK: - Equatable & Hashable
 
   static func == (lhs: TrackedApp, rhs: TrackedApp) -> Bool {

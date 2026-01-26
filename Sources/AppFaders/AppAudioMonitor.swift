@@ -22,7 +22,7 @@ final class AppAudioMonitor: @unchecked Sendable {
   private let lock = NSLock()
   private var _runningApps: [TrackedApp] = []
 
-  /// currently running applications that are tracked
+  /// currently running tracked applications
   var runningApps: [TrackedApp] {
     lock.lock()
     defer { lock.unlock() }
@@ -89,11 +89,14 @@ final class AppAudioMonitor: @unchecked Sendable {
     else { return }
 
     lock.lock()
-    _runningApps.append(trackedApp)
+    if !_runningApps.contains(where: { $0.bundleID == trackedApp.bundleID }) {
+      _runningApps.append(trackedApp)
+      os_log(.debug, log: log, "App launched: %{public}@", trackedApp.bundleID)
+      continuation.yield(.didLaunch(trackedApp))
+    } else {
+      os_log(.debug, log: log, "App launched (already tracked): %{public}@", trackedApp.bundleID)
+    }
     lock.unlock()
-
-    os_log(.debug, log: log, "App launched: %{public}@", trackedApp.bundleID)
-    continuation.yield(.didLaunch(trackedApp))
   }
 
   private func handleAppTerminate(
