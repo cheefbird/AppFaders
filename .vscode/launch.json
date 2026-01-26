@@ -19,6 +19,26 @@
       "target": "AppFaders",
       "configuration": "release",
       "preLaunchTask": "swift: Build Release AppFaders"
+    },
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:AppFaders}",
+      "name": "Debug AppFadersHelper",
+      "target": "AppFadersHelper",
+      "configuration": "debug",
+      "preLaunchTask": "swift: Build Debug AppFadersHelper"
+    },
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:AppFaders}",
+      "name": "Release AppFadersHelper",
+      "target": "AppFadersHelper",
+      "configuration": "release",
+      "preLaunchTask": "swift: Build Release AppFadersHelper"
     }
   ]
 }
