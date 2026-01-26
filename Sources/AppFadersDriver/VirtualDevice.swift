@@ -126,13 +126,6 @@ final class VirtualDevice: @unchecked Sendable {
       return true
     }
 
-    // custom IPC property for setting app volumes
-    if objectID == ObjectID.device,
-       address.mSelector == AppFadersProperty.setVolume
-    {
-      return true
-    }
-
     // delegate stream properties to VirtualStream
     if objectID == ObjectID.outputStream {
       return VirtualStream.shared.isPropertySettable(address: address)
@@ -351,9 +344,7 @@ final class VirtualDevice: @unchecked Sendable {
          kAudioDevicePropertyZeroTimeStampPeriod,
          kAudioDevicePropertyClockDomain,
          kAudioDevicePropertyIsHidden,
-         kAudioDevicePropertyPreferredChannelsForStereo,
-         AppFadersProperty.setVolume,
-         AppFadersProperty.getVolume:
+         kAudioDevicePropertyPreferredChannelsForStereo:
       true
     default:
       false
@@ -402,20 +393,12 @@ final class VirtualDevice: @unchecked Sendable {
         address.mScope == kAudioObjectPropertyScopeGlobal)
         ? UInt32(MemoryLayout<AudioObjectID>.size) : 0
 
-    case kAudioObjectPropertyCustomPropertyInfoList:
-      UInt32(MemoryLayout<AudioServerPlugInCustomPropertyInfo>.size * 2)
-
-    case kAudioDevicePropertyControlList:
-      0 // empty list
+    case kAudioObjectPropertyCustomPropertyInfoList,
+         kAudioDevicePropertyControlList:
+      0 // empty lists - custom IPC removed, using XPC
 
     case kAudioDevicePropertyNominalSampleRate:
       UInt32(MemoryLayout<Float64>.size)
-
-    case AppFadersProperty.setVolume:
-      UInt32(VolumeCommand.totalSize)
-
-    case AppFadersProperty.getVolume:
-      UInt32(MemoryLayout<Float32>.size)
 
     case kAudioDevicePropertyAvailableNominalSampleRates:
       // 3 sample rates: 44100, 48000, 96000
@@ -494,33 +477,9 @@ final class VirtualDevice: @unchecked Sendable {
       }
       return (Data(), 0) // no input streams
 
-    case kAudioObjectPropertyCustomPropertyInfoList:
-      var info = [
-        AudioServerPlugInCustomPropertyInfo(
-          mSelector: AppFadersProperty.setVolume,
-          mPropertyDataType: 0,
-          mQualifierDataType: 0
-        ),
-        AudioServerPlugInCustomPropertyInfo(
-          mSelector: AppFadersProperty.getVolume,
-          mPropertyDataType: 0,
-          mQualifierDataType: 0
-        )
-      ]
-      let size = MemoryLayout<AudioServerPlugInCustomPropertyInfo>.size * info.count
-      return (Data(bytes: &info, count: size), UInt32(size))
-
-    case AppFadersProperty.getVolume:
-      guard qualifierSize > 0, let qualifierData else {
-        return nil
-      }
-      let bundleID = String(cString: qualifierData.assumingMemoryBound(to: UInt8.self))
-      var volume = Float32(VolumeStore.shared.getVolume(for: bundleID))
-      return (Data(bytes: &volume, count: MemoryLayout<Float32>.size),
-              UInt32(MemoryLayout<Float32>.size))
-
-    case kAudioDevicePropertyControlList:
-      // empty list
+    case kAudioObjectPropertyCustomPropertyInfoList,
+         kAudioDevicePropertyControlList:
+      // empty lists - custom IPC removed, using XPC
       return (Data(), 0)
 
     case kAudioDevicePropertyNominalSampleRate:
@@ -627,34 +586,6 @@ final class VirtualDevice: @unchecked Sendable {
         data: data,
         size: size
       )
-      return noErr
-    }
-
-    // set application volume
-    if objectID == ObjectID.device,
-       address.mSelector == AppFadersProperty.setVolume
-    {
-      guard size >= UInt32(VolumeCommand.totalSize) else {
-        return kAudioHardwareBadPropertySizeError
-      }
-
-      // parse VolumeCommand from data
-      // wire format: [bundleIDLength: UInt8] [bundleIDBytes: 255 bytes] [volume: Float32]
-      let bundleIDLength = data.load(as: UInt8.self)
-      guard bundleIDLength <= UInt8(VolumeCommand.maxBundleIDLength) else {
-        return kAudioHardwareIllegalOperationError
-      }
-
-      let bundleIDStart = data.advanced(by: 1)
-      let bundleIDData = Data(bytes: bundleIDStart, count: Int(bundleIDLength))
-      guard let bundleID = String(data: bundleIDData, encoding: .utf8) else {
-        return kAudioHardwareIllegalOperationError
-      }
-
-      let volumeStart = data.advanced(by: 1 + VolumeCommand.maxBundleIDLength)
-      let volume = volumeStart.load(as: Float32.self)
-
-      VolumeStore.shared.setVolume(for: bundleID, volume: volume)
       return noErr
     }
 
