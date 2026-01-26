@@ -54,6 +54,9 @@ final class DriverEntry: @unchecked Sendable {
 
     self.host = host
 
+    // Connect to helper XPC service for volume data
+    HelperBridge.shared.connect()
+
     // VirtualDevice is a singleton, accessed via VirtualDevice.shared
     os_log(.debug, log: log, "initialize complete - device ID: %u", deviceObjectID)
     return noErr
