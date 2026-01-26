@@ -2,7 +2,7 @@
 // Central coordinator for the AppFaders host application
 //
 // Manages state for the UI, coordinates device discovery, app monitoring,
-// and IPC communication with the virtual driver.
+// and IPC communication with the helper service.
 
 import CAAudioHardware
 import Foundation
@@ -20,7 +20,7 @@ final class AudioOrchestrator {
   /// Currently running applications that are tracked
   private(set) var trackedApps: [TrackedApp] = []
 
-  /// Whether the AppFaders Virtual Driver is currently connected
+  /// Whether the helper service is currently connected
   private(set) var isDriverConnected: Bool = false
 
   /// Current volume levels for applications (Bundle ID -> Volume 0.0-1.0)
@@ -45,7 +45,7 @@ final class AudioOrchestrator {
 
   /// Starts the orchestration process
   /// - Consumes updates from DeviceManager and AppAudioMonitor
-  /// - Maintains connection to the virtual driver
+  /// - Maintains connection to the helper service
   /// - Note: This method blocks until the task is cancelled.
   func start() async {
     os_log(.info, log: log, "AudioOrchestrator starting...")
@@ -62,15 +62,15 @@ final class AudioOrchestrator {
       trackApp(app)
     }
 
-    // 4. Initial check for driver
-    await checkDriverConnection()
+    // 4. Initial connection to helper
+    await connectToHelper()
 
     // 5. Start consuming streams
     await withTaskGroup(of: Void.self) { group in
-      // Device List Updates
+      // Device List Updates (still useful for knowing if driver is available)
       group.addTask { [weak self] in
         for await _ in deviceUpdates {
-          await self?.checkDriverConnection()
+          await self?.checkDriverAvailability()
         }
       }
 
@@ -93,34 +93,33 @@ final class AudioOrchestrator {
 
   // MARK: - Actions
 
-  /// Gets the current volume for an application from the driver
+  /// Gets the current volume for an application from the helper
   /// - Parameter bundleID: The bundle identifier of the application
   /// - Returns: The volume level (0.0 - 1.0)
-  /// - Throws: Error if the driver communication fails
-  func getVolume(for bundleID: String) throws -> Float {
+  /// - Throws: Error if the helper communication fails
+  func getVolume(for bundleID: String) async throws -> Float {
     guard driverBridge.isConnected else {
-      throw DriverError.deviceNotFound
+      throw DriverError.helperNotRunning
     }
-    return try driverBridge.getAppVolume(bundleID: bundleID)
+    return try await driverBridge.getAppVolume(bundleID: bundleID)
   }
 
   /// Sets the volume for a specific application
   /// - Parameters:
   ///   - bundleID: The bundle identifier of the application
   ///   - volume: The volume level (0.0 - 1.0)
-  /// - Throws: Error if the driver communication fails
-  func setVolume(for bundleID: String, volume: Float) throws {
+  func setVolume(for bundleID: String, volume: Float) async {
     let oldVolume = appVolumes[bundleID]
 
     // 1. Update local state immediately for UI responsiveness
     appVolumes[bundleID] = volume
 
-    // 2. Send command to driver
+    // 2. Send command to helper
     do {
       if driverBridge.isConnected {
-        try driverBridge.setAppVolume(bundleID: bundleID, volume: volume)
+        try await driverBridge.setAppVolume(bundleID: bundleID, volume: volume)
       } else {
-        os_log(.debug, log: log, "Driver not connected, volume cached for %{public}@", bundleID)
+        os_log(.debug, log: log, "Helper not connected, volume cached for %{public}@", bundleID)
       }
     } catch {
       // Revert on error to maintain consistency
@@ -133,74 +132,74 @@ final class AudioOrchestrator {
       os_log(
         .error,
         log: log,
-        "Failed to set volume for %{public}@: %@",
+        "Failed to set volume for %{public}@: %{public}@",
         bundleID,
-        error as CVarArg
+        error.localizedDescription
       )
-      throw error
     }
   }
 
   // MARK: - Private Helpers
 
-  /// Checks if the virtual driver is present and updates connection state
-  private func checkDriverConnection() async {
-    if let device = deviceManager.appFadersDevice {
-      if !driverBridge.isConnected {
-        do {
-          try driverBridge.connect(deviceID: device.objectID)
-          isDriverConnected = true
-          os_log(.info, log: log, "Connected to AppFaders Virtual Driver")
+  /// Connects to the helper service
+  private func connectToHelper() async {
+    do {
+      try await driverBridge.connect()
+      isDriverConnected = true
+      os_log(.info, log: log, "Connected to AppFaders Helper Service")
 
-          // Restore volumes to driver
-          restoreVolumes()
-        } catch {
-          os_log(.error, log: log, "Failed to connect to driver: %@", error as CVarArg)
-          isDriverConnected = false
-        }
-      }
-    } else {
-      if driverBridge.isConnected {
-        driverBridge.disconnect()
-        isDriverConnected = false
-        os_log(.info, log: log, "Disconnected from AppFaders Virtual Driver")
-      }
+      // Restore volumes to helper
+      await restoreVolumes()
+    } catch {
+      os_log(.error, log: log, "Failed to connect to helper: %{public}@", error.localizedDescription)
+      isDriverConnected = false
     }
   }
 
-  private func restoreVolumes() {
+  /// Checks if driver is available (informational - connection is to helper)
+  private func checkDriverAvailability() {
+    let driverAvailable = deviceManager.appFadersDevice != nil
+    os_log(
+      .debug,
+      log: log,
+      "Driver availability check: %{public}@",
+      driverAvailable ? "available" : "not found"
+    )
+  }
+
+  private func restoreVolumes() async {
     for (bundleID, volume) in appVolumes {
       do {
-        try driverBridge.setAppVolume(bundleID: bundleID, volume: volume)
+        try await driverBridge.setAppVolume(bundleID: bundleID, volume: volume)
       } catch {
         os_log(
           .error,
           log: log,
-          "Failed to restore volume for %{public}@: %@",
+          "Failed to restore volume for %{public}@: %{public}@",
           bundleID,
-          error as CVarArg
+          error.localizedDescription
         )
       }
     }
   }
 
   /// Handles app launch and termination events
-  private func handleAppEvent(_ event: AppLifecycleEvent) {
+  private func handleAppEvent(_ event: AppLifecycleEvent) async {
     switch event {
     case let .didLaunch(app):
       trackApp(app)
 
-      // Sync volume to driver if it exists
+      // Sync volume to helper if connected
       if let vol = appVolumes[app.bundleID], driverBridge.isConnected {
         do {
-          try driverBridge.setAppVolume(bundleID: app.bundleID, volume: vol)
+          try await driverBridge.setAppVolume(bundleID: app.bundleID, volume: vol)
         } catch {
           os_log(
             .error,
             log: log,
-            "Failed to sync volume for launched app %{public}@: %@",
+            "Failed to sync volume for launched app %{public}@: %{public}@",
             app.bundleID,
-            error as CVarArg
+            error.localizedDescription
           )
         }
       }
