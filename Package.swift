@@ -9,6 +9,7 @@ let package = Package(
   ],
   products: [
     .executable(name: "AppFaders", targets: ["AppFaders"]),
+    .executable(name: "AppFadersHelper", targets: ["AppFadersHelper"]),
     .library(name: "AppFadersDriver", type: .dynamic, targets: ["AppFadersDriver"]),
     .plugin(name: "BundleAssembler", targets: ["BundleAssembler"])
   ],
@@ -21,6 +22,10 @@ let package = Package(
       dependencies: [
         .product(name: "CAAudioHardware", package: "CAAudioHardware")
       ]
+    ),
+    .executableTarget(
+      name: "AppFadersHelper",
+      dependencies: []
     ),
     .target(
       name: "AppFadersDriverBridge",
