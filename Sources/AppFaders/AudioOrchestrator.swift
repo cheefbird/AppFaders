@@ -93,6 +93,17 @@ final class AudioOrchestrator {
 
   // MARK: - Actions
 
+  /// Gets the current volume for an application from the driver
+  /// - Parameter bundleID: The bundle identifier of the application
+  /// - Returns: The volume level (0.0 - 1.0)
+  /// - Throws: Error if the driver communication fails
+  func getVolume(for bundleID: String) throws -> Float {
+    guard driverBridge.isConnected else {
+      throw DriverError.deviceNotFound
+    }
+    return try driverBridge.getAppVolume(bundleID: bundleID)
+  }
+
   /// Sets the volume for a specific application
   /// - Parameters:
   ///   - bundleID: The bundle identifier of the application
