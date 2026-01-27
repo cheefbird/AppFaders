@@ -11,6 +11,10 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 HAL_PLUGINS_DIR="/Library/Audio/Plug-Ins/HAL"
 DRIVER_NAME="AppFadersDriver.driver"
+HELPER_NAME="AppFadersHelper"
+HELPER_SUPPORT_DIR="/Library/Application Support/AppFaders"
+LAUNCHDAEMON_PLIST="com.fbreidenbach.appfaders.helper.plist"
+LAUNCHDAEMONS_DIR="/Library/LaunchDaemons"
 
 # colors for output
 RED='\033[0;31m'
@@ -27,37 +31,71 @@ error() {
 
 cd "$PROJECT_DIR"
 
-# step 1: build
+# step 1: build driver and helper
 info "Building project..."
 swift build || error "Build failed"
 
-# step 2: locate built dylib
+# step 2: install helper (before driver so XPC service is available)
+info "Installing helper service..."
+
+HELPER_BINARY=".build/debug/$HELPER_NAME"
+if [[ ! -f $HELPER_BINARY ]]; then
+  error "Helper binary not found at $HELPER_BINARY"
+fi
+
+# create support directory
+sudo mkdir -p "$HELPER_SUPPORT_DIR"
+
+# copy helper binary
+sudo cp "$HELPER_BINARY" "$HELPER_SUPPORT_DIR/"
+sudo chmod 755 "$HELPER_SUPPORT_DIR/$HELPER_NAME"
+sudo chown root:wheel "$HELPER_SUPPORT_DIR/$HELPER_NAME"
+info "Helper binary installed to $HELPER_SUPPORT_DIR"
+
+# install LaunchDaemon plist
+PLIST_SOURCE="$PROJECT_DIR/Resources/$LAUNCHDAEMON_PLIST"
+if [[ ! -f $PLIST_SOURCE ]]; then
+  error "LaunchDaemon plist not found at $PLIST_SOURCE"
+fi
+
+# unload existing if present (ignore errors)
+sudo launchctl bootout system "$LAUNCHDAEMONS_DIR/$LAUNCHDAEMON_PLIST" 2>/dev/null || true
+
+sudo cp "$PLIST_SOURCE" "$LAUNCHDAEMONS_DIR/"
+sudo chown root:wheel "$LAUNCHDAEMONS_DIR/$LAUNCHDAEMON_PLIST"
+sudo chmod 644 "$LAUNCHDAEMONS_DIR/$LAUNCHDAEMON_PLIST"
+
+# bootstrap the LaunchDaemon into system domain
+sudo launchctl bootstrap system "$LAUNCHDAEMONS_DIR/$LAUNCHDAEMON_PLIST" || warn "Failed to bootstrap LaunchDaemon (may already be loaded)"
+info "Helper LaunchDaemon installed and bootstrapped"
+
+# step 3: locate built driver dylib
 DYLIB_PATH=".build/debug/libAppFadersDriver.dylib"
 if [[ ! -f $DYLIB_PATH ]]; then
   error "Built dylib not found at $DYLIB_PATH"
 fi
 info "Found dylib: $DYLIB_PATH"
 
-# step 3: locate bundle structure created by plugin
+# step 4: locate bundle structure created by plugin
 BUNDLE_PATH=$(find .build -path "*BundleAssembler/$DRIVER_NAME" -type d 2>/dev/null | head -1)
 if [[ -z $BUNDLE_PATH || ! -d $BUNDLE_PATH ]]; then
   error "Bundle structure not found. Make sure BundleAssembler plugin ran."
 fi
 info "Found bundle: $BUNDLE_PATH"
 
-# step 4: copy dylib to bundle Contents/MacOS/
+# step 5: copy dylib to bundle Contents/MacOS/
 MACOS_DIR="$BUNDLE_PATH/Contents/MacOS"
 BINARY_DEST="$MACOS_DIR/AppFadersDriver"
 info "Copying dylib to bundle..."
 cp "$DYLIB_PATH" "$BINARY_DEST"
 chmod 755 "$BINARY_DEST"
 
-# step 5: fix install name (dylib references @rpath/libAppFadersDriver.dylib which won't resolve)
+# step 6: fix install name (dylib references @rpath/libAppFadersDriver.dylib which won't resolve)
 info "Fixing install name..."
 install_name_tool -id "@loader_path/AppFadersDriver" "$BINARY_DEST"
 install_name_tool -change "@rpath/libAppFadersDriver.dylib" "@loader_path/AppFadersDriver" "$BINARY_DEST"
 
-# step 6: code sign the binary
+# step 7: code sign the binary
 info "Code signing binary..."
 # remove marker file that interferes with signing
 rm -f "$BUNDLE_PATH/.bundle-ready"
@@ -70,7 +108,7 @@ info "Using identity hash: $SIGNING_HASH"
 codesign --force --options runtime --timestamp --sign "$SIGNING_HASH" "$BINARY_DEST" || error "Code signing failed"
 info "Binary signed"
 
-# step 7: verify bundle structure
+# step 8: verify bundle structure
 if [[ ! -f "$BUNDLE_PATH/Contents/Info.plist" ]]; then
   error "Info.plist missing from bundle"
 fi
@@ -79,7 +117,7 @@ if [[ ! -f $BINARY_DEST ]]; then
 fi
 info "Bundle structure verified"
 
-# step 8: install to HAL directory (requires sudo)
+# step 9: install to HAL directory (requires sudo)
 INSTALL_PATH="$HAL_PLUGINS_DIR/$DRIVER_NAME"
 info "Installing to $INSTALL_PATH (requires sudo)..."
 
@@ -93,12 +131,12 @@ sudo chown -R root:wheel "$INSTALL_PATH"
 sudo chmod -R 755 "$INSTALL_PATH"
 info "Driver installed"
 
-# step 9: restart coreaudiod
+# step 10: restart coreaudiod
 info "Restarting coreaudiod (requires sudo)..."
 sudo killall coreaudiod 2>/dev/null || true
 sleep 2
 
-# step 10: verify device appears
+# step 11: verify device appears
 info "Verifying device registration..."
 sleep 1
 
