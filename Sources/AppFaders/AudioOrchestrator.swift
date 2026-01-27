@@ -9,24 +9,13 @@ private let log = OSLog(subsystem: "com.fbreidenbach.appfaders", category: "Audi
 @MainActor
 @Observable
 final class AudioOrchestrator {
-  // MARK: - State
-
-  /// Currently running applications that are tracked
   private(set) var trackedApps: [TrackedApp] = []
-
-  /// Whether the helper service is currently connected
   private(set) var isDriverConnected: Bool = false
-
-  /// Current volume levels for applications (Bundle ID -> Volume 0.0-1.0)
-  private(set) var appVolumes: [String: Float] = [:]
-
-  // MARK: - Components
+  private(set) var appVolumes: [String: Float] = [:] // bundleID -> volume
 
   private let deviceManager: DeviceManager
   private let appAudioMonitor: AppAudioMonitor
   private let driverBridge: DriverBridge
-
-  // MARK: - Initialization
 
   init() {
     deviceManager = DeviceManager()
@@ -44,24 +33,18 @@ final class AudioOrchestrator {
   func start() async {
     os_log(.info, log: log, "AudioOrchestrator starting...")
 
-    // 1. Capture streams first to avoid race conditions and actor isolation issues
     let deviceUpdates = deviceManager.deviceListUpdates
     let appEvents = appAudioMonitor.events
 
-    // 2. Initialize monitoring (populates initial list)
     appAudioMonitor.start()
 
-    // 3. Process initial apps (deduplicating if stream caught them already)
     for app in appAudioMonitor.runningApps {
       trackApp(app)
     }
 
-    // 4. Initial connection to helper
     await connectToHelper()
 
-    // 5. Start consuming streams
     await withTaskGroup(of: Void.self) { group in
-      // Device List Updates (still useful for knowing if driver is available)
       group.addTask { [weak self] in
         for await _ in deviceUpdates {
           await self?.checkDriverAvailability()
@@ -77,8 +60,7 @@ final class AudioOrchestrator {
     }
   }
 
-  /// Stops the orchestrator (placeholder for interface compliance)
-  /// Task cancellation is the primary mechanism to stop start().
+  /// Stops the orchestrator. Cancellation of start() is the primary stop mechanism.
   func stop() {
     os_log(.info, log: log, "AudioOrchestrator stopping")
     driverBridge.disconnect()
@@ -104,11 +86,8 @@ final class AudioOrchestrator {
   ///   - volume: The volume level (0.0 - 1.0)
   func setVolume(for bundleID: String, volume: Float) async {
     let oldVolume = appVolumes[bundleID]
-
-    // 1. Update local state immediately for UI responsiveness
     appVolumes[bundleID] = volume
 
-    // 2. Send command to helper
     do {
       if driverBridge.isConnected {
         try await driverBridge.setAppVolume(bundleID: bundleID, volume: volume)
@@ -116,7 +95,6 @@ final class AudioOrchestrator {
         os_log(.debug, log: log, "Helper not connected, volume cached for %{public}@", bundleID)
       }
     } catch {
-      // Revert on error to maintain consistency
       if let old = oldVolume {
         appVolumes[bundleID] = old
       } else {
@@ -141,8 +119,6 @@ final class AudioOrchestrator {
       try await driverBridge.connect()
       isDriverConnected = true
       os_log(.info, log: log, "Connected to AppFaders Helper Service")
-
-      // Restore volumes to helper
       await restoreVolumes()
     } catch {
       os_log(
@@ -155,7 +131,7 @@ final class AudioOrchestrator {
     }
   }
 
-  /// Checks if driver is available (informational - connection is to helper)
+  /// Logs driver availability status
   private func checkDriverAvailability() {
     let driverAvailable = deviceManager.appFadersDevice != nil
     os_log(
@@ -188,7 +164,6 @@ final class AudioOrchestrator {
     case let .didLaunch(app):
       trackApp(app)
 
-      // Sync volume to helper if connected
       if let vol = appVolumes[app.bundleID], driverBridge.isConnected {
         do {
           try await driverBridge.setAppVolume(bundleID: app.bundleID, volume: vol)
@@ -207,7 +182,6 @@ final class AudioOrchestrator {
       if let index = trackedApps.firstIndex(where: { $0.bundleID == bundleID }) {
         trackedApps.remove(at: index)
         os_log(.debug, log: log, "Tracked app terminated: %{public}@", bundleID)
-        // We generally keep the volume in appVolumes to remember it for next launch
       }
     }
   }
@@ -215,7 +189,6 @@ final class AudioOrchestrator {
   private func trackApp(_ app: TrackedApp) {
     if !trackedApps.contains(where: { $0.bundleID == app.bundleID }) {
       trackedApps.append(app)
-      // Initialize volume if not present (default 1.0)
       if appVolumes[app.bundleID] == nil {
         appVolumes[app.bundleID] = 1.0
       }

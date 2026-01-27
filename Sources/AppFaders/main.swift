@@ -5,7 +5,6 @@ import Foundation
 Task { @MainActor in
   print("AppFaders Host v0.2.0")
 
-  // Create the orchestrator (this initializes components)
   let orchestrator = AudioOrchestrator()
   print("Orchestrator initialized. Starting...")
 

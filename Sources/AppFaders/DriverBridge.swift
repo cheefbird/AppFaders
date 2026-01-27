@@ -75,7 +75,6 @@ final class DriverBridge: @unchecked Sendable {
   ///   - volume: The desired volume level (0.0 - 1.0)
   /// - Throws: DriverError if validation fails or XPC call fails
   func setAppVolume(bundleID: String, volume: Float) async throws {
-    // Validation
     guard volume >= 0.0, volume <= 1.0 else {
       throw DriverError.invalidVolumeRange(volume)
     }

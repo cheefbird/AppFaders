@@ -2,26 +2,17 @@ import Foundation
 
 /// errors related to driver communication and management
 enum DriverError: Error, LocalizedError, Equatable {
-  /// the virtual audio device could not be found
   case deviceNotFound
-  /// failed to read a property from the audio object
   case propertyReadFailed(OSStatus)
-  /// failed to write a property to the audio object
   case propertyWriteFailed(OSStatus)
-  /// the provided volume is outside the valid range (0.0 - 1.0)
   case invalidVolumeRange(Float)
-  /// the bundle identifier exceeds the maximum allowed length
   case bundleIDTooLong(Int)
 
   // MARK: - XPC Errors
 
-  /// the helper service is not running and could not be started
   case helperNotRunning
-  /// failed to establish XPC connection to helper
   case connectionFailed(String)
-  /// XPC connection was interrupted
   case connectionInterrupted
-  /// helper returned an error
   case remoteError(String)
 
   var errorDescription: String? {
