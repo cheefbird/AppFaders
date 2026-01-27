@@ -1,9 +1,3 @@
-// DeviceManager.swift
-// Wrapper around CAAudioHardware for device discovery and notifications
-//
-// handles enumeration of audio devices and identifies the AppFaders virtual device.
-// provides notifications when the system's device list changes via AsyncStream.
-
 @preconcurrency import CAAudioHardware
 import Foundation
 import os.log

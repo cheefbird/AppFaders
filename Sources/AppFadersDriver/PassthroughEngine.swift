@@ -1,9 +1,3 @@
-// PassthroughEngine.swift
-// Routes captured audio from the virtual device to the default physical output
-//
-// audio flows: app -> virtual device -> ring buffer -> physical output IOProc
-// all operations must be real-time safe (no locks, no allocations)
-
 import AudioToolbox
 import CoreAudio
 import Foundation

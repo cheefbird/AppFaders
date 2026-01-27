@@ -1,8 +1,3 @@
-// AudioTypes.swift
-// Shared types for the AppFaders HAL driver
-//
-// defines configuration and format types used across driver components
-
 import CoreAudio
 
 // MARK: - Device Configuration
@@ -114,4 +109,3 @@ public extension AudioDeviceConfiguration {
     }
   }
 }
-

@@ -1,10 +1,3 @@
-// DriverEntry.swift
-// HAL plug-in entry point and lifecycle management
-//
-// singleton that coordinates between the C interface layer (PlugInInterface.c)
-// and the Swift driver implementation. coreaudiod loads the C vtable which
-// delegates to these @_cdecl exported functions.
-
 import CoreAudio
 import Foundation
 import os.log

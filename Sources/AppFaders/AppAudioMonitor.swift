@@ -1,9 +1,3 @@
-// AppAudioMonitor.swift
-// Monitors running applications for audio control
-//
-// tracks app launch and termination events via NSWorkspace.
-// filters apps to those with valid bundle identifiers.
-
 import AppKit
 import Foundation
 import os.log

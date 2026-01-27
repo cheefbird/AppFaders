@@ -1,10 +1,6 @@
-// HelperProtocol.swift
-// XPC protocol definition for host to helper communication
-//
-// duplicated from AppFadersHelper/XPCProtocols.swift - must match exactly
-
 import Foundation
 
+// NOTE: Must match AppFadersHelper/XPCProtocols.swift exactly
 /// Protocol for host app connections (read-write)
 @objc protocol AppFadersHostProtocol {
   func setVolume(bundleID: String, volume: Float, reply: @escaping (NSError?) -> Void)

@@ -1,8 +1,3 @@
-// DriverBridge.swift
-// XPC client for communicating with the AppFaders helper service
-//
-// Handles async volume commands via XPC. Replaces the defunct AudioObject property approach.
-
 import Foundation
 import os.log
 
@@ -93,7 +88,7 @@ final class DriverBridge: @unchecked Sendable {
 
     try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
       proxy.setVolume(bundleID: bundleID, volume: volume) { error in
-        if let error = error {
+        if let error {
           continuation.resume(throwing: DriverError.remoteError(error.localizedDescription))
         } else {
           continuation.resume()
@@ -115,7 +110,7 @@ final class DriverBridge: @unchecked Sendable {
 
     return try await withCheckedThrowingContinuation { continuation in
       proxy.getVolume(bundleID: bundleID) { volume, error in
-        if let error = error {
+        if let error {
           continuation.resume(throwing: DriverError.remoteError(error.localizedDescription))
         } else {
           continuation.resume(returning: volume)
@@ -131,7 +126,7 @@ final class DriverBridge: @unchecked Sendable {
     let conn = connection
     lock.unlock()
 
-    guard let conn = conn else {
+    guard let conn else {
       throw DriverError.helperNotRunning
     }
 

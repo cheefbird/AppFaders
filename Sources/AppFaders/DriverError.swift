@@ -1,8 +1,3 @@
-// DriverError.swift
-// Error types for the AppFaders host orchestrator
-//
-// defines errors that can occur during audio device management and IPC bridge operations.
-
 import Foundation
 
 /// errors related to driver communication and management

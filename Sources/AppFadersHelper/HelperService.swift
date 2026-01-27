@@ -1,6 +1,3 @@
-// HelperService.swift
-// XPC service implementation handling requests from host and driver
-
 import Foundation
 import os.log
 

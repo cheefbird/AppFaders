@@ -1,6 +1,3 @@
-// XPCProtocols.swift
-// XPC protocol definitions for host and driver clients
-
 import Foundation
 
 /// Protocol for host app connections (read-write)

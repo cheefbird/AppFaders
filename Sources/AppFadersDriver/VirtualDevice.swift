@@ -1,10 +1,3 @@
-// VirtualDevice.swift
-// AudioObject implementation for "AppFaders Virtual Device"
-//
-// implements property handlers for the virtual audio device that appears
-// in System Settings. coreaudiod queries these properties to display
-// device info and route audio.
-
 import CoreAudio
 import Foundation
 import os.log

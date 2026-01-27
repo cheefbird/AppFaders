@@ -1,8 +1,3 @@
-// VolumeStore.swift
-// Thread-safe storage for per-application volume settings
-//
-// Central source of truth for volume levels, accessed by host and driver via XPC.
-
 import Foundation
 import os.log
 

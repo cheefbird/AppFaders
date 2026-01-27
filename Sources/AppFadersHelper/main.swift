@@ -1,6 +1,3 @@
-// main.swift
-// Entry point for AppFadersHelper XPC service
-
 import Foundation
 import os.log
 

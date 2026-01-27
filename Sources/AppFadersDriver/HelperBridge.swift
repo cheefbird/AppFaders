@@ -1,6 +1,3 @@
-// HelperBridge.swift
-// XPC client for driver to communicate with helper service
-
 import Foundation
 import os.log
 

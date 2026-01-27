@@ -1,9 +1,3 @@
-// AudioOrchestrator.swift
-// Central coordinator for the AppFaders host application
-//
-// Manages state for the UI, coordinates device discovery, app monitoring,
-// and IPC communication with the helper service.
-
 import CAAudioHardware
 import Foundation
 import Observation
@@ -151,7 +145,12 @@ final class AudioOrchestrator {
       // Restore volumes to helper
       await restoreVolumes()
     } catch {
-      os_log(.error, log: log, "Failed to connect to helper: %{public}@", error.localizedDescription)
+      os_log(
+        .error,
+        log: log,
+        "Failed to connect to helper: %{public}@",
+        error.localizedDescription
+      )
       isDriverConnected = false
     }
   }

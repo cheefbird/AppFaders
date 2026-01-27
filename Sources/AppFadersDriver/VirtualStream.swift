@@ -1,9 +1,3 @@
-// VirtualStream.swift
-// AudioObject implementation for the virtual device's output stream
-//
-// handles stream configuration (sample rate, format, channels) and
-// coordinates IO state. the stream is owned by VirtualDevice.
-
 import CoreAudio
 import Foundation
 import os.log
