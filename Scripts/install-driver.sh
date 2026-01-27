@@ -13,8 +13,8 @@ HAL_PLUGINS_DIR="/Library/Audio/Plug-Ins/HAL"
 DRIVER_NAME="AppFadersDriver.driver"
 HELPER_NAME="AppFadersHelper"
 HELPER_SUPPORT_DIR="/Library/Application Support/AppFaders"
-LAUNCHAGENT_PLIST="com.fbreidenbach.appfaders.helper.plist"
-LAUNCHAGENTS_DIR="/Library/LaunchAgents"
+LAUNCHDAEMON_PLIST="com.fbreidenbach.appfaders.helper.plist"
+LAUNCHDAEMONS_DIR="/Library/LaunchDaemons"
 
 # colors for output
 RED='\033[0;31m'
@@ -52,22 +52,22 @@ sudo chmod 755 "$HELPER_SUPPORT_DIR/$HELPER_NAME"
 sudo chown root:wheel "$HELPER_SUPPORT_DIR/$HELPER_NAME"
 info "Helper binary installed to $HELPER_SUPPORT_DIR"
 
-# install LaunchAgent plist
-PLIST_SOURCE="$PROJECT_DIR/Resources/$LAUNCHAGENT_PLIST"
+# install LaunchDaemon plist
+PLIST_SOURCE="$PROJECT_DIR/Resources/$LAUNCHDAEMON_PLIST"
 if [[ ! -f $PLIST_SOURCE ]]; then
-  error "LaunchAgent plist not found at $PLIST_SOURCE"
+  error "LaunchDaemon plist not found at $PLIST_SOURCE"
 fi
 
 # unload existing if present (ignore errors)
-sudo launchctl unload "$LAUNCHAGENTS_DIR/$LAUNCHAGENT_PLIST" 2>/dev/null || true
+sudo launchctl bootout system "$LAUNCHDAEMONS_DIR/$LAUNCHDAEMON_PLIST" 2>/dev/null || true
 
-sudo cp "$PLIST_SOURCE" "$LAUNCHAGENTS_DIR/"
-sudo chown root:wheel "$LAUNCHAGENTS_DIR/$LAUNCHAGENT_PLIST"
-sudo chmod 644 "$LAUNCHAGENTS_DIR/$LAUNCHAGENT_PLIST"
+sudo cp "$PLIST_SOURCE" "$LAUNCHDAEMONS_DIR/"
+sudo chown root:wheel "$LAUNCHDAEMONS_DIR/$LAUNCHDAEMON_PLIST"
+sudo chmod 644 "$LAUNCHDAEMONS_DIR/$LAUNCHDAEMON_PLIST"
 
-# load the LaunchAgent
-sudo launchctl load "$LAUNCHAGENTS_DIR/$LAUNCHAGENT_PLIST" || warn "Failed to load LaunchAgent (may already be loaded)"
-info "Helper LaunchAgent installed and loaded"
+# bootstrap the LaunchDaemon into system domain
+sudo launchctl bootstrap system "$LAUNCHDAEMONS_DIR/$LAUNCHDAEMON_PLIST" || warn "Failed to bootstrap LaunchDaemon (may already be loaded)"
+info "Helper LaunchDaemon installed and bootstrapped"
 
 # step 3: locate built driver dylib
 DYLIB_PATH=".build/debug/libAppFadersDriver.dylib"

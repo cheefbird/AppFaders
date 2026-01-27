@@ -7,8 +7,8 @@ set -e
 DRIVER_PATH="/Library/Audio/Plug-Ins/HAL/AppFadersDriver.driver"
 HELPER_NAME="AppFadersHelper"
 HELPER_SUPPORT_DIR="/Library/Application Support/AppFaders"
-LAUNCHAGENT_PLIST="com.fbreidenbach.appfaders.helper.plist"
-LAUNCHAGENTS_DIR="/Library/LaunchAgents"
+LAUNCHDAEMON_PLIST="com.fbreidenbach.appfaders.helper.plist"
+LAUNCHDAEMONS_DIR="/Library/LaunchDaemons"
 
 # colors for output
 GREEN='\033[0;32m'
@@ -31,16 +31,16 @@ info "Restarting coreaudiod..."
 sudo killall coreaudiod 2>/dev/null || true
 sleep 2
 
-# step 3: unload LaunchAgent (ignore errors if not loaded)
-info "Unloading helper LaunchAgent..."
-sudo launchctl unload "$LAUNCHAGENTS_DIR/$LAUNCHAGENT_PLIST" 2>/dev/null || true
+# step 3: unload LaunchDaemon (ignore errors if not loaded)
+info "Unloading helper LaunchDaemon..."
+sudo launchctl bootout system "$LAUNCHDAEMONS_DIR/$LAUNCHDAEMON_PLIST" 2>/dev/null || true
 
-# step 4: remove LaunchAgent plist
-if [[ -f "$LAUNCHAGENTS_DIR/$LAUNCHAGENT_PLIST" ]]; then
-  info "Removing LaunchAgent plist..."
-  sudo rm -f "$LAUNCHAGENTS_DIR/$LAUNCHAGENT_PLIST"
+# step 4: remove LaunchDaemon plist
+if [[ -f "$LAUNCHDAEMONS_DIR/$LAUNCHDAEMON_PLIST" ]]; then
+  info "Removing LaunchDaemon plist..."
+  sudo rm -f "$LAUNCHDAEMONS_DIR/$LAUNCHDAEMON_PLIST"
 else
-  warn "LaunchAgent plist not found"
+  warn "LaunchDaemon plist not found"
 fi
 
 # step 5: remove helper binary

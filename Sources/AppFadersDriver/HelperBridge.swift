@@ -61,8 +61,10 @@ final class HelperBridge: @unchecked Sendable {
 
     os_log(.info, log: log, "XPC connection established")
 
-    // Initial cache refresh (async, don't block)
-    refreshCacheAsync()
+    // Defer initial cache refresh - XPC calls during driver init can block
+    DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.5) { [weak self] in
+      self?.refreshCacheAsync()
+    }
   }
 
   /// Disconnect from helper service
@@ -111,20 +113,25 @@ final class HelperBridge: @unchecked Sendable {
     let conn = connection
     lock.unlock()
 
-    guard let conn = conn else {
+    guard let conn else {
       os_log(.debug, log: log, "Cannot refresh cache - not connected")
       return
     }
 
     guard let proxy = conn.remoteObjectProxyWithErrorHandler({ error in
-      os_log(.error, log: log, "XPC error during cache refresh: %{public}@", error.localizedDescription)
+      os_log(
+        .error,
+        log: log,
+        "XPC error during cache refresh: %{public}@",
+        error.localizedDescription
+      )
     }) as? AppFadersDriverProtocol else {
       os_log(.error, log: log, "Failed to get remote object proxy")
       return
     }
 
     proxy.getAllVolumes { [weak self] volumes, error in
-      if let error = error {
+      if let error {
         os_log(.error, log: log, "getAllVolumes failed: %{public}@", error.localizedDescription)
         return
       }
