@@ -9,7 +9,7 @@ Per-application audio volume control for macOS via a custom HAL audio driver.
 AppFaders is a menu bar app that lets you control volume individually for each application. It works by installing a virtual audio device (HAL plug-in) that sits between apps and your output device.
 
 ```mermaid
-flowchart LR
+flowchart TB
     subgraph Host["Host App (SwiftUI)"]
         H1[Menu Bar UI]
         H2[App monitoring]
