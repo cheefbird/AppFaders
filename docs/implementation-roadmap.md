@@ -26,7 +26,7 @@ This document outlines the sequential phases for building the AppFaders macOS ap
 **Goal**: Create the native macOS user interface.
 
 - **Menu Bar Integration**: Build the Menu Bar Extra and the SwiftUI popover.
-- **Dynamic Mixer**: Develop the app list with reactive sliders linked to the Audio Orchestrator via XPC.
+- **Dynamic Mixer**: Develop the app list with reactive sliders and global mute/unmute toggles, linked to the Audio Orchestrator via XPC.
 - **Native Aesthetic**: Implement Light/Dark/Auto modes with a lightweight, translucent design.
 - **Verification**: Smooth UI interactions and real-time volume synchronization.
 
