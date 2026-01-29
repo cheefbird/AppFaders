@@ -1,0 +1,1075 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "bi8Au",
+      "x": 0,
+      "y": 0,
+      "name": "Dark Mode UI",
+      "clip": true,
+      "width": 800,
+      "height": 600,
+      "fill": "#000000",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "P5Ib2",
+          "x": 210,
+          "y": 50,
+          "name": "AppFaders Panel",
+          "width": 380,
+          "fill": "#1E1E1E",
+          "cornerRadius": 20,
+          "layout": "vertical",
+          "padding": 20,
+          "children": [
+            {
+              "id": "Zmgej",
+              "type": "ref",
+              "ref": "7tlKE",
+              "width": "fill_container",
+              "name": "header"
+            },
+            {
+              "id": "GvEMj",
+              "type": "ref",
+              "ref": "KMsWg",
+              "width": "fill_container",
+              "name": "divider1"
+            },
+            {
+              "id": "iJWmp",
+              "type": "ref",
+              "ref": "ZmHmG",
+              "width": "fill_container",
+              "name": "masterOutput"
+            },
+            {
+              "id": "DBZdy",
+              "type": "ref",
+              "ref": "SZAXz",
+              "width": "fill_container",
+              "name": "appleMusic",
+              "descendants": {
+                "ah14t": {
+                  "id": "To1BP",
+                  "type": "ref",
+                  "ref": "kUrVA"
+                },
+                "zyfrg": {
+                  "content": "Apple Music"
+                },
+                "qLX8n": {
+                  "content": "100%"
+                },
+                "2U7G2/c8C0i": {
+                  "x": 184
+                }
+              }
+            },
+            {
+              "id": "TlExR",
+              "type": "ref",
+              "ref": "SZAXz",
+              "width": "fill_container",
+              "name": "zoom",
+              "descendants": {
+                "ah14t": {
+                  "id": "h1PBe",
+                  "type": "ref",
+                  "ref": "RSov8"
+                },
+                "zyfrg": {
+                  "content": "Zoom"
+                },
+                "qLX8n": {
+                  "content": "40%"
+                },
+                "2U7G2/c8C0i": {
+                  "x": 64
+                }
+              }
+            },
+            {
+              "id": "Ia7mK",
+              "type": "ref",
+              "ref": "SZAXz",
+              "width": "fill_container",
+              "name": "discord",
+              "descendants": {
+                "ah14t": {
+                  "id": "pbDFM",
+                  "type": "ref",
+                  "ref": "kMbNH"
+                },
+                "zyfrg": {
+                  "content": "Discord"
+                },
+                "qLX8n": {
+                  "content": "75%"
+                },
+                "2U7G2/c8C0i": {
+                  "x": 134
+                }
+              }
+            },
+            {
+              "id": "uPrI0",
+              "type": "ref",
+              "ref": "MBi9g",
+              "width": "fill_container",
+              "name": "safari",
+              "descendants": {
+                "tkmL0": {
+                  "id": "PJdDR",
+                  "type": "ref",
+                  "ref": "dtaVj"
+                },
+                "ziFya": {
+                  "content": "Safari"
+                },
+                "dc6AJ/c8C0i": {
+                  "x": 0
+                }
+              }
+            },
+            {
+              "id": "rrMGN",
+              "type": "ref",
+              "ref": "KMsWg",
+              "width": "fill_container",
+              "name": "divider2"
+            },
+            {
+              "id": "Pe4sj",
+              "type": "ref",
+              "ref": "SCxSk",
+              "width": "fill_container",
+              "name": "footer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "odSpy",
+      "x": 1039,
+      "y": 0,
+      "name": "Components",
+      "clip": true,
+      "width": 900,
+      "height": 1100,
+      "fill": "#0D0D0D",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "BjAXz",
+          "x": 40,
+          "y": 40,
+          "name": "Icons Row",
+          "gap": 32,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "tLYj9",
+              "name": "Icon/Speaker",
+              "reusable": true,
+              "width": 23,
+              "height": 18,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "path",
+                  "id": "rOsFh",
+                  "x": 0,
+                  "y": 0,
+                  "geometry": "M22.488 18.375c0.434 0.293 0.973 0.187 1.29-0.258 1.5-2.063 2.378-4.899 2.378-7.793 0-2.894-0.867-5.754-2.379-7.793-0.316-0.445-0.855-0.55-1.289-0.258-0.434 0.292-0.504 0.844-0.164 1.324 1.278 1.805 2.016 4.23 2.016 6.727 0 2.497-0.762 4.898-2.016 6.727-0.328 0.48-0.27 1.03 0.164 1.324m-4.336-3.059c0.387 0.27 0.938 0.188 1.254-0.27 0.903-1.183 1.442-2.93 1.442-4.722 0-1.792-0.54-3.527-1.442-4.723-0.316-0.457-0.867-0.55-1.254-0.27-0.48 0.329-0.55 0.915-0.187 1.395 0.68 0.938 1.066 2.239 1.066 3.598 0 1.36-0.398 2.648-1.066 3.598-0.352 0.492-0.293 1.054 0.187 1.394m-5.519 5.356c0.773 0 1.324-0.551 1.324-1.313l0-17.976c0-0.762-0.55-1.383-1.348-1.383-0.55 0-0.914 0.246-1.511 0.808l-5.004 4.688c-0.07949 0.07312-0.18516 0.11099-0.293 0.105l-3.352 0c-1.594 0-2.449 0.88-2.449 2.567l0 4.36c0 1.698 0.855 2.566 2.45 2.566l3.35 0c0.118 0 0.223 0.035 0.294 0.105l5.004 4.734c0.527 0.516 0.984 0.739 1.535 0.739",
+                  "fill": "#fff",
+                  "width": 23,
+                  "height": 18
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "u847K",
+              "name": "Icon/Muted",
+              "reusable": true,
+              "width": 18,
+              "height": 18,
+              "layout": "vertical",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "path",
+                  "id": "yAKpZ",
+                  "geometry": "M16.24582 19.747c-0.153 0.554-0.638 0.925-1.273 0.925-0.539 0-0.996-0.223-1.535-0.738l-4.992-4.735c-0.08113-0.07036-0.18565-0.10781-0.293-0.105l-3.363 0c-1.582 0-2.45-0.867-2.45-2.566l0-4.36c0-0.762 0.178-1.36 0.52-1.784l13.386 13.363z m0.052-18.364l0 11.992-7.87-7.865 0.018-0.014 4.992-4.687c0.598-0.574 0.973-0.809 1.512-0.809 0.797 0 1.348 0.621 1.348 1.383m4.043 20.519c0.3531 0.35152 0.92391 0.35152 1.277 0 0.34-0.363 0.351-0.925 0-1.277l-20.074-20.062c-0.35798-0.35196-0.93202-0.35196-1.29 0-0.33843 0.3584-0.33843 0.9186 0 1.277l20.087 20.062z",
+                  "fill": "#e53935",
+                  "width": 18,
+                  "height": 18
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ZMzGz",
+              "name": "Icon/Settings",
+              "reusable": true,
+              "width": 24,
+              "height": 24,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "path",
+                  "id": "2CMzN",
+                  "x": 0,
+                  "y": 0,
+                  "geometry": "M11.168 24.492l2.156 0c0.61 0 1.055-0.363 1.184-0.96l0.61-2.579c0.43974-0.1444 0.86993-0.31641 1.288-0.515l2.262 1.382c0.504 0.317 1.078 0.27 1.5-0.152l1.512-1.5c0.422-0.422 0.48-1.031 0.14-1.535l-1.383-2.238c0.2-0.41 0.375-0.832 0.504-1.254l2.602-0.621c0.598-0.13 0.95-0.575 0.95-1.184l0-2.121c0-0.598-0.352-1.043-0.95-1.172l-2.578-0.621c-0.152-0.48-0.34-0.914-0.504-1.277l1.383-2.274c0.328-0.504 0.293-1.078-0.14-1.5l-1.537-1.511c-0.434-0.398-0.95-0.468-1.465-0.175l-2.297 1.418c-0.4135-0.21314-0.8448-0.38981-1.289-0.528l-0.61-2.613c-0.126-0.599-0.571-0.962-1.181-0.962l-2.156 0c-0.61 0-1.055 0.363-1.195 0.96l-0.61 2.59c-0.44736 0.14417-0.88215 0.32478-1.3 0.54l-2.275-1.406c-0.516-0.293-1.043-0.235-1.476 0.175l-1.524 1.512c-0.434 0.422-0.48 0.996-0.14 1.5l1.37 2.274c-0.152 0.363-0.34 0.796-0.492 1.277l-2.578 0.621c-0.597 0.129-0.949 0.574-0.949 1.172l0 2.12c0 0.61 0.352 1.056 0.95 1.185l2.6 0.62c0.13 0.422 0.305 0.844 0.493 1.255l-1.371 2.238c-0.352 0.504-0.281 1.113 0.14 1.535l1.5 1.5c0.422 0.422 1.008 0.469 1.512 0.152l2.25-1.383c0.399 0.188 0.832 0.364 1.29 0.516l0.609 2.578c0.14 0.598 0.586 0.961 1.195 0.961m1.078-8.11c-2.273 0-4.137-1.874-4.137-4.148 0-2.261 1.864-4.125 4.137-4.125 2.274 0 4.137 1.864 4.137 4.125 0 2.274-1.863 4.149-4.137 4.149",
+                  "fill": "#fff",
+                  "width": 24.492998242378235,
+                  "height": 24.492002487182617
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "E12Zp",
+          "x": 40,
+          "y": 120,
+          "name": "Sliders Row",
+          "gap": 32,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "LXEhN",
+              "name": "Slider",
+              "reusable": true,
+              "width": 300,
+              "height": 24,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "GJ64c",
+                  "x": 0,
+                  "y": 10,
+                  "name": "Track",
+                  "fill": "#4A4A4A",
+                  "width": 300,
+                  "height": 4
+                },
+                {
+                  "type": "ellipse",
+                  "id": "BXpJ4",
+                  "x": 240,
+                  "y": 2,
+                  "name": "Thumb",
+                  "fill": "#FFFFFF",
+                  "width": 20,
+                  "height": 20
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "FCZzU",
+              "name": "Slider Small",
+              "reusable": true,
+              "width": 200,
+              "height": 16,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "KLDtK",
+                  "x": 0,
+                  "y": 6,
+                  "name": "Track",
+                  "fill": "#4A4A4A",
+                  "width": 200,
+                  "height": 4
+                },
+                {
+                  "type": "ellipse",
+                  "id": "c8C0i",
+                  "x": 160,
+                  "y": 0,
+                  "name": "Thumb",
+                  "fill": "#FFFFFF",
+                  "width": 16,
+                  "height": 16
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "l6vL9",
+          "x": 40,
+          "y": 200,
+          "name": "App Icons Row",
+          "gap": 20,
+          "children": [
+            {
+              "type": "frame",
+              "id": "kUrVA",
+              "name": "AppIcon/Apple Music",
+              "reusable": true,
+              "width": 48,
+              "height": 48,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 12,
+                  "id": "wBqeh",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Background",
+                  "fill": "#E53935",
+                  "width": 48,
+                  "height": 48
+                },
+                {
+                  "type": "path",
+                  "id": "jED79",
+                  "x": 14.74468191209462,
+                  "y": 8.697596036236746,
+                  "geometry": "M14.297 5.32935l0-4.406c0-0.621-0.504-1.02-1.102-0.903l-6.023 1.314c-0.75 0.164-1.16 0.574-1.16 1.23l0.023 13.032c0.059 0.574-0.21 0.949-0.726 1.054l-1.864 0.387c-2.343 0.491-3.445 1.687-3.445 3.456 0 1.793 1.383 3.047 3.328 3.047 1.723 0 4.3-1.266 4.3-4.676l0-10.722c0-0.621 0.118-0.75 0.669-0.868l5.355-1.171c0.399-0.082 0.645-0.387 0.645-0.774",
+                  "fill": "#fff",
+                  "width": 18,
+                  "height": 30
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "RSov8",
+              "name": "AppIcon/Zoom",
+              "reusable": true,
+              "width": 48,
+              "height": 48,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 12,
+                  "id": "FjkCr",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Background",
+                  "fill": "#2D8CFF",
+                  "width": 48,
+                  "height": 48
+                },
+                {
+                  "type": "path",
+                  "id": "AFGoa",
+                  "x": 8,
+                  "y": 5,
+                  "name": "Camera",
+                  "geometry": "M17 10.5v-3.5c0-0.55-0.45-1-1-1h-12c-0.55 0-1 0.45-1 1v10c0 0.55 0.45 1 1 1h12c0.55 0 1-0.45 1-1v-3.5l4 4v-11l-4 4z",
+                  "fill": "#FFFFFF",
+                  "width": 26,
+                  "height": 19
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "kMbNH",
+              "name": "AppIcon/Discord",
+              "reusable": true,
+              "width": 48,
+              "height": 48,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 12,
+                  "id": "NPefE",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Background",
+                  "fill": "#5865F2",
+                  "width": 48,
+                  "height": 48
+                },
+                {
+                  "type": "path",
+                  "id": "ulzdd",
+                  "x": 8,
+                  "y": 9,
+                  "name": "Logo",
+                  "geometry": "M19.27 5.33c-1.33-0.62-2.77-1.07-4.27-1.33a0.09 0.09 0 0 0-0.07 0.03c-0.18 0.33-0.39 0.76-0.53 1.09a16.09 16.09 0 0 0-4.8 0c-0.14-0.34-0.35-0.76-0.54-1.09-0.01-0.02-0.04-0.03-0.07-0.03-1.5 0.26-2.93 0.71-4.27 1.33-0.01 0-0.02 0.01-0.03 0.02-2.72 4.07-3.47 8.03-3.1 11.95 0 0.02 0.01 0.04 0.03 0.05 1.8 1.32 3.53 2.12 5.24 2.65 0.03 0.01 0.06 0 0.07-0.02 0.4-0.55 0.76-1.13 1.07-1.74 0.02-0.04 0-0.08-0.04-0.09-0.57-0.22-1.11-0.48-1.64-0.78-0.04-0.02-0.04-0.08-0.01-0.11 0.11-0.08 0.22-0.17 0.33-0.25 0.02-0.02 0.05-0.02 0.07-0.01 3.44 1.57 7.15 1.57 10.55 0 0.02-0.01 0.05-0.01 0.07 0.01 0.11 0.09 0.22 0.17 0.33 0.26 0.04 0.03 0.04 0.09-0.01 0.11-0.52 0.31-1.07 0.56-1.64 0.78-0.04 0.01-0.05 0.06-0.04 0.09 0.32 0.61 0.68 1.19 1.07 1.74 0.03 0.01 0.06 0.02 0.09 0.01 1.72-0.53 3.45-1.33 5.25-2.65 0.02-0.01 0.03-0.03 0.03-0.05 0.44-4.53-0.73-8.46-3.1-11.95-0.01-0.01-0.02-0.02-0.04-0.02z m-10.75 9.58c-1.03 0-1.89-0.95-1.89-2.12s0.84-2.12 1.89-2.12c1.06 0 1.9 0.96 1.89 2.12 0 1.17-0.84 2.12-1.89 2.12z m6.97 0c-1.03 0-1.89-0.95-1.89-2.12s0.84-2.12 1.89-2.12c1.06 0 1.9 0.96 1.89 2.12 0 1.17-0.83 2.12-1.89 2.12z",
+                  "fill": "#FFFFFF",
+                  "width": 28,
+                  "height": 20
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "dtaVj",
+              "name": "AppIcon/Safari",
+              "reusable": true,
+              "width": 48,
+              "height": 48,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 12,
+                  "id": "C18lz",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Background",
+                  "fill": "#4A90D9",
+                  "width": 48,
+                  "height": 48
+                },
+                {
+                  "type": "path",
+                  "id": "Fn03n",
+                  "x": 7,
+                  "y": 7,
+                  "name": "Compass",
+                  "geometry": "M12 2c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10z m3.5 13.5l-8 3 3-8 8-3-3 8z",
+                  "fill": "#FFFFFF",
+                  "width": 28,
+                  "height": 28
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "deqtB",
+          "x": 40,
+          "y": 280,
+          "name": "Composite Components",
+          "layout": "vertical",
+          "gap": 32,
+          "children": [
+            {
+              "type": "frame",
+              "id": "7tlKE",
+              "name": "Header",
+              "reusable": true,
+              "width": 340,
+              "height": 40,
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "LDJtC",
+                  "name": "Title",
+                  "fill": "#FFFFFF",
+                  "content": "AppFaders",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                },
+                {
+                  "id": "m0ml2",
+                  "type": "ref",
+                  "ref": "ZMzGz",
+                  "name": "SettingsIcon"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ZmHmG",
+              "name": "Master Output",
+              "reusable": true,
+              "width": 340,
+              "layout": "vertical",
+              "gap": 16,
+              "padding": [
+                20,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "44BOv",
+                  "name": "Header Row",
+                  "width": 302,
+                  "height": 19,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "oxKG8",
+                      "name": "Label",
+                      "fill": "#888888",
+                      "content": "MASTER OUTPUT",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "700",
+                      "letterSpacing": 1.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "yy9op",
+                      "name": "Percentage",
+                      "fill": "#AAAAAA",
+                      "content": "85%",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "DhVmb",
+                  "name": "Slider Row",
+                  "width": 340,
+                  "gap": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "nJwdE",
+                      "type": "ref",
+                      "ref": "LXEhN",
+                      "name": "Slider",
+                      "width": "fill_container",
+                      "flipX": false,
+                      "flipY": false,
+                      "height": 24,
+                      "x": 0,
+                      "y": 0,
+                      "textGrowth": "auto",
+                      "descendants": {
+                        "GJ64c": {
+                          "flipX": false,
+                          "flipY": false,
+                          "width": 291,
+                          "height": 4,
+                          "x": 9,
+                          "y": 10
+                        }
+                      }
+                    },
+                    {
+                      "id": "vOtGL",
+                      "type": "ref",
+                      "ref": "tLYj9",
+                      "name": "Speaker Right",
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "start",
+                      "width": 23,
+                      "height": 18,
+                      "x": 317,
+                      "y": 3,
+                      "flipX": false,
+                      "flipY": false,
+                      "descendants": {
+                        "rOsFh": {
+                          "x": 0,
+                          "y": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "SZAXz",
+              "name": "App Volume Row",
+              "reusable": true,
+              "width": 340,
+              "height": 72,
+              "gap": 16,
+              "padding": [
+                12,
+                0
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ah14t",
+                  "name": "Icon Slot",
+                  "slot": [
+                    "kUrVA",
+                    "RSov8",
+                    "kMbNH",
+                    "dtaVj"
+                  ],
+                  "width": 48,
+                  "height": 48,
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "HXtSH",
+                  "name": "Content",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "JIKbp",
+                      "name": "Name Row",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "zyfrg",
+                          "name": "App Name",
+                          "fill": "#FFFFFF",
+                          "content": "App Name",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "qLX8n",
+                          "name": "Percentage",
+                          "fill": "#888888",
+                          "content": "100%",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "2U7G2",
+                      "type": "ref",
+                      "ref": "FCZzU",
+                      "name": "Slider",
+                      "width": "fill_container"
+                    }
+                  ]
+                },
+                {
+                  "id": "gEv48",
+                  "type": "ref",
+                  "ref": "tLYj9",
+                  "name": "Speaker",
+                  "layout": "none"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "MBi9g",
+              "name": "App Volume Row/Muted",
+              "reusable": true,
+              "width": 340,
+              "height": 72,
+              "gap": 16,
+              "padding": [
+                12,
+                0
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "tkmL0",
+                  "name": "Icon Slot",
+                  "slot": [
+                    "kUrVA",
+                    "RSov8",
+                    "kMbNH",
+                    "dtaVj"
+                  ],
+                  "width": 48,
+                  "height": 48,
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "Ahh8e",
+                  "name": "Content",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Uk7jh",
+                      "name": "Name Row",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ziFya",
+                          "name": "App Name",
+                          "fill": "#FFFFFF",
+                          "content": "App Name",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "1v7Ua",
+                          "name": "Muted Label",
+                          "fill": "#E53935",
+                          "content": "Muted",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "dc6AJ",
+                      "type": "ref",
+                      "ref": "FCZzU",
+                      "name": "Slider",
+                      "width": "fill_container",
+                      "descendants": {
+                        "c8C0i": {
+                          "x": 0
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "zrMmy",
+                  "type": "ref",
+                  "ref": "u847K",
+                  "name": "Muted Icon"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "SCxSk",
+              "name": "Footer",
+              "reusable": true,
+              "width": 340,
+              "height": 40,
+              "padding": [
+                8,
+                0
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "A6kVa",
+                  "name": "Version",
+                  "fill": "#666666",
+                  "content": "V1.0.0 ALPHA",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "rLUOo",
+                  "name": "Quit Button",
+                  "fill": "#E53935",
+                  "content": "Quit",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "KMsWg",
+              "name": "Divider",
+              "reusable": true,
+              "width": 340,
+              "height": 1,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "eheKT",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Line",
+                  "fill": "#333333",
+                  "width": 340,
+                  "height": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ZDEDx",
+          "x": 426.56952524505346,
+          "y": 254.90399691534503,
+          "name": "speaker.slash.fill.svg",
+          "width": 24.77,
+          "height": 26.396,
+          "layout": "none"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "BzFsY",
+      "x": 0,
+      "y": 688,
+      "name": "Light Mode UI",
+      "clip": true,
+      "width": 800,
+      "height": 600,
+      "fill": "#ffffff",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "2MP4X",
+          "x": 210,
+          "y": 50,
+          "name": "AppFaders Panel Light",
+          "width": 380,
+          "fill": "#F5F5F5",
+          "cornerRadius": 20,
+          "layout": "vertical",
+          "padding": 20,
+          "children": [
+            {
+              "id": "QbP9S",
+              "type": "ref",
+              "ref": "7tlKE",
+              "width": "fill_container",
+              "name": "header",
+              "descendants": {
+                "LDJtC": {
+                  "fill": "#1E1E1E"
+                },
+                "m0ml2/2CMzN": {
+                  "fill": "#666666"
+                }
+              }
+            },
+            {
+              "id": "8weG7",
+              "type": "ref",
+              "ref": "KMsWg",
+              "width": "fill_container",
+              "name": "divider1",
+              "descendants": {
+                "eheKT": {
+                  "fill": "#DDDDDD"
+                }
+              }
+            },
+            {
+              "id": "X2bvg",
+              "type": "ref",
+              "ref": "ZmHmG",
+              "width": "fill_container",
+              "name": "masterOutput",
+              "descendants": {
+                "oxKG8": {
+                  "fill": "#666666"
+                },
+                "yy9op": {
+                  "fill": "#333333"
+                },
+                "nJwdE/GJ64c": {
+                  "fill": "#CCCCCC"
+                },
+                "nJwdE/BXpJ4": {
+                  "fill": "#1E1E1E"
+                },
+                "vOtGL/rOsFh": {
+                  "fill": "#666666"
+                }
+              }
+            },
+            {
+              "id": "UPPXQ",
+              "type": "ref",
+              "ref": "SZAXz",
+              "width": "fill_container",
+              "name": "appleMusic",
+              "descendants": {
+                "ah14t": {
+                  "id": "oOemR",
+                  "type": "ref",
+                  "ref": "kUrVA"
+                },
+                "zyfrg": {
+                  "content": "Apple Music",
+                  "fill": "#1E1E1E"
+                },
+                "qLX8n": {
+                  "content": "100%",
+                  "fill": "#666666"
+                },
+                "2U7G2/KLDtK": {
+                  "fill": "#CCCCCC"
+                },
+                "2U7G2/c8C0i": {
+                  "x": 184,
+                  "fill": "#1E1E1E"
+                },
+                "gEv48/rOsFh": {
+                  "fill": "#666666"
+                }
+              }
+            },
+            {
+              "id": "pVOxO",
+              "type": "ref",
+              "ref": "SZAXz",
+              "width": "fill_container",
+              "name": "zoom",
+              "descendants": {
+                "ah14t": {
+                  "id": "Kccx1",
+                  "type": "ref",
+                  "ref": "RSov8"
+                },
+                "zyfrg": {
+                  "content": "Zoom",
+                  "fill": "#1E1E1E"
+                },
+                "qLX8n": {
+                  "content": "40%",
+                  "fill": "#666666"
+                },
+                "2U7G2/KLDtK": {
+                  "fill": "#CCCCCC"
+                },
+                "2U7G2/c8C0i": {
+                  "x": 64,
+                  "fill": "#1E1E1E"
+                },
+                "gEv48/rOsFh": {
+                  "fill": "#666666"
+                }
+              }
+            },
+            {
+              "id": "5XlzY",
+              "type": "ref",
+              "ref": "SZAXz",
+              "width": "fill_container",
+              "name": "discord",
+              "descendants": {
+                "ah14t": {
+                  "id": "P1wK5",
+                  "type": "ref",
+                  "ref": "kMbNH"
+                },
+                "zyfrg": {
+                  "content": "Discord",
+                  "fill": "#1E1E1E"
+                },
+                "qLX8n": {
+                  "content": "75%",
+                  "fill": "#666666"
+                },
+                "2U7G2/KLDtK": {
+                  "fill": "#CCCCCC"
+                },
+                "2U7G2/c8C0i": {
+                  "x": 134,
+                  "fill": "#1E1E1E"
+                },
+                "gEv48/rOsFh": {
+                  "fill": "#666666"
+                }
+              }
+            },
+            {
+              "id": "aRpte",
+              "type": "ref",
+              "ref": "MBi9g",
+              "width": "fill_container",
+              "name": "safari",
+              "descendants": {
+                "tkmL0": {
+                  "id": "L9mlM",
+                  "type": "ref",
+                  "ref": "dtaVj"
+                },
+                "ziFya": {
+                  "content": "Safari",
+                  "fill": "#1E1E1E"
+                },
+                "dc6AJ/KLDtK": {
+                  "fill": "#CCCCCC"
+                },
+                "dc6AJ/c8C0i": {
+                  "x": 0,
+                  "fill": "#1E1E1E"
+                }
+              }
+            },
+            {
+              "id": "qnyJy",
+              "type": "ref",
+              "ref": "KMsWg",
+              "width": "fill_container",
+              "name": "divider2",
+              "descendants": {
+                "eheKT": {
+                  "fill": "#DDDDDD"
+                }
+              }
+            },
+            {
+              "id": "n2l5y",
+              "type": "ref",
+              "ref": "SCxSk",
+              "width": "fill_container",
+              "name": "footer",
+              "descendants": {
+                "A6kVa": {
+                  "fill": "#999999"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "61hMn",
+      "x": 997,
+      "y": 544,
+      "fill": "#ffffff",
+      "fontFamily": "Inter",
+      "fontSize": 16,
+      "fontWeight": "normal"
+    }
+  ]
+}
