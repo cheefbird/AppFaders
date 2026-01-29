@@ -156,7 +156,7 @@
     {
       "type": "frame",
       "id": "odSpy",
-      "x": 1039,
+      "x": -984,
       "y": 0,
       "name": "Components",
       "clip": true,
@@ -841,7 +841,7 @@
       "type": "frame",
       "id": "BzFsY",
       "x": 0,
-      "y": 688,
+      "y": 728,
       "name": "Light Mode UI",
       "clip": true,
       "width": 800,
@@ -1070,6 +1070,896 @@
       "fontFamily": "Inter",
       "fontSize": 16,
       "fontWeight": "normal"
+    },
+    {
+      "type": "frame",
+      "id": "zTKpu",
+      "x": 960,
+      "y": 25,
+      "name": "TUI",
+      "clip": true,
+      "width": 400,
+      "fill": "#1d1f29",
+      "cornerRadius": 4,
+      "layout": "vertical",
+      "gap": 2,
+      "padding": 8,
+      "children": [
+        {
+          "id": "Rxyw9",
+          "type": "ref",
+          "ref": "Ffupc",
+          "width": "fill_container",
+          "name": "header"
+        },
+        {
+          "id": "Edb62",
+          "type": "ref",
+          "ref": "r7BZ4",
+          "width": "fill_container",
+          "name": "div1"
+        },
+        {
+          "id": "imzG8",
+          "type": "ref",
+          "ref": "pFRMh",
+          "width": "fill_container",
+          "name": "master"
+        },
+        {
+          "id": "NiR8A",
+          "type": "ref",
+          "ref": "r7BZ4",
+          "width": "fill_container",
+          "name": "div2"
+        },
+        {
+          "id": "xihnV",
+          "type": "ref",
+          "ref": "OXuoW",
+          "width": "fill_container",
+          "name": "AppleMusic",
+          "descendants": {
+            "Pu3LE": {
+              "id": "Qw5Th",
+              "type": "ref",
+              "ref": "uFXZu"
+            },
+            "W7bje": {
+              "content": "Apple Music"
+            },
+            "Cvsyb": {
+              "content": "100%"
+            }
+          }
+        },
+        {
+          "id": "8v0U7",
+          "type": "ref",
+          "ref": "OXuoW",
+          "width": "fill_container",
+          "name": "Zoom",
+          "descendants": {
+            "Pu3LE": {
+              "id": "QTnBZ",
+              "type": "ref",
+              "ref": "MaCcM"
+            },
+            "W7bje": {
+              "content": "Zoom"
+            },
+            "Cvsyb": {
+              "content": "40%"
+            }
+          }
+        },
+        {
+          "id": "MAtL0",
+          "type": "ref",
+          "ref": "OXuoW",
+          "width": "fill_container",
+          "name": "Discord",
+          "descendants": {
+            "Pu3LE": {
+              "id": "lNm9v",
+              "type": "ref",
+              "ref": "Fhili"
+            },
+            "W7bje": {
+              "content": "Discord"
+            },
+            "Cvsyb": {
+              "content": "75%"
+            }
+          }
+        },
+        {
+          "id": "x2ly9",
+          "type": "ref",
+          "ref": "HtKnH",
+          "width": "fill_container",
+          "name": "Safari",
+          "descendants": {
+            "sjKyB": {
+              "id": "Tigm2",
+              "type": "ref",
+              "ref": "De4T5"
+            },
+            "l9qWV": {
+              "content": "Safari"
+            }
+          }
+        },
+        {
+          "id": "XKb6j",
+          "type": "ref",
+          "ref": "r7BZ4",
+          "width": "fill_container",
+          "name": "div3"
+        },
+        {
+          "id": "K76FR",
+          "type": "ref",
+          "ref": "10eco",
+          "width": "fill_container",
+          "name": "footer"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "zidb0",
+      "x": 960,
+      "y": 600,
+      "name": "TUI Components",
+      "width": 700,
+      "fill": "#0D0D0D",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 24,
+      "children": [
+        {
+          "type": "text",
+          "id": "GPQNu",
+          "name": "iconsLabel",
+          "fill": "#666666",
+          "content": "Icons & Symbols",
+          "fontFamily": "Inter",
+          "fontSize": 11,
+          "fontWeight": "600",
+          "letterSpacing": 1
+        },
+        {
+          "type": "frame",
+          "id": "8aKPQ",
+          "name": "AppIconsRow",
+          "fill": "#1d1f29",
+          "cornerRadius": 4,
+          "gap": 16,
+          "padding": 8,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "uFXZu",
+              "name": "TUI/Icon/Music",
+              "reusable": true,
+              "width": 24,
+              "height": 24,
+              "layout": "vertical",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "MLRqr",
+                  "name": "musicSymbol",
+                  "fill": "#dc3d6f",
+                  "content": "♫",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "MaCcM",
+              "name": "TUI/Icon/Video",
+              "reusable": true,
+              "width": 24,
+              "height": 24,
+              "layout": "vertical",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "aeK1Y",
+                  "name": "videoSymbol",
+                  "fill": "#0d42f3",
+                  "content": "▶",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Fhili",
+              "name": "TUI/Icon/Chat",
+              "reusable": true,
+              "width": 24,
+              "height": 24,
+              "layout": "vertical",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "vsZxC",
+                  "name": "chatSymbol",
+                  "fill": "#b854e5",
+                  "content": "◆",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "De4T5",
+              "name": "TUI/Icon/Browser",
+              "reusable": true,
+              "width": 24,
+              "height": 24,
+              "layout": "vertical",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "CeXj9",
+                  "name": "browserSymbol",
+                  "fill": "#61d2b8",
+                  "content": "◎",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "r3jnC",
+          "name": "UIIconsRow",
+          "fill": "#1d1f29",
+          "cornerRadius": 4,
+          "gap": 16,
+          "padding": 8,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "YZILW",
+              "name": "TUI/Icon/Settings",
+              "reusable": true,
+              "width": 18,
+              "height": 18,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "path",
+                  "id": "YkZTP",
+                  "name": "SettingsPath",
+                  "geometry": "M11.168 24.492l2.156 0c0.61 0 1.055-0.363 1.184-0.96l0.61-2.579c0.43974-0.1444 0.86993-0.31641 1.288-0.515l2.262 1.382c0.504 0.317 1.078 0.27 1.5-0.152l1.512-1.5c0.422-0.422 0.48-1.031 0.14-1.535l-1.383-2.238c0.2-0.41 0.375-0.832 0.504-1.254l2.602-0.621c0.598-0.13 0.95-0.575 0.95-1.184l0-2.121c0-0.598-0.352-1.043-0.95-1.172l-2.578-0.621c-0.152-0.48-0.34-0.914-0.504-1.277l1.383-2.274c0.328-0.504 0.293-1.078-0.14-1.5l-1.537-1.511c-0.434-0.398-0.95-0.468-1.465-0.175l-2.297 1.418c-0.4135-0.21314-0.8448-0.38981-1.289-0.528l-0.61-2.613c-0.126-0.599-0.571-0.962-1.181-0.962l-2.156 0c-0.61 0-1.055 0.363-1.195 0.96l-0.61 2.59c-0.44736 0.14417-0.88215 0.32478-1.3 0.54l-2.275-1.406c-0.516-0.293-1.043-0.235-1.476 0.175l-1.524 1.512c-0.434 0.422-0.48 0.996-0.14 1.5l1.37 2.274c-0.152 0.363-0.34 0.796-0.492 1.277l-2.578 0.621c-0.597 0.129-0.949 0.574-0.949 1.172l0 2.12c0 0.61 0.352 1.056 0.95 1.185l2.6 0.62c0.13 0.422 0.305 0.844 0.493 1.255l-1.371 2.238c-0.352 0.504-0.281 1.113 0.14 1.535l1.5 1.5c0.422 0.422 1.008 0.469 1.512 0.152l2.25-1.383c0.399 0.188 0.832 0.364 1.29 0.516l0.609 2.578c0.14 0.598 0.586 0.961 1.195 0.961m1.078-8.11c-2.273 0-4.137-1.874-4.137-4.148 0-2.261 1.864-4.125 4.137-4.125 2.274 0 4.137 1.864 4.137 4.125 0 2.274-1.863 4.149-4.137 4.149",
+                  "fill": "#61d2b8",
+                  "width": 16,
+                  "height": 16
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hkfl9",
+              "name": "TUI/Icon/Speaker",
+              "reusable": true,
+              "width": 18,
+              "height": 18,
+              "layout": "vertical",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "path",
+                  "id": "uvQXg",
+                  "name": "SpeakerPath",
+                  "geometry": "M22.488 18.375c0.434 0.293 0.973 0.187 1.29-0.258 1.5-2.063 2.378-4.899 2.378-7.793 0-2.894-0.867-5.754-2.379-7.793-0.316-0.445-0.855-0.55-1.289-0.258-0.434 0.292-0.504 0.844-0.164 1.324 1.278 1.805 2.016 4.23 2.016 6.727 0 2.497-0.762 4.898-2.016 6.727-0.328 0.48-0.27 1.03 0.164 1.324m-4.336-3.059c0.387 0.27 0.938 0.188 1.254-0.27 0.903-1.183 1.442-2.93 1.442-4.722 0-1.792-0.54-3.527-1.442-4.723-0.316-0.457-0.867-0.55-1.254-0.27-0.48 0.329-0.55 0.915-0.187 1.395 0.68 0.938 1.066 2.239 1.066 3.598 0 1.36-0.398 2.648-1.066 3.598-0.352 0.492-0.293 1.054 0.187 1.394m-5.519 5.356c0.773 0 1.324-0.551 1.324-1.313l0-17.976c0-0.762-0.55-1.383-1.348-1.383-0.55 0-0.914 0.246-1.511 0.808l-5.004 4.688c-0.07949 0.07312-0.18516 0.11099-0.293 0.105l-3.352 0c-1.594 0-2.449 0.88-2.449 2.567l0 4.36c0 1.698 0.855 2.566 2.45 2.566l3.35 0c0.118 0 0.223 0.035 0.294 0.105l5.004 4.734c0.527 0.516 0.984 0.739 1.535 0.739",
+                  "fill": "#f6cc4f",
+                  "width": 18,
+                  "height": 12
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bajkk",
+              "name": "TUI/Icon/Muted",
+              "reusable": true,
+              "width": 18,
+              "height": 18,
+              "layout": "vertical",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "path",
+                  "id": "ubthR",
+                  "name": "MutedPath",
+                  "geometry": "M16.24582 19.747c-0.153 0.554-0.638 0.925-1.273 0.925-0.539 0-0.996-0.223-1.535-0.738l-4.992-4.735c-0.08113-0.07036-0.18565-0.10781-0.293-0.105l-3.363 0c-1.582 0-2.45-0.867-2.45-2.566l0-4.36c0-0.762 0.178-1.36 0.52-1.784l13.386 13.363z m0.052-18.364l0 11.992-7.87-7.865 0.018-0.014 4.992-4.687c0.598-0.574 0.973-0.809 1.512-0.809 0.797 0 1.348 0.621 1.348 1.383m4.043 20.519c0.3531 0.35152 0.92391 0.35152 1.277 0 0.34-0.363 0.351-0.925 0-1.277l-20.074-20.062c-0.35798-0.35196-0.93202-0.35196-1.29 0-0.33843 0.3584-0.33843 0.9186 0 1.277l20.087 20.062z",
+                  "fill": "#dc3d6f",
+                  "width": 14,
+                  "height": 14
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "P8MTX",
+          "name": "SliderCharsRow",
+          "fill": "#1d1f29",
+          "cornerRadius": 4,
+          "gap": 16,
+          "padding": 8,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "NFq0i",
+              "name": "TUI/Slider/Filled",
+              "reusable": true,
+              "width": 40,
+              "height": 24,
+              "layout": "vertical",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "NhOaI",
+                  "name": "filledText",
+                  "fill": "#f6cc4f",
+                  "content": "████",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "zeuAX",
+              "name": "TUI/Slider/Empty",
+              "reusable": true,
+              "width": 40,
+              "height": 24,
+              "layout": "vertical",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "4LCqu",
+                  "name": "emptyText",
+                  "fill": "#3A3D4B",
+                  "content": "░░░░",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "d7wM8",
+          "name": "row1Label",
+          "fill": "#666666",
+          "content": "Single-Row Elements",
+          "fontFamily": "Inter",
+          "fontSize": 11,
+          "fontWeight": "600",
+          "letterSpacing": 1
+        },
+        {
+          "type": "frame",
+          "id": "vC9iX",
+          "name": "Row1",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "Ffupc",
+              "name": "TUI/Header",
+              "reusable": true,
+              "width": 200,
+              "height": 16,
+              "fill": "#1d1f29",
+              "padding": [
+                0,
+                4
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "2UEHo",
+                  "name": "tuiHeaderTitle",
+                  "fill": "#f6cc4f",
+                  "content": "AppFaders",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "id": "K1yUy",
+                  "type": "ref",
+                  "ref": "YZILW"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "10eco",
+              "name": "TUI/Footer",
+              "reusable": true,
+              "width": 200,
+              "height": 16,
+              "fill": "#1d1f29",
+              "padding": [
+                0,
+                4
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "eumty",
+                  "name": "tuiFooterVer",
+                  "fill": "#3A3D4B",
+                  "content": "v1.0.0 ALPHA",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "MPl29",
+                  "name": "tuiFooterQuit",
+                  "fill": "#dc3d6f",
+                  "content": "[Quit]",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "mvSs2",
+          "name": "row2Label",
+          "fill": "#666666",
+          "content": "Dividers",
+          "fontFamily": "Inter",
+          "fontSize": 11,
+          "fontWeight": "600",
+          "letterSpacing": 1
+        },
+        {
+          "type": "frame",
+          "id": "4J7Yi",
+          "name": "Row2",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "r7BZ4",
+              "name": "TUI/Divider",
+              "reusable": true,
+              "width": 200,
+              "height": 1,
+              "fill": "#1d1f29",
+              "layout": "vertical",
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "RnHZt",
+                  "name": "tuiDivLine",
+                  "fill": "#3a3d4b",
+                  "width": "fill_container",
+                  "height": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "h7d4X",
+          "name": "row3Label",
+          "fill": "#666666",
+          "content": "Content Sections",
+          "fontFamily": "Inter",
+          "fontSize": 11,
+          "fontWeight": "600",
+          "letterSpacing": 1
+        },
+        {
+          "type": "frame",
+          "id": "DvRMM",
+          "name": "Row3",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "children": [
+            {
+              "type": "frame",
+              "id": "pFRMh",
+              "name": "TUI/MasterOutput",
+              "reusable": true,
+              "width": 379,
+              "fill": "#1d1f29",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                4,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "HSwPT",
+                  "name": "tuiMasterHeader",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jWIcD",
+                      "name": "tuiMasterLabel",
+                      "fill": "#61d2b8",
+                      "content": "MASTER OUTPUT",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "AXxQ2",
+                      "name": "tuiMasterPct",
+                      "fill": "#f6cc4f",
+                      "content": "85%",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "KGr3S",
+                  "name": "tuiMasterSliderRow",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "B5cCG",
+                      "name": "tuiMasterBar",
+                      "fill": "#f6cc4f",
+                      "content": "████████████████░░░░░░",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "id": "nhmup",
+                      "type": "ref",
+                      "ref": "tLYj9",
+                      "width": 14,
+                      "height": 11,
+                      "name": "tuiMasterSpk",
+                      "descendants": {
+                        "rOsFh": {
+                          "fill": "#f6cc4f",
+                          "flipX": false,
+                          "flipY": false,
+                          "width": 15,
+                          "height": 12,
+                          "x": 0,
+                          "y": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "OXuoW",
+              "name": "TUI/AppRow",
+              "reusable": true,
+              "width": 379,
+              "fill": "#1d1f29",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                4,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "vMLIw",
+                  "name": "tuiAppHeader",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "OCnmI",
+                      "name": "tuiAppName",
+                      "width": "fill_container",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Pu3LE",
+                          "name": "Icon",
+                          "fill": "#dc3d6f",
+                          "content": "♫",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "W7bje",
+                          "name": "AppName",
+                          "fill": "#f6cc4f",
+                          "content": "App Name",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "lXO30",
+                      "name": "tuiAppRight",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Cvsyb",
+                          "name": "Percentage",
+                          "fill": "#61d2b8",
+                          "content": "100%",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "bCNKO",
+                  "name": "SliderRow",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "uh23h",
+                      "name": "Slider",
+                      "fill": "#9ed279",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "████████████████████████",
+                      "fontFamily": "Inter",
+                      "fontSize": 8,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "t5d2q",
+                      "name": "IconWrapper",
+                      "width": 27,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "KSf5r",
+                          "type": "ref",
+                          "ref": "hkfl9",
+                          "width": 14,
+                          "height": 11,
+                          "name": "Speaker",
+                          "flipX": false,
+                          "flipY": false,
+                          "x": 6.5,
+                          "y": 0,
+                          "descendants": {
+                            "uvQXg": {
+                              "flipX": false,
+                              "flipY": false,
+                              "width": 16,
+                              "height": 11,
+                              "x": -1,
+                              "y": 0
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "HtKnH",
+              "name": "TUI/AppRowMuted",
+              "reusable": true,
+              "width": 379,
+              "fill": "#1d1f29",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                4,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "4wZDL",
+                  "name": "tuiMutedHeader",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "oP5Gj",
+                      "name": "tuiMutedName",
+                      "width": "fill_container",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "sjKyB",
+                          "name": "Icon",
+                          "fill": "#61d2b8",
+                          "content": "◎",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "l9qWV",
+                          "name": "AppName",
+                          "fill": "#dc3d6f",
+                          "content": "App Name",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Rg9Wy",
+                      "name": "tuiMutedRight",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "AQ6ry",
+                          "name": "MutedLabel",
+                          "fill": "#dc3d6f",
+                          "content": "Muted",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Jl4Mr",
+                  "name": "SliderRow",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "y1UuB",
+                      "name": "Slider",
+                      "fill": "#3A3D4B",
+                      "content": "░░░░░░░░░░░░░░░░░░░░░░░░",
+                      "fontFamily": "Inter",
+                      "fontSize": 8,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "TEztN",
+                      "name": "IconWrapper",
+                      "width": 32,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "Kh841",
+                          "type": "ref",
+                          "ref": "bajkk",
+                          "width": 11,
+                          "height": 11,
+                          "name": "MutedIcon",
+                          "flipX": false,
+                          "flipY": false,
+                          "x": 10.5,
+                          "y": 0,
+                          "descendants": {
+                            "ubthR": {
+                              "width": 12,
+                              "height": 12
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
