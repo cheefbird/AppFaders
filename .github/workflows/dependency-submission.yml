@@ -1,0 +1,28 @@
+name: Swift Dependency Submission
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+    - 'Package.swift'
+    - 'Package.resolved'
+  pull_request:
+    branches: [ main ]
+    paths:
+    - 'Package.swift'
+    - 'Package.resolved'
+
+permissions:
+  contents: write
+
+jobs:
+  submit-dependencies:
+    runs-on: macos-26
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Submit dependencies
+      uses: vapor-community/swift-dependency-submission@v0.1
+      with:
+        force: true
