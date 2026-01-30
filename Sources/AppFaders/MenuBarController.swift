@@ -10,6 +10,9 @@ final class MenuBarController: NSObject {
   private var panel: NSPanel?
   private(set) var isPanelVisible = false
 
+  private var clickOutsideMonitor: Any?
+  private var escapeKeyMonitor: Any?
+
   override init() {
     super.init()
     setupStatusItem()
@@ -28,16 +31,106 @@ final class MenuBarController: NSObject {
 
   func showPanel() {
     guard let panel else { return }
+
+    positionPanelBelowStatusItem()
     panel.makeKeyAndOrderFront(nil)
     isPanelVisible = true
+    addEventMonitors()
     os_log(.debug, log: log, "Panel shown")
   }
 
   func hidePanel() {
     guard let panel else { return }
+
+    removeEventMonitors()
     panel.orderOut(nil)
     isPanelVisible = false
     os_log(.debug, log: log, "Panel hidden")
+  }
+
+  // MARK: - Panel Positioning
+
+  private func positionPanelBelowStatusItem() {
+    guard let panel,
+          let button = statusItem?.button,
+          let buttonWindow = button.window
+    else { return }
+
+    let buttonFrame = buttonWindow.frame
+    let panelSize = panel.frame.size
+
+    // Center panel horizontally below the status item button
+    let panelX = buttonFrame.midX - (panelSize.width / 2)
+    // Position panel just below the menu bar
+    let panelY = buttonFrame.minY - panelSize.height
+
+    // Ensure panel stays on screen
+    if let screen = buttonWindow.screen {
+      let screenFrame = screen.visibleFrame
+      let adjustedX = max(screenFrame.minX, min(panelX, screenFrame.maxX - panelSize.width))
+      panel.setFrameOrigin(NSPoint(x: adjustedX, y: panelY))
+    } else {
+      panel.setFrameOrigin(NSPoint(x: panelX, y: panelY))
+    }
+  }
+
+  // MARK: - Event Monitors
+
+  private func addEventMonitors() {
+    // Click outside to dismiss
+    clickOutsideMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) {
+      [weak self] event in
+      guard let self else { return }
+      Task { @MainActor in
+        self.handleClickOutside(event)
+      }
+    }
+
+    // Escape key to dismiss
+    escapeKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) {
+      [weak self] event in
+      guard let self else { return event }
+      if event.keyCode == 53 {  // Escape key
+        Task { @MainActor in
+          self.hidePanel()
+        }
+        return nil  // Consume the event
+      }
+      return event
+    }
+  }
+
+  private func removeEventMonitors() {
+    if let monitor = clickOutsideMonitor {
+      NSEvent.removeMonitor(monitor)
+      clickOutsideMonitor = nil
+    }
+    if let monitor = escapeKeyMonitor {
+      NSEvent.removeMonitor(monitor)
+      escapeKeyMonitor = nil
+    }
+  }
+
+  private func handleClickOutside(_ event: NSEvent) {
+    guard let panel, isPanelVisible else { return }
+
+    // For global events, locationInWindow is screen coordinates
+    let clickLocation = event.locationInWindow
+
+    // Ignore clicks on the status item - let togglePanel handle those
+    if let button = statusItem?.button,
+       let buttonWindow = button.window {
+      let buttonFrame = buttonWindow.frame
+      if buttonFrame.contains(clickLocation) {
+        return
+      }
+    }
+
+    // Check if click is outside the panel
+    let panelFrame = panel.frame
+    if !panelFrame.contains(clickLocation) {
+      hidePanel()
+    }
   }
 
   // MARK: - Panel Setup
