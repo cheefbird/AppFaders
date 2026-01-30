@@ -1,19 +1,22 @@
 import AppKit
 import os.log
+import SwiftUI
 
 private let log = OSLog(subsystem: "com.fbreidenbach.appfaders", category: "MenuBarController")
 
 @MainActor
 final class MenuBarController: NSObject {
   private var statusItem: NSStatusItem?
+  private var panel: NSPanel?
   private(set) var isPanelVisible = false
 
   override init() {
     super.init()
     setupStatusItem()
+    setupPanel()
   }
 
-  // MARK: - Panel Management (placeholder for task 5-6)
+  // MARK: - Panel Management
 
   func togglePanel() {
     if isPanelVisible {
@@ -24,13 +27,44 @@ final class MenuBarController: NSObject {
   }
 
   func showPanel() {
+    guard let panel else { return }
+    panel.makeKeyAndOrderFront(nil)
     isPanelVisible = true
-    os_log(.debug, log: log, "Panel shown (placeholder)")
+    os_log(.debug, log: log, "Panel shown")
   }
 
   func hidePanel() {
+    guard let panel else { return }
+    panel.orderOut(nil)
     isPanelVisible = false
-    os_log(.debug, log: log, "Panel hidden (placeholder)")
+    os_log(.debug, log: log, "Panel hidden")
+  }
+
+  // MARK: - Panel Setup
+
+  private func setupPanel() {
+    let panel = NSPanel(
+      contentRect: NSRect(x: 0, y: 0, width: 420, height: 400),
+      styleMask: [.nonactivatingPanel, .fullSizeContentView, .borderless],
+      backing: .buffered,
+      defer: false
+    )
+
+    panel.isFloatingPanel = true
+    panel.level = .floating
+    panel.hidesOnDeactivate = true
+    panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+    panel.backgroundColor = .clear
+    panel.isOpaque = false
+    panel.hasShadow = true
+    panel.titlebarAppearsTransparent = true
+    panel.titleVisibility = .hidden
+
+    let hostingView = NSHostingView(rootView: PlaceholderPanelView())
+    panel.contentView = hostingView
+
+    self.panel = panel
+    os_log(.info, log: log, "Panel created")
   }
 
   // MARK: - Status Item Setup
