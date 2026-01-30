@@ -1,3 +1,4 @@
+import AppFadersCore
 import CAAudioHardware
 import Foundation
 import Observation

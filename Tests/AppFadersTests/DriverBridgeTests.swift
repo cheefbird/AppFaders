@@ -3,7 +3,7 @@
 //
 // Tests validation before XPC calls - helper doesn't need to be running
 
-@testable import AppFaders
+@testable import AppFadersCore
 import Foundation
 import Testing
 

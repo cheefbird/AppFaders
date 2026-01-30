@@ -25,6 +25,7 @@ let package = Package(
     .executableTarget(
       name: "AppFaders",
       dependencies: [
+        "AppFadersCore",
         .product(name: "CAAudioHardware", package: "CAAudioHardware")
       ]
     ),
@@ -66,7 +67,7 @@ let package = Package(
     ),
     .testTarget(
       name: "AppFadersTests",
-      dependencies: ["AppFaders"]
+      dependencies: ["AppFaders", "AppFadersCore"]
     )
   ]
 )
