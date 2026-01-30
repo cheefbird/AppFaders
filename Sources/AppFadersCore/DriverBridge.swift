@@ -5,19 +5,21 @@ private let log = OSLog(subsystem: "com.fbreidenbach.appfaders", category: "Driv
 private let machServiceName = "com.fbreidenbach.appfaders.helper"
 
 /// handles communication with the AppFaders helper service via XPC
-final class DriverBridge: @unchecked Sendable {
+public final class DriverBridge: @unchecked Sendable {
   private let lock = NSLock()
   private var connection: NSXPCConnection?
 
+  public init() {}
+
   /// returns true if currently connected to the helper service
-  var isConnected: Bool {
+  public var isConnected: Bool {
     lock.withLock { connection != nil }
   }
 
   // MARK: - Connection Management
 
   /// establishes XPC connection to the helper service
-  func connect() async throws {
+  public func connect() async throws {
     try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
       lock.lock()
 
@@ -52,7 +54,7 @@ final class DriverBridge: @unchecked Sendable {
   }
 
   /// disconnects from the helper service
-  func disconnect() {
+  public func disconnect() {
     lock.lock()
     defer { lock.unlock() }
 
@@ -74,7 +76,7 @@ final class DriverBridge: @unchecked Sendable {
   ///   - bundleID: The target application's bundle identifier
   ///   - volume: The desired volume level (0.0 - 1.0)
   /// - Throws: DriverError if validation fails or XPC call fails
-  func setAppVolume(bundleID: String, volume: Float) async throws {
+  public func setAppVolume(bundleID: String, volume: Float) async throws {
     guard volume >= 0.0, volume <= 1.0 else {
       throw DriverError.invalidVolumeRange(volume)
     }
@@ -100,7 +102,7 @@ final class DriverBridge: @unchecked Sendable {
   /// - Parameter bundleID: The target application's bundle identifier
   /// - Returns: The current volume level (0.0 - 1.0)
   /// - Throws: DriverError if validation fails or XPC call fails
-  func getAppVolume(bundleID: String) async throws -> Float {
+  public func getAppVolume(bundleID: String) async throws -> Float {
     guard bundleID.utf8.count <= 255 else {
       throw DriverError.bundleIDTooLong(bundleID.utf8.count)
     }

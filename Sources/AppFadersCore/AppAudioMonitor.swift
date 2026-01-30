@@ -5,26 +5,26 @@ import os.log
 private let log = OSLog(subsystem: "com.fbreidenbach.appfaders", category: "AppAudioMonitor")
 
 /// lifecycle events for tracked applications
-enum AppLifecycleEvent: Sendable {
+public enum AppLifecycleEvent: Sendable {
   case didLaunch(TrackedApp)
   case didTerminate(String) // bundleID
 }
 
 /// monitors running applications using NSWorkspace
-final class AppAudioMonitor: @unchecked Sendable {
+public final class AppAudioMonitor: @unchecked Sendable {
   private let workspace = NSWorkspace.shared
   private let lock = NSLock()
   private var _runningApps: [TrackedApp] = []
 
   /// currently running tracked applications
-  var runningApps: [TrackedApp] {
+  public var runningApps: [TrackedApp] {
     lock.lock()
     defer { lock.unlock() }
     return _runningApps
   }
 
   /// async stream of app lifecycle events
-  var events: AsyncStream<AppLifecycleEvent> {
+  public var events: AsyncStream<AppLifecycleEvent> {
     AsyncStream { continuation in
       let task = Task { [weak self] in
         guard let self else { return }
@@ -56,12 +56,12 @@ final class AppAudioMonitor: @unchecked Sendable {
     }
   }
 
-  init() {
+  public init() {
     os_log(.info, log: log, "AppAudioMonitor initialized")
   }
 
   /// starts monitoring and populates initial state
-  func start() {
+  public func start() {
     // initial snapshot
     let currentApps = workspace.runningApplications
       .compactMap { TrackedApp(from: $0) }

@@ -2,15 +2,17 @@ import AppKit
 import Foundation
 
 /// Application tracked by the host orchestrator
-struct TrackedApp: Identifiable, Sendable, Hashable {
-  var id: String { bundleID }
+public struct TrackedApp: Identifiable, Sendable, Hashable {
+  public var id: String {
+    bundleID
+  }
 
-  let bundleID: String
-  let localizedName: String
-  let icon: NSImage?
-  let launchDate: Date
+  public let bundleID: String
+  public let localizedName: String
+  public let icon: NSImage?
+  public let launchDate: Date
 
-  init?(from runningApp: NSRunningApplication) {
+  public init?(from runningApp: NSRunningApplication) {
     guard let bundleID = runningApp.bundleIdentifier else {
       return nil
     }
@@ -21,18 +23,18 @@ struct TrackedApp: Identifiable, Sendable, Hashable {
     launchDate = runningApp.launchDate ?? .distantPast
   }
 
-  init(bundleID: String, localizedName: String, icon: NSImage?, launchDate: Date) {
+  public init(bundleID: String, localizedName: String, icon: NSImage?, launchDate: Date) {
     self.bundleID = bundleID
     self.localizedName = localizedName
     self.icon = icon
     self.launchDate = launchDate
   }
 
-  static func == (lhs: TrackedApp, rhs: TrackedApp) -> Bool {
+  public static func == (lhs: TrackedApp, rhs: TrackedApp) -> Bool {
     lhs.bundleID == rhs.bundleID && lhs.launchDate == rhs.launchDate
   }
 
-  func hash(into hasher: inout Hasher) {
+  public func hash(into hasher: inout Hasher) {
     hasher.combine(bundleID)
     hasher.combine(launchDate)
   }
