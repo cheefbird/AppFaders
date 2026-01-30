@@ -44,7 +44,10 @@ final class MenuBarController: NSObject {
     }
 
     // SF Symbol for menu bar icon
-    if let image = NSImage(systemSymbolName: "slider.vertical.3", accessibilityDescription: "AppFaders") {
+    if let image = NSImage(
+      systemSymbolName: "slider.vertical.3",
+      accessibilityDescription: "AppFaders"
+    ) {
       image.isTemplate = true
       button.image = image
     } else {
@@ -72,13 +75,21 @@ final class MenuBarController: NSObject {
   private func showContextMenu(for button: NSStatusBarButton) {
     let menu = NSMenu()
 
-    let openItem = NSMenuItem(title: "Open", action: #selector(openMenuItemClicked), keyEquivalent: "")
+    let openItem = NSMenuItem(
+      title: "Open",
+      action: #selector(openMenuItemClicked),
+      keyEquivalent: ""
+    )
     openItem.target = self
     menu.addItem(openItem)
 
     menu.addItem(NSMenuItem.separator())
 
-    let quitItem = NSMenuItem(title: "Quit", action: #selector(quitMenuItemClicked), keyEquivalent: "q")
+    let quitItem = NSMenuItem(
+      title: "Quit",
+      action: #selector(quitMenuItemClicked),
+      keyEquivalent: "q"
+    )
     quitItem.target = self
     menu.addItem(quitItem)
 

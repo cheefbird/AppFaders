@@ -3,7 +3,9 @@ import Foundation
 
 /// Application tracked by the host orchestrator
 public struct TrackedApp: Identifiable, Sendable, Hashable {
-  public var id: String { bundleID }
+  public var id: String {
+    bundleID
+  }
 
   public let bundleID: String
   public let localizedName: String

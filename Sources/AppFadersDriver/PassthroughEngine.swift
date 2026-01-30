@@ -13,7 +13,7 @@ private let log = OSLog(
 
 // MARK: - Missing CoreAudio Constants
 
-// HAL plug-in IO operation type - not bridged to Swift
+/// HAL plug-in IO operation type - not bridged to Swift
 private let kAudioServerPlugInIOOperationWriteMix: UInt32 = 2
 
 // MARK: - Ring Buffer

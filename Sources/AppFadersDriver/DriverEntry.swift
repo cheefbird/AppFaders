@@ -101,13 +101,13 @@ final class DriverEntry: @unchecked Sendable {
 
 // MARK: - C Interface Exports
 
-// called from PlugInInterface.c Initialize()
+/// called from PlugInInterface.c Initialize()
 @_cdecl("AppFadersDriver_Initialize")
 public func driverInitialize(host: AudioServerPlugInHostRef) -> OSStatus {
   DriverEntry.shared.initialize(host: host)
 }
 
-// called from PlugInInterface.c CreateDevice()
+/// called from PlugInInterface.c CreateDevice()
 @_cdecl("AppFadersDriver_CreateDevice")
 public func driverCreateDevice(
   description: CFDictionary?,
@@ -122,7 +122,7 @@ public func driverCreateDevice(
   return status
 }
 
-// called from PlugInInterface.c DestroyDevice()
+/// called from PlugInInterface.c DestroyDevice()
 @_cdecl("AppFadersDriver_DestroyDevice")
 public func driverDestroyDevice(deviceID: AudioObjectID) -> OSStatus {
   DriverEntry.shared.destroyDevice(deviceID: deviceID)
