@@ -1209,8 +1209,8 @@
     {
       "type": "frame",
       "id": "zidb0",
-      "x": 960,
-      "y": 600,
+      "x": 1465,
+      "y": 25,
       "name": "TUI Components",
       "width": 700,
       "fill": "#0D0D0D",
