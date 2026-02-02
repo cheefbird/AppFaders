@@ -6,7 +6,7 @@
 
 Per-application audio volume control for macOS via a custom HAL audio driver.
 
-> **Status**: Phases 1-3 complete. Menu bar UI working. Next up: distribution packaging.
+> **Status**: Phases 1-3 complete. Menu bar UI working. Next up: refine app detection, troubleshoot user experience.
 
 ![AppFaders Desktop UI](/docs/desktop-ui.png)  
 *UI is from development - Finder volume won't be included*
