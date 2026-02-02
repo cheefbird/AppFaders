@@ -4,8 +4,8 @@ import SwiftUI
 struct PanelView: View {
   @Bindable var state: AppState
 
-  private let panelBackground = Color("PanelBackground", bundle: .module)
-  private let dividerColor = Color("Divider", bundle: .module)
+  private let panelBackground = AppColors.panelBackground
+  private let dividerColor = AppColors.divider
 
   var body: some View {
     VStack(spacing: 0) {
@@ -21,12 +21,23 @@ struct PanelView: View {
         onMuteToggle: { state.toggleMasterMute() }
       )
 
-      ForEach(state.apps) { app in
-        AppRowView(
-          app: app,
-          volume: volumeBinding(for: app.id),
-          onMuteToggle: { Task { await state.toggleMute(for: app.id) } }
-        )
+      if !state.apps.isEmpty {
+        Rectangle()
+          .fill(dividerColor)
+          .frame(height: 1)
+
+        ScrollView {
+          LazyVStack(spacing: 0) {
+            ForEach(state.apps) { app in
+              AppRowView(
+                app: app,
+                volume: volumeBinding(for: app.id),
+                onMuteToggle: { Task { await state.toggleMute(for: app.id) } }
+              )
+            }
+          }
+        }
+        .frame(maxHeight: 400)
       }
 
       Rectangle()
