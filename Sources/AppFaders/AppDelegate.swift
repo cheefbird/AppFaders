@@ -8,13 +8,23 @@ private let log = OSLog(subsystem: "com.fbreidenbach.appfaders", category: "AppD
 final class AppDelegate: NSObject, NSApplicationDelegate {
   private var menuBarController: MenuBarController?
   private let orchestrator = AudioOrchestrator()
+  private let deviceManager = DeviceManager()
+  private var appState: AppState?
   private var orchestratorTask: Task<Void, Never>?
 
   func applicationDidFinishLaunching(_ notification: Notification) {
     os_log(.info, log: log, "AppFaders launching")
 
     NSApp.setActivationPolicy(.accessory)
-    menuBarController = MenuBarController()
+
+    // Create AppState with dependencies
+    let state = AppState(orchestrator: orchestrator, deviceManager: deviceManager)
+    appState = state
+
+    // Create menu bar controller with state
+    menuBarController = MenuBarController(appState: state)
+
+    // Start orchestrator
     orchestratorTask = Task {
       await orchestrator.start()
     }

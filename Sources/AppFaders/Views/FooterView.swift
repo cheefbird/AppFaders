@@ -4,8 +4,8 @@ import SwiftUI
 struct FooterView: View {
   let onQuit: () -> Void
 
-  private let tertiaryText = Color("TertiaryText", bundle: .module)
-  private let accentColor = Color("Accent", bundle: .module)
+  private let tertiaryText = AppColors.tertiaryText
+  private let accentColor = AppColors.accent
 
   var body: some View {
     HStack {
@@ -31,13 +31,13 @@ struct FooterView: View {
 #Preview("Footer - Light") {
   FooterView(onQuit: {})
     .padding()
-    .background(Color("PanelBackground", bundle: .module))
+    .background(AppColors.panelBackground)
     .preferredColorScheme(.light)
 }
 
 #Preview("Footer - Dark") {
   FooterView(onQuit: {})
     .padding()
-    .background(Color("PanelBackground", bundle: .module))
+    .background(AppColors.panelBackground)
     .preferredColorScheme(.dark)
 }

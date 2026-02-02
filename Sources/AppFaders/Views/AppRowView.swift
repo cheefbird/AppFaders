@@ -7,9 +7,9 @@ struct AppRowView: View {
   @Binding var volume: Float
   let onMuteToggle: () -> Void
 
-  private let primaryText = Color("PrimaryText", bundle: .module)
-  private let secondaryText = Color("SecondaryText", bundle: .module)
-  private let accentColor = Color("Accent", bundle: .module)
+  private let primaryText = AppColors.primaryText
+  private let secondaryText = AppColors.secondaryText
+  private let accentColor = AppColors.accent
 
   var body: some View {
     HStack(spacing: 16) {
@@ -53,7 +53,7 @@ struct AppRowView: View {
         .font(.system(size: 32))
         .foregroundStyle(secondaryText)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color("Divider", bundle: .module))
+        .background(AppColors.divider)
     }
   }
 }
@@ -74,7 +74,7 @@ struct AppRowView: View {
     onMuteToggle: {}
   )
   .padding(.horizontal, 20)
-  .background(Color("PanelBackground", bundle: .module))
+  .background(AppColors.panelBackground)
   .preferredColorScheme(.dark)
 }
 
@@ -92,7 +92,7 @@ struct AppRowView: View {
     onMuteToggle: {}
   )
   .padding(.horizontal, 20)
-  .background(Color("PanelBackground", bundle: .module))
+  .background(AppColors.panelBackground)
   .preferredColorScheme(.dark)
 }
 
@@ -110,6 +110,6 @@ struct AppRowView: View {
     onMuteToggle: {}
   )
   .padding(.horizontal, 20)
-  .background(Color("PanelBackground", bundle: .module))
+  .background(AppColors.panelBackground)
   .preferredColorScheme(.light)
 }

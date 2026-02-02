@@ -2,8 +2,8 @@ import SwiftUI
 
 /// Panel header with title and settings icon matching Pencil design (7tlKE)
 struct HeaderView: View {
-  private let primaryText = Color("PrimaryText", bundle: .module)
-  private let secondaryText = Color("SecondaryText", bundle: .module)
+  private let primaryText = AppColors.primaryText
+  private let secondaryText = AppColors.secondaryText
 
   var body: some View {
     HStack {
@@ -26,13 +26,13 @@ struct HeaderView: View {
 #Preview("Header - Light") {
   HeaderView()
     .padding()
-    .background(Color("PanelBackground", bundle: .module))
+    .background(AppColors.panelBackground)
     .preferredColorScheme(.light)
 }
 
 #Preview("Header - Dark") {
   HeaderView()
     .padding()
-    .background(Color("PanelBackground", bundle: .module))
+    .background(AppColors.panelBackground)
     .preferredColorScheme(.dark)
 }

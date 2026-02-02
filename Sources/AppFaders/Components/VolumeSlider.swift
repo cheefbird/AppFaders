@@ -40,8 +40,8 @@ struct VolumeSlider: View {
   @Binding var value: Float
   var size: SliderSize = .large
 
-  private let trackColor = Color("SliderTrack", bundle: .module)
-  private let thumbColor = Color("SliderThumb", bundle: .module)
+  private let trackColor = AppColors.sliderTrack
+  private let thumbColor = AppColors.sliderThumb
 
   var body: some View {
     GeometryReader { geometry in

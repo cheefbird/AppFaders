@@ -6,7 +6,7 @@ struct MasterVolumeView: View {
   let isMuted: Bool
   let onMuteToggle: () -> Void
 
-  private let secondaryText = Color("SecondaryText", bundle: .module)
+  private let secondaryText = AppColors.secondaryText
 
   var body: some View {
     VStack(spacing: 16) {
@@ -21,7 +21,7 @@ struct MasterVolumeView: View {
 
         Text(isMuted ? "Muted" : "\(Int(volume * 100))%")
           .font(.system(size: 16, weight: .semibold))
-          .foregroundStyle(isMuted ? Color("Accent", bundle: .module) : secondaryText)
+          .foregroundStyle(isMuted ? AppColors.accent : secondaryText)
       }
 
       // Slider row: slider + mute button
@@ -40,20 +40,20 @@ struct MasterVolumeView: View {
 #Preview("Master - Light") {
   MasterVolumeView(volume: .constant(0.85), isMuted: false, onMuteToggle: {})
     .padding(.horizontal, 20)
-    .background(Color("PanelBackground", bundle: .module))
+    .background(AppColors.panelBackground)
     .preferredColorScheme(.light)
 }
 
 #Preview("Master - Dark") {
   MasterVolumeView(volume: .constant(0.85), isMuted: false, onMuteToggle: {})
     .padding(.horizontal, 20)
-    .background(Color("PanelBackground", bundle: .module))
+    .background(AppColors.panelBackground)
     .preferredColorScheme(.dark)
 }
 
 #Preview("Master Muted - Dark") {
   MasterVolumeView(volume: .constant(0.0), isMuted: true, onMuteToggle: {})
     .padding(.horizontal, 20)
-    .background(Color("PanelBackground", bundle: .module))
+    .background(AppColors.panelBackground)
     .preferredColorScheme(.dark)
 }

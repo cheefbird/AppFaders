@@ -5,8 +5,8 @@ struct MuteButton: View {
   let isMuted: Bool
   let onToggle: () -> Void
 
-  private let speakerColor = Color("SliderThumb", bundle: .module)
-  private let mutedColor = Color("Accent", bundle: .module)
+  private let speakerColor = AppColors.sliderThumb
+  private let mutedColor = AppColors.accent
 
   var body: some View {
     Button(action: onToggle) {

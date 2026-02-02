@@ -13,7 +13,10 @@ final class MenuBarController: NSObject {
   private var clickOutsideMonitor: Any?
   private var escapeKeyMonitor: Any?
 
-  override init() {
+  private let appState: AppState
+
+  init(appState: AppState) {
+    self.appState = appState
     super.init()
     setupStatusItem()
     setupPanel()
@@ -30,13 +33,27 @@ final class MenuBarController: NSObject {
   }
 
   func showPanel() {
-    guard let panel else { return }
+    guard let panel else {
+      os_log(.error, log: log, "showPanel: panel is nil")
+      return
+    }
+
+    // Sync state before showing
+    appState.syncFromOrchestrator()
+    appState.refreshMasterVolume()
+
+    // Resize panel to fit content
+    if let contentView = panel.contentView {
+      let fittingSize = contentView.fittingSize
+      if fittingSize.width > 0 && fittingSize.height > 0 {
+        panel.setContentSize(fittingSize)
+      }
+    }
 
     positionPanelBelowStatusItem()
     panel.makeKeyAndOrderFront(nil)
     isPanelVisible = true
     addEventMonitors()
-    os_log(.debug, log: log, "Panel shown")
   }
 
   func hidePanel() {
@@ -138,7 +155,7 @@ final class MenuBarController: NSObject {
 
   private func setupPanel() {
     let panel = NSPanel(
-      contentRect: NSRect(x: 0, y: 0, width: 420, height: 400),
+      contentRect: NSRect(x: 0, y: 0, width: 380, height: 500),
       styleMask: [.nonactivatingPanel, .fullSizeContentView, .borderless],
       backing: .buffered,
       defer: false
@@ -146,7 +163,7 @@ final class MenuBarController: NSObject {
 
     panel.isFloatingPanel = true
     panel.level = .floating
-    panel.hidesOnDeactivate = true
+    panel.hidesOnDeactivate = false  // Must be false for menu bar apps
     panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
     panel.backgroundColor = .clear
     panel.isOpaque = false
@@ -154,11 +171,13 @@ final class MenuBarController: NSObject {
     panel.titlebarAppearsTransparent = true
     panel.titleVisibility = .hidden
 
-    let hostingView = NSHostingView(rootView: PlaceholderPanelView())
+    let panelView = PanelView(state: appState)
+    let hostingView = NSHostingView(rootView: panelView)
+    hostingView.autoresizingMask = [.width, .height]
     panel.contentView = hostingView
 
     self.panel = panel
-    os_log(.info, log: log, "Panel created")
+    os_log(.info, log: log, "Panel created with PanelView")
   }
 
   // MARK: - Status Item Setup
@@ -183,7 +202,7 @@ final class MenuBarController: NSObject {
 
     button.target = self
     button.action = #selector(statusItemClicked(_:))
-    button.sendAction(on: [.leftMouseUp, .rightMouseUp])
+    button.sendAction(on: [.leftMouseDown, .rightMouseUp])
 
     os_log(.info, log: log, "Menu bar controller initialized")
   }
