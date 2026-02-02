@@ -90,11 +90,11 @@ final class MenuBarController: NSObject {
     escapeKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) {
       [weak self] event in
       guard let self else { return event }
-      if event.keyCode == 53 {  // Escape key
+      if event.keyCode == 53 { // Escape key
         Task { @MainActor in
           self.hidePanel()
         }
-        return nil  // Consume the event
+        return nil // Consume the event
       }
       return event
     }
@@ -119,7 +119,8 @@ final class MenuBarController: NSObject {
 
     // Ignore clicks on the status item - let togglePanel handle those
     if let button = statusItem?.button,
-       let buttonWindow = button.window {
+       let buttonWindow = button.window
+    {
       let buttonFrame = buttonWindow.frame
       if buttonFrame.contains(clickLocation) {
         return
@@ -170,7 +171,6 @@ final class MenuBarController: NSObject {
       return
     }
 
-    // SF Symbol for menu bar icon
     if let image = NSImage(
       systemSymbolName: "slider.vertical.3",
       accessibilityDescription: "AppFaders"
@@ -181,7 +181,6 @@ final class MenuBarController: NSObject {
       os_log(.error, log: log, "Failed to load SF Symbol 'slider.vertical.3'")
     }
 
-    // Handle both left and right clicks
     button.target = self
     button.action = #selector(statusItemClicked(_:))
     button.sendAction(on: [.leftMouseUp, .rightMouseUp])

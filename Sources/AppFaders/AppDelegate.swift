@@ -13,13 +13,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   func applicationDidFinishLaunching(_ notification: Notification) {
     os_log(.info, log: log, "AppFaders launching")
 
-    // Menu bar only - no dock icon
     NSApp.setActivationPolicy(.accessory)
-
-    // Create menu bar controller (panel toggle placeholder for now)
     menuBarController = MenuBarController()
-
-    // Start orchestrator in background task
     orchestratorTask = Task {
       await orchestrator.start()
     }
