@@ -21,20 +21,20 @@ This document outlines the sequential phases for building the AppFaders macOS ap
 - **Driver Caching**: `HelperBridge` maintains local volume cache for real-time safe audio callbacks.
 - **Verification**: Manual integration test confirmed XPC round-trip and volume state sync. See `Docs/xpc-integration-test.md`.
 
-## Phase 3: `swiftui-volume-mixer`
+## Phase 3: `desktop-ui` ✓
 
 **Goal**: Create the native macOS user interface.
 
-- **Menu Bar Integration**: Build the Menu Bar Extra and the SwiftUI popover.
-- **Dynamic Mixer**: Develop the app list with reactive sliders and global mute/unmute toggles, linked to the Audio Orchestrator via XPC.
-- **Native Aesthetic**: Implement Light/Dark/Auto modes with a lightweight, translucent design.
-- **Verification**: Smooth UI interactions and real-time volume synchronization.
+- **Menu Bar Integration**: NSStatusItem with NSPanel (not SwiftUI popover) for proper focus/click-outside behavior.
+- **Dynamic Mixer**: App list with reactive sliders and mute toggles, linked to `AudioOrchestrator` via XPC.
+- **Native Aesthetic**: Light/Dark mode support with translucent vibrancy effects using `AppColors` theme system.
+- **Verification**: Smooth UI interactions, real-time volume sync, proper panel dismiss behavior.
 
-## Phase 4: `distribution-packaging`
+## Phase 4: `system-delivery`
 
 **Goal**: Package for end-user distribution.
 
-- **Signed PKG Installer**: Build installer using `pkgbuild`/`productbuild` that installs driver to `/Library/Audio/Plug-Ins/HAL` and helper to `/Library/LaunchDaemons/`.
+- **Signed PKG Installer**: Single PKG using `pkgbuild`/`productbuild` that installs all components: app to `/Applications`, driver to `/Library/Audio/Plug-Ins/HAL`, helper to `/Library/LaunchDaemons/`.
 - **Notarization**: Script notarization workflow via `notarytool` for Gatekeeper approval.
 - **Uninstaller**: Optional script/tool to cleanly remove driver, helper, and LaunchDaemon.
 - **Verification**: Fresh macOS install can download PKG, install without Gatekeeper warnings, and run app successfully.
