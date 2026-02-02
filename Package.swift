@@ -27,6 +27,9 @@ let package = Package(
       dependencies: [
         "AppFadersCore",
         .product(name: "CAAudioHardware", package: "CAAudioHardware")
+      ],
+      resources: [
+        .process("Resources")
       ]
     ),
     .executableTarget(
