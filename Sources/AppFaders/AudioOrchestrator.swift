@@ -22,7 +22,15 @@ final class AudioOrchestrator {
     deviceManager = DeviceManager()
     appAudioMonitor = AppAudioMonitor()
     driverBridge = DriverBridge()
-    os_log(.info, log: log, "AudioOrchestrator initialized")
+
+    // Populate apps immediately so they're available before start() runs
+    appAudioMonitor.start()
+    for app in appAudioMonitor.runningApps {
+      trackedApps.append(app)
+      appVolumes[app.bundleID] = 1.0
+    }
+
+    os_log(.info, log: log, "AudioOrchestrator initialized with %d apps", trackedApps.count)
   }
 
   // MARK: - Lifecycle
@@ -37,12 +45,7 @@ final class AudioOrchestrator {
     let deviceUpdates = deviceManager.deviceListUpdates
     let appEvents = appAudioMonitor.events
 
-    appAudioMonitor.start()
-
-    for app in appAudioMonitor.runningApps {
-      trackApp(app)
-    }
-
+    // Apps already populated in init(), just connect to helper
     await connectToHelper()
 
     await withTaskGroup(of: Void.self) { group in
