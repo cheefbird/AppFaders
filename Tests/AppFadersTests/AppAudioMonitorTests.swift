@@ -1,4 +1,4 @@
-@testable import AppFaders
+@testable import AppFadersCore
 import AppKit
 import Foundation
 import Testing

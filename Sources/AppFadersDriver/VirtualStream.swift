@@ -26,7 +26,7 @@ final class VirtualStream: @unchecked Sendable {
   private var isActive: Bool = false
   private var sampleRate: Float64 = 48000.0
 
-  // supported sample rates
+  /// supported sample rates
   let supportedSampleRates: [Float64] = [44100.0, 48000.0, 96000.0]
 
   private init() {

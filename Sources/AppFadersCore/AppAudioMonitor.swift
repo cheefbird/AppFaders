@@ -5,26 +5,26 @@ import os.log
 private let log = OSLog(subsystem: "com.fbreidenbach.appfaders", category: "AppAudioMonitor")
 
 /// lifecycle events for tracked applications
-enum AppLifecycleEvent: Sendable {
+public enum AppLifecycleEvent: Sendable {
   case didLaunch(TrackedApp)
   case didTerminate(String) // bundleID
 }
 
 /// monitors running applications using NSWorkspace
-final class AppAudioMonitor: @unchecked Sendable {
+public final class AppAudioMonitor: @unchecked Sendable {
   private let workspace = NSWorkspace.shared
   private let lock = NSLock()
   private var _runningApps: [TrackedApp] = []
 
   /// currently running tracked applications
-  var runningApps: [TrackedApp] {
+  public var runningApps: [TrackedApp] {
     lock.lock()
     defer { lock.unlock() }
     return _runningApps
   }
 
   /// async stream of app lifecycle events
-  var events: AsyncStream<AppLifecycleEvent> {
+  public var events: AsyncStream<AppLifecycleEvent> {
     AsyncStream { continuation in
       let task = Task { [weak self] in
         guard let self else { return }
@@ -56,21 +56,29 @@ final class AppAudioMonitor: @unchecked Sendable {
     }
   }
 
-  init() {
+  public init() {
     os_log(.info, log: log, "AppAudioMonitor initialized")
   }
 
   /// starts monitoring and populates initial state
-  func start() {
-    // initial snapshot
-    let currentApps = workspace.runningApplications
+  public func start() {
+    // initial snapshot - only include regular (windowed) apps
+    let allApps = workspace.runningApplications
+    let currentApps = allApps
+      .filter { $0.activationPolicy == .regular }
       .compactMap { TrackedApp(from: $0) }
 
     lock.lock()
     _runningApps = currentApps
     lock.unlock()
 
-    os_log(.info, log: log, "Started monitoring with %d initial apps", currentApps.count)
+    os_log(
+      .info,
+      log: log,
+      "Started monitoring with %d apps (filtered from %d total)",
+      currentApps.count,
+      allApps.count
+    )
   }
 
   private func handleAppLaunch(
@@ -79,6 +87,7 @@ final class AppAudioMonitor: @unchecked Sendable {
   ) {
     guard let app = notification
       .userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+      app.activationPolicy == .regular,
       let trackedApp = TrackedApp(from: app)
     else { return }
 

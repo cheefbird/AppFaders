@@ -4,8 +4,8 @@ import os.log
 
 // MARK: - Object IDs
 
-// static object IDs for our audio object hierarchy
-// these must be unique within the driver and stable across sessions
+/// static object IDs for our audio object hierarchy
+/// these must be unique within the driver and stable across sessions
 public enum ObjectID {
   static let plugIn: AudioObjectID = 1
   static let device: AudioObjectID = 2
@@ -15,17 +15,22 @@ public enum ObjectID {
 
 // MARK: - Missing CoreAudio Constants
 
-// these HAL-specific constants aren't bridged to Swift
+/// these HAL-specific constants aren't bridged to Swift
 private let kAudioPlugInPropertyResourceBundle = AudioObjectPropertySelector(
-  fourCharCode("rsrc"))
+  fourCharCode("rsrc")
+)
 private let kAudioDevicePropertyZeroTimeStampPeriod = AudioObjectPropertySelector(
-  fourCharCode("ring"))
+  fourCharCode("ring")
+)
 private let kAudioObjectPropertyCustomPropertyInfoList = AudioObjectPropertySelector(
-  fourCharCode("cust"))
+  fourCharCode("cust")
+)
 private let kAudioDevicePropertyControlList = AudioObjectPropertySelector(
-  fourCharCode("ctrl"))
+  fourCharCode("ctrl")
+)
 private let kAudioClockDevicePropertyClockDomain = AudioObjectPropertySelector(
-  fourCharCode("clk#"))
+  fourCharCode("clk#")
+)
 
 private func fourCharCode(_ string: String) -> UInt32 {
   var result: UInt32 = 0

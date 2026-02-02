@@ -1,7 +1,7 @@
 import Foundation
 
 /// errors related to driver communication and management
-enum DriverError: Error, LocalizedError, Equatable {
+public enum DriverError: Error, LocalizedError, Equatable, Sendable {
   case deviceNotFound
   case propertyReadFailed(OSStatus)
   case propertyWriteFailed(OSStatus)
@@ -15,7 +15,7 @@ enum DriverError: Error, LocalizedError, Equatable {
   case connectionInterrupted
   case remoteError(String)
 
-  var errorDescription: String? {
+  public var errorDescription: String? {
     switch self {
     case .deviceNotFound:
       "AppFaders Virtual Device not found. Please ensure the driver is installed."
