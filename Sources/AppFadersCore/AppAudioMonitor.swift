@@ -62,15 +62,23 @@ public final class AppAudioMonitor: @unchecked Sendable {
 
   /// starts monitoring and populates initial state
   public func start() {
-    // initial snapshot
-    let currentApps = workspace.runningApplications
+    // initial snapshot - only include regular (windowed) apps
+    let allApps = workspace.runningApplications
+    let currentApps = allApps
+      .filter { $0.activationPolicy == .regular }
       .compactMap { TrackedApp(from: $0) }
 
     lock.lock()
     _runningApps = currentApps
     lock.unlock()
 
-    os_log(.info, log: log, "Started monitoring with %d initial apps", currentApps.count)
+    os_log(
+      .info,
+      log: log,
+      "Started monitoring with %d apps (filtered from %d total)",
+      currentApps.count,
+      allApps.count
+    )
   }
 
   private func handleAppLaunch(
@@ -79,6 +87,7 @@ public final class AppAudioMonitor: @unchecked Sendable {
   ) {
     guard let app = notification
       .userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+      app.activationPolicy == .regular,
       let trackedApp = TrackedApp(from: app)
     else { return }
 
