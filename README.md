@@ -6,7 +6,7 @@
 
 Per-application audio volume control for macOS via a custom HAL audio driver.
 
-> **Status**: Phases 1-3 complete. Menu bar UI working. Next up: refine app detection, troubleshoot user experience.
+> **Status**: Not working. Some basics are in place, including a UI. Next up: refine app detection, troubleshoot user experience.
 
 ![AppFaders Desktop UI](/docs/desktop-ui.png)  
 *UI is from development - Finder volume won't be included*
@@ -17,7 +17,7 @@ Per-application audio volume control for macOS via a custom HAL audio driver.
 
 AppFaders is a menu bar app that lets you control volume individually for each application. It works by installing a virtual audio device (HAL plug-in) that sits between apps and your output device.
 
-```
+```txt
 ┌─────────────────────┐                ┌─────────────────────┐
 │                     │      XPC       │                     │
 │   Host App          │◄──────────────►│   Helper Service    │
