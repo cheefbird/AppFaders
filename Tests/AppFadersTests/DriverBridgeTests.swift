@@ -33,8 +33,8 @@ struct DriverBridgeTests {
   func validateValidVolume() async {
     let bridge = DriverBridge()
 
-    // Valid volumes should pass validation and fail at XPC (helper not running)
-    // We check that invalidVolumeRange is NOT thrown
+    /// Valid volumes should pass validation and fail at XPC (helper not running)
+    /// We check that invalidVolumeRange is NOT thrown
     func check(_ volume: Float) async {
       do {
         try await bridge.setAppVolume(bundleID: "com.test.app", volume: volume)

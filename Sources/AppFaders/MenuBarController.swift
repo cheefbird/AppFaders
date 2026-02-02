@@ -45,7 +45,7 @@ final class MenuBarController: NSObject {
     // Resize panel to fit content
     if let contentView = panel.contentView {
       let fittingSize = contentView.fittingSize
-      if fittingSize.width > 0 && fittingSize.height > 0 {
+      if fittingSize.width > 0, fittingSize.height > 0 {
         panel.setContentSize(fittingSize)
       }
     }
@@ -163,7 +163,7 @@ final class MenuBarController: NSObject {
 
     panel.isFloatingPanel = true
     panel.level = .floating
-    panel.hidesOnDeactivate = false  // Must be false for menu bar apps
+    panel.hidesOnDeactivate = false // Must be false for menu bar apps
     panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
     panel.backgroundColor = .clear
     panel.isOpaque = false
