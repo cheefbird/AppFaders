@@ -51,12 +51,14 @@ struct VolumeSlider: View {
       let thumbX = thumbRadius + CGFloat(value) * usableWidth
 
       ZStack(alignment: .leading) {
-        // Track
         RoundedRectangle(cornerRadius: 2)
           .fill(trackColor)
           .frame(width: trackWidth, height: size.trackHeight)
 
-        // Thumb
+        RoundedRectangle(cornerRadius: 2)
+          .fill(thumbColor.opacity(0.5))
+          .frame(width: thumbX, height: size.trackHeight)
+
         Circle()
           .fill(thumbColor)
           .frame(width: size.thumbDiameter, height: size.thumbDiameter)

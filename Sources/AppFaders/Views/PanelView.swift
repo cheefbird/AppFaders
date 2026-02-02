@@ -37,6 +37,7 @@ struct PanelView: View {
             }
           }
         }
+        .scrollIndicators(.automatic)
         .frame(maxHeight: 400)
       }
 
