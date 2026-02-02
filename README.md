@@ -2,7 +2,7 @@
 
 Per-application audio volume control for macOS via a custom HAL audio driver.
 
-> **Status**: Early development — Phases 1-2 complete. XPC IPC working. Next up: SwiftUI menu bar UI.
+> **Status**: Phases 1-3 complete. Menu bar UI working. Next up: distribution packaging.
 
 ## Overview
 
@@ -36,14 +36,23 @@ swift build
 swift test
 ```
 
-## Installing
+## Managing Helper and Driver
 
 ```bash
 # Build, sign, and install driver + helper service
+# NOTE: Requires Apple Developer account and cert
 Scripts/install-driver.sh
 
 # Remove driver + helper
 Scripts/uninstall-driver.sh
+```
+
+## Running AppFaders
+
+```bash
+swift build
+
+swift run AppFaders
 ```
 
 ## Project Structure
@@ -51,6 +60,7 @@ Scripts/uninstall-driver.sh
 | Target | Description |
 |--------|-------------|
 | `AppFaders` | SwiftUI menu bar app |
+| `AppFadersCore` | Shared library (TrackedApp, DriverBridge, AppAudioMonitor) |
 | `AppFadersHelper` | XPC service (LaunchDaemon) for volume state |
 | `AppFadersDriver` | Swift HAL driver implementation |
 | `AppFadersDriverBridge` | C interface for CoreAudio HAL |
@@ -60,10 +70,10 @@ Scripts/uninstall-driver.sh
 
 1. ~~**driver-foundation**~~ — Virtual device registration and passthrough ✓
 2. ~~**host-audio-orchestrator**~~ — App monitoring + XPC IPC ✓
-3. **swiftui-volume-mixer** — Menu bar UI
-4. **distribution-packaging** — Signed PKG installer + notarization
+3. ~~**desktop-ui**~~ — Menu bar UI (NSPanel + SwiftUI) ✓
+4. **system-delivery** — Signed PKG installer + notarization
 5. **settings-and-hotkeys** — Launch at login + global hotkeys
 
 ## License
 
-[Apache 2.0](LICENSE)
+[Apache 2.0](LICENSE.md)
