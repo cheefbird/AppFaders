@@ -55,6 +55,68 @@ final class DeviceManager: Sendable {
     }
   }
 
+  /// returns the default system output device
+  var defaultOutputDevice: AudioDevice? {
+    try? AudioDevice.defaultOutputDevice
+  }
+
+  // MARK: - System Volume Control
+
+  /// gets the current system output volume (0.0-1.0)
+  func getSystemVolume() -> Float {
+    guard let device = defaultOutputDevice else {
+      os_log(.error, log: log, "No default output device for getSystemVolume")
+      return 1.0
+    }
+    do {
+      return try device.volumeScalar(inScope: .output)
+    } catch {
+      os_log(.error, log: log, "Failed to get system volume: %@", error as CVarArg)
+      return 1.0
+    }
+  }
+
+  /// sets the system output volume (0.0-1.0)
+  func setSystemVolume(_ volume: Float) {
+    guard let device = defaultOutputDevice else {
+      os_log(.error, log: log, "No default output device for setSystemVolume")
+      return
+    }
+    let clamped = max(0.0, min(1.0, volume))
+    do {
+      try device.setVolumeScalar(clamped, inScope: .output)
+    } catch {
+      os_log(.error, log: log, "Failed to set system volume: %@", error as CVarArg)
+    }
+  }
+
+  /// gets the current system mute state
+  func getSystemMute() -> Bool {
+    guard let device = defaultOutputDevice else {
+      os_log(.error, log: log, "No default output device for getSystemMute")
+      return false
+    }
+    do {
+      return try device.mute(inScope: .output)
+    } catch {
+      os_log(.error, log: log, "Failed to get system mute: %@", error as CVarArg)
+      return false
+    }
+  }
+
+  /// sets the system mute state
+  func setSystemMute(_ muted: Bool) {
+    guard let device = defaultOutputDevice else {
+      os_log(.error, log: log, "No default output device for setSystemMute")
+      return
+    }
+    do {
+      try device.setMute(muted, inScope: .output)
+    } catch {
+      os_log(.error, log: log, "Failed to set system mute: %@", error as CVarArg)
+    }
+  }
+
   init() {
     os_log(.info, log: log, "DeviceManager initialized")
   }
