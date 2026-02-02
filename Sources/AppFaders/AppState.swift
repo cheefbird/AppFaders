@@ -31,6 +31,23 @@ struct AppVolumeState: Identifiable, @unchecked Sendable {
     self.isMuted = isMuted
     previousVolume = volume
   }
+
+  /// Memberwise initializer for previews and testing
+  init(
+    id: String,
+    name: String,
+    icon: NSImage?,
+    volume: Float,
+    isMuted: Bool,
+    previousVolume: Float
+  ) {
+    self.id = id
+    self.name = name
+    self.icon = icon
+    self.volume = volume
+    self.isMuted = isMuted
+    self.previousVolume = previousVolume
+  }
 }
 
 // MARK: - AppState
