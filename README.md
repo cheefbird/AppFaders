@@ -79,6 +79,23 @@ Scripts/install-driver.sh
 Scripts/uninstall-driver.sh
 ```
 
+### Try a Tart VM
+
+```sh
+# Install Tart if needed
+brew install cirruslabs/cli/tart
+
+# Clone a macOS Tahoe vanilla image (~21.7 GB)
+tart clone ghcr.io/cirruslabs/macos-tahoe-vanilla:latest appfaders-test
+
+# Build the project then boot the VM with directory mounted
+swift build
+tart run --dir=appfaders:~/Developer/AppFaders:ro appfaders-test
+
+# Inside the VM (login: admin/admin), open Terminal and run:
+bash "/Volumes/My Shared Files/appfaders/Scripts/vm-spike.sh"
+```
+
 ---
 
 ## Project Structure
