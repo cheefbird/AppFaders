@@ -20,7 +20,7 @@ jobs:
   submit-dependencies:
     runs-on: macos-26
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Submit dependencies
       uses: vapor-community/swift-dependency-submission@v0.1
