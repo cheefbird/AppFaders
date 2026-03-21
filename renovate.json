@@ -1,18 +1,23 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", "schedule:weekends", ":semanticCommits"],
+  "extends": ["config:best-practices"],
   "labels": ["dependencies"],
-  "rangeStrategy": "pin",
+  "schedule": ["before 9am every weekday"],
+  "automerge": false,
+  "prConcurrentLimit": 3,
   "packageRules": [
     {
-      "description": "Swift packages — minor and patch only, pin exact versions",
-      "matchManagers": ["swift"],
-      "groupName": "swift-packages",
-      "rangeStrategy": "pin",
-      "automerge": false
+      "description": "GitHub Actions — group updates together",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions"
     },
     {
-      "description": "Block major bumps on Swift deps — review manually",
+      "description": "Swift packages — group minor/patch, block majors",
+      "matchManagers": ["swift"],
+      "groupName": "swift-packages"
+    },
+    {
+      "description": "Block major Swift dep bumps",
       "matchManagers": ["swift"],
       "matchUpdateTypes": ["major"],
       "enabled": false
