@@ -15,7 +15,7 @@ let package = Package(
     .plugin(name: "BundleAssembler", targets: ["BundleAssembler"])
   ],
   dependencies: [
-    .package(url: "https://github.com/sbooth/CAAudioHardware", from: "0.7.1")
+    .package(url: "https://github.com/sbooth/CAAudioHardware", from: "0.8.0")
   ],
   targets: [
     .target(
