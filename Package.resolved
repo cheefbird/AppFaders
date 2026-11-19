@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sbooth/CAAudioHardware",
       "state" : {
-        "revision" : "d927963dcfbb819da6ed6f17b83f17ffbc689280",
-        "version" : "0.7.1"
+        "revision" : "d295de91f21ef1ee3301997c17be310625a859e9",
+        "version" : "0.9.0"
       }
     },
     {
